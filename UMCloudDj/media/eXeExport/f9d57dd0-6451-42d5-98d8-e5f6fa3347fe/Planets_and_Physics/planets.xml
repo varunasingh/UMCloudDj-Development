@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<exepage title='Planets' ><idevice type='multichoice' id ='2'>
+<question><![CDATA[<div id="taquestion0b2" class="block iDevice_content">
+<p>Is pluto a planet?</p>
+</div>
+]]><answer iscorrect='false'><![CDATA[
+<span class='exe_tfmob'>True</span>]]><feedback>
+<![CDATA[<img src='icon_mobile_stockwrong.png'/>]]></feedback>
+</answer>
+<answer iscorrect='true'><![CDATA[
+<span class='exe_tfmob'>False</span>]]><feedback>
+<![CDATA[<img src='icon_mobile_stockcorrect.png'/>]]></feedback>
+</answer>
+</question>
+</idevice></exepage>
