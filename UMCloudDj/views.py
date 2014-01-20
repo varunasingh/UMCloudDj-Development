@@ -22,14 +22,18 @@ def getcourse_view(request):
 		#print(matchedCourse.username)
 		print("The unique folder for course id: " + courseid + " is: " + matchedCourse.uid + "/" + matchedCourse.name)
 		coursefolder = matchedCourse.uid + "/" + matchedCourse.name
+		xmlDownload = coursefolder + "_ustadpkg_html5.xml"
 		#if request.method == 'POST':
 			#print("REQUEST IS POST!!")
 		data = { 
-			'folder' : coursefolder
+			'folder' : coursefolder,
+			'xmlDownload' : xmlDownload
 		}
 		response = HttpResponse("folder:" + coursefolder)
-		response = render_to_response("getcourse.html", {'coursefolder': coursefolder}, context_instance=RequestContext(request))
+		response = HttpResponse("xmlDownload:" + xmlDownload)
+		response = render_to_response("getcourse.html", {'coursefolder': coursefolder, 'xmlDownload': xmlDownload}, context_instance=RequestContext(request))
 		response['folder'] = coursefolder
+		response['xmlDownload'] = xmlDownload
 		#response = HttpResponse("Text only, please.", content_type="text/plain")
 		#response.write("<p>Here is the text of the Web page.</p>")
 		#response.write("<p>Here is another paragrah.</p>")

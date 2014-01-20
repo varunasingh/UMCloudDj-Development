@@ -1,0 +1,28 @@
+sudo apt-get install apache2
+sudo apt-get install python
+sudo-apt get install python-pip
+sudo pip install Django
+sudo apt-get install tree
+sudo apt-get install git
+cd srv
+git clone ssh://varunasingh@git.code.sf.net/p/ustadmobil/code-umclouddjango UMCloudDjango
+cd UMCloudDjango
+python manage.py runserver ip:800
+cd /opt/
+git clone https://forja.cenatic.es/anonscm/git/iteexe/iteexe.git -b toughramobile
+sudo apt-get update
+sudo apt-get install build-essential
+cd /opt/iteexe/installs/debian/ubuntu
+sudo apt-get these things:
+Build-Depends-Indep: debhelper (>= 5.0.38), python-support (>=0.5.3), python-all-dev (>= 2.6), python-setuptools, python-git
+Depends: ${python:Depends}, python-setuptools, python-zopeinterface (>=3.0.0-6) | python-zope.interface, python-imaging, python-chardet, python-lxml, www-browser
+(from file: /opt/iteexe/debian/control)
+
+easy_install gitpython
+
+then check:
+which exe_do
+
+sudo apt-get -f install
+sudo apt-get install sqlite3
+
