@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<exepage title='Physics' ><idevice type='multichoice' id='3'>
+<question ><![CDATA[<div id="taquestion3_325" class="block iDevice_content">
+<p>What fell on Newton's head ?</p>
+</div>
+]]>
+<answer iscorrect='false'> 
+<![CDATA[
+<div id="taans3_328" class="block iDevice_content">
+<p>Mango</p>
+</div>
+
+]]>
+<feedback >
+<![CDATA[
+<div id="taf3_328" class="block iDevice_content">
+<p>He was not in a tropical area</p>
+</div>
+]]></feedback>
+</answer>
+
+
+<answer iscorrect='true'> 
+<![CDATA[
+<div id="taans3_414" class="block iDevice_content">
+<p>Apple</p>
+</div>
+
+]]>
+<feedback >
+<![CDATA[
+<div id="taf3_414" class="block iDevice_content">
+<p>Eureka!</p>
+</div>
+]]></feedback>
+</answer>
+
+
+</question></idevice>
+</exepage>

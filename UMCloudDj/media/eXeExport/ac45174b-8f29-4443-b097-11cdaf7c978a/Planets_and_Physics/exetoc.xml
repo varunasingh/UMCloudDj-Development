@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<exebase audioformats='WAV,MP3,OGG,' videoformats='MP4,3GP,OGV,MPG,' resolutions='100x100,240x320,320x240,480x640,640x480,' >
+<page href='index.xml' title='Home'>
+
+	<idevice id='1' title='Multi-choice 01'/>
+</page>
+<page href='planets.xml' title='Planets'>
+
+	<idevice id='2' title='True-False Question'/>
+</page>
+<page href='physics.xml' title='Physics'>
+
+	<idevice id='3' title=''/>
+</page>
+</exebase>

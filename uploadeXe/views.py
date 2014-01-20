@@ -63,8 +63,8 @@ def list(request):
 	    		setattr(newdoc, 'userid', request.user.id)
 	    		newdoc.save()
 	    	else:
-			    setattr(newdoc, 'success', "NO")
-			    newdoc.save()
+			setattr(newdoc, 'success', "NO")
+	    		newdoc.save()
 	        	# Redirect to the document list after POST
                 #return HttpResponseRedirect(reverse('uploadeXe.views.list'))
 	    else:
