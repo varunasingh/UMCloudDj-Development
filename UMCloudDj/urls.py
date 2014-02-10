@@ -30,7 +30,7 @@ urlpatterns = patterns('',
         url(r'^$', 'UMCloudDj.views.secured'),
 	url(r'^logout/$', 'UMCloudDj.views.logout_view'),
 	url(r'^register/$', 'UMCloudDj.views.register_view', name='register'),
-	url(r'^progressbarupload/', include('progressbarupload.urls')),
+	#url(r'^progressbarupload/', include('progressbarupload.urls')),
 
  	#For upload feature. Need both for file upload. The second one re directs to the url and first one does somehting related to that. 
 	(r'^uploadeXe/', include('uploadeXe.urls')),
