@@ -6,11 +6,6 @@ Pre-Requisites to make sense of the server:
 
 run this to sync your database
 
-cd ustadmobil-code-umclouddjango
-
-mkdir UMCloudDj/database
-
-go back: 
 
 cd ustadmobil-code-umclouddjango/
 $ python manage.py syncdb
