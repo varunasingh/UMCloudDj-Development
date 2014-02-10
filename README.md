@@ -4,6 +4,10 @@ Pre-Requisites to make sense of the server:
 
 - Have eXe installed
 
+run this to sync your database
+
+cd ~/UMCloudDJ/
+$ python manage.py syncdb
 
 cd ~/UMCloudDJ/
 $ python manage.py runserver
