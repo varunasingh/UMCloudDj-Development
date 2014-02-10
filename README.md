@@ -6,10 +6,16 @@ Pre-Requisites to make sense of the server:
 
 run this to sync your database
 
-cd ~/UMCloudDJ/
+cd ustadmobil-code-umclouddjango
+
+mkdir UMCloudDj/database
+
+go back: 
+
+cd ustadmobil-code-umclouddjango/
 $ python manage.py syncdb
 
-cd ~/UMCloudDJ/
+cd ustadmobil-code-umclouddjango
 $ python manage.py runserver
 
 The server will run on 127.0.0.1 over port 8000 or you can specify the port and IP after runserer. 
