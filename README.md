@@ -1,5 +1,10 @@
 To run the server, 
 
+Pre-Requisites to make sense of the server:
+
+- Have eXe installed
+
+
 cd ~/UMCloudDJ/
 $ python manage.py runserver
 

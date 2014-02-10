@@ -1,4 +1,5 @@
 from django.core.context_processors import csrf
+from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render_to_response, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -8,8 +9,81 @@ from django.contrib import auth
 from django.template import RequestContext
 from uploadeXe.models import Document
 from django.http import HttpResponse
+from django.shortcuts import render
+import os
+#from UMCloudDj.models import Ustadmobiletest
+from uploadeXe.models import Ustadmobiletest
+
 
 #UMCloudDj.uploadeXe
+
+@csrf_exempt
+def sendtestlog_view(request):
+	print("Up on a melencholy hill..")
+        unittestlogs = 'hiii'
+
+	unittestlogs = request.POST.get('appunittestoutput')
+	#print("The unit test logs recieved is: " + unittestlogs)
+	
+	username = request.POST.get('username');
+	password = request.POST.get('password');
+
+	os.system("pwd")
+
+	with open ("umpassword.txt", "r") as myfile:
+    		umpassword=myfile.read().replace('\n', '')
+	#print("The umpasswod is : " + umpassword);
+
+	if ( username == "test" and password == umpassword ):
+		#process with inserting data into table.	
+		print("The username and password matches! The unit test output recieved is: " + unittestlogs)
+		unittestlogs = unittestlogs.strip()
+	
+		for i, phrase in enumerate(unittestlogs.split('new|')):
+			if phrase != '':
+   				print('phrase #%d: %s' % (i+1,phrase))
+				utestfields = phrase.split('|')
+				
+				
+				
+				##Code for putting in database goes here.	
+				newunittestresult = Ustadmobiletest(name = utestfields[0] )
+				setattr (newunittestresult, 'result', utestfields[1] )
+				setattr (newunittestresult, 'runtime', utestfields[2] )
+  				setattr (newunittestresult, 'dategroup',  utestfields[3])
+				setattr (newunittestresult, 'platform', utestfields[4])
+				setattr (newunittestresult, 'ustad_version', utestfields[5])
+				newunittestresult.save()
+			else:
+				print('one log is empty: no info. Proceeding.')
+	
+		context_instance=RequestContext(request)
+        	response = render_to_response("sendtestlog.html", {'appunittestoutput': unittestlogs}, context_instance=RequestContext(request))
+        	return response
+
+	else:
+		#Return a bad signal. 
+		print("The username and password is incorrect. Sorry bro..")
+		return render_to_response("invalid.html", {'invalid': invalid}, context_instance=RequestContext(request))
+	
+
+	
+
+	#context_instance=RequestContext(request)
+	#response = render_to_response("sendtestlog.html", {'appunittestoutput': unittestlogs}, context_instance=RequestContext(request))
+	#return response
+
+	#c = {}
+        #c.update(csrf(request))
+	#d = {'appunittestoutput': unittestlogs}
+	#context_instance = RequestContext(request, {'appunittestoutput': unittestlogs})
+	
+	#return render_to_response('sendtestlog.html', c, context_instance=RequestContext(request))
+	#return render_to_response('sendtestlog.html', c)
+	
+
+	#return redirect("/")
+	
 
 def getcourse_view(request):
 	courseid = request.GET.get('id')
