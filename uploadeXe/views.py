@@ -65,18 +65,11 @@ def list(request):
 			print("Starting grunt process..")
 			os.system('mv ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/ustadmobile-settings.js ' +  appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/ustadmobile-settings.js.origi')
 
-			#os.system('cp ' + appLocation + '/../UMCloudDj/media/gruntConfig/* ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/')
-			#os.system('cp ' + appLocation + '/../UMCloudDj/media/gruntConfig/ustadmobile.js ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/')
-			#os.system('cp ' + appLocation + '/../UMCloudDj/media/gruntConfig/ustadmobile-test.js ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/')
-			#os.system('cp ' + appLocation + '/../UMCloudDj/media/gruntConfig/qunit-1.12.0.js ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/')
-			#Testing prposes only
-
 			os.system('cp ' + appLocation + '/../UMCloudDj/media/gruntConfig/Gruntfile.js ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/')
 			os.system('cp ' + appLocation + '/../UMCloudDj/media/gruntConfig/package.json ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/')
 			os.system('cp ' + appLocation + '/../UMCloudDj/media/gruntConfig/ustadmobile-settings.js ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/ustadmobile-settings.js' )
 			os.system('cp ' + appLocation + '/../UMCloudDj/media/gruntConfig/umpassword.html ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/umpassword.html')
 			os.system('cd ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/')
-			os.system(' ls -lhrt ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/ > ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/jslist' )
 			print ('Trying this: ' + 'npm install grunt-contrib-qunit --save-dev -g --prefix ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/')
 			os.system('npm install grunt-contrib-qunit --save-dev -g --prefix ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/')
 			os.system('mv ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/lib/node_modules/ '+ appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/')
@@ -87,13 +80,14 @@ def list(request):
 			    os.system('mv ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/ustadmobile-settings.js.origi ' +  appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/ustadmobile-settings.js')
 			    print("Grunt ran successfully. ")
 			else:
+			    #Grunt run failed. 
 			    print("Unable to run grunt. Test failed. ")
 			    os.system('mv ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/ustadmobile-settings.js.origi ' +  appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/ustadmobile-settings.js')
+			    setattr(newdoc, 'success', "NO")
 
 
 			#When testing is disabled ( Running until eXe changes are made - VarunaSingh 180220141732 - edit on 250220141323)
 			#os.system('mv ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/ustadmobile-settings.js.origi ' +  appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/ustadmobile-settings.js') #Comment this when you have eXe changes, etc.
-
 
 			#If you ever do an if condition for installing grunt on the local course..
 			#else:
@@ -102,29 +96,35 @@ def list(request):
 		    
 					
 	    	else:
+			#Couldn't copy html file xml to main directoy. Something went wrong in the exe export
 			setattr(newdoc, 'success', "NO")
 	    		newdoc.save()
 	        	# Redirect to the document list after POST
-                #return HttpResponseRedirect(reverse('uploadeXe.views.list'))
+                	#return HttpResponseRedirect(reverse('uploadeXe.views.list'))
 	    else:
+		    #Exe didn't run. exe_do : something went wrong in eXe.
 		    setattr(newdoc, 'success', "NO")
+
+	    #Saving to database.
             newdoc.save()
+	
+	#form is valid (upload file form)
 	# Redirect to the document list after POST
         return HttpResponseRedirect(reverse('uploadeXe.views.list'))
 
     else:
+       #Form isn't POST. 
        form = ExeUploadForm() # A empty, unbound form
 
     # Load documents for the list page
-    #documents = Document.objects.all()
     documents = Document.objects.filter(userid=request.user.id, success="YES")
     current_user = request.user.username
-    #for doc in documents:	#Testing..
-	#print("elp: " + str(doc.id))
+
     # Render list page with the documents and the form
     return render_to_response(
         'myapp/list.html',
         {'documents': documents, 'form': form, 'current_user': current_user},
         context_instance=RequestContext(request)
     )
+
 # Create your views here.

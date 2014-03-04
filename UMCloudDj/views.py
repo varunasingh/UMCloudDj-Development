@@ -10,16 +10,60 @@ from django.template import RequestContext
 from uploadeXe.models import Document
 from django.http import HttpResponse
 from django.shortcuts import render
+from django.core import serializers
 import os
+#import urllib, json
+import urllib
+import urllib2, base64, json
 #from UMCloudDj.models import Ustadmobiletest
 from uploadeXe.models import Ustadmobiletest
-
+#from django.utils import simplejson
 
 #UMCloudDj.uploadeXe
 
+def readjsonfromlrs_view(request):
+	lrsurl = "http://cloud.scorm.com/ScormEngineInterface/TCAPI/public/statements?limit=25&related_activities=false&related_agents=false"
+	lrsurl = "http://www.youtube.com/oembed?url=http://www.youtube.com/watch?v=HOEpcI6e_Zc&format=json"
+	lrsurl = "http://gdata.youtube.com/feeds/api/playlists/PLE-68G1RgFNzzgniTuuctub872JuwjJJw?v=2&alt=json"
+	lrsurl = "http://cloud.scorm.com/ScormEngineInterface/TCAPI/public/statements?limit=70&related_activities=false&related_agents=false"
+	lrsurl = "http://svr2.ustadmobile.com:8001/xAPI/statements?limit=7"
+	
+	#BASIC AUTHENTICATION
+	username="testuser"
+	password="testpassword"
+	req = urllib2.Request(lrsurl)
+	base64string = base64.encodestring('%s:%s' % (username, password)).replace('\n', '')
+	req.add_header("Authorization", "Basic %s" % base64string)   
+	req.add_header("X-Experience-API-Version", "1.0.1")
+	
+	#GETTING JSON String from URL
+	jdata_string = urllib2.urlopen(req).read() #gets string..
+	jdata = json.dumps(jdata_string) #puts in a JSON string  #JSON encoding 
+	data = json.loads(jdata_string) #puts in a JSON #JSON decoding # to a python dictionary
+	
+	#Returns the JSON object only to the template. No variables. Such that {{statements}} can be accessed. 
+	##return render(request, "json_view.html", data) #Returns jdata so that {{statements}} can be accessed so.
+	#More about render: https://docs.djangoproject.com/en/dev/intro/tutorial03/#a-shortcut-render
+
+	#Returns the JSON. No template. Nothing else.
+	#return HttpResponse(json.dumps(json_string2, ensure_ascii=False), content_type="application/json; encoding=utf-8")
+
+	#To return JSON as variable to template
+	return render_to_response("json_view.html", {'json_dump':data}, context_instance=RequestContext(request))
+
+	#To return only the JSON object
+	#resp = HttpResponse(content_type="application/json")
+	#json.dump(jdata, resp)
+	#return resp	
+	
+	#If you want to return to the 'login' page.
+	#return redirect('login')
+
+
+
 @csrf_exempt
 def sendtestlog_view(request):
-	print("Up on a melencholy hill..")
+	print("Receiving the test logs..")
         unittestlogs = 'hiii'
 
 	unittestlogs = request.POST.get('appunittestoutput')

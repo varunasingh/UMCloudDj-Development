@@ -21,6 +21,7 @@ from django.contrib import admin
 #UMCloudDj.uploadeXe
 
 urlpatterns = patterns('',
+	url(r'^jsontest/$', 'UMCloudDj.views.readjsonfromlrs_view', name='jsontest'),
 	url(r'^sendtestlog/$', 'UMCloudDj.views.sendtestlog_view', name='sendtestlog'),
 	url(r'^getcourse/$', 'UMCloudDj.views.getcourse_view', name='getcourse'),
 	url(r'^admin/', include(admin.site.urls)),

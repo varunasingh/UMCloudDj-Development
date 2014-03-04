@@ -1,0 +1,120 @@
+<script src="http://127.0.0.1:8010/media/jscss/js/jquery-1.9.1.min.js"></script>
+<script src="http://127.0.0.1:8010/media/jscss/js/mrjsontable.js"></script>
+<link href="http://127.0.0.1:8010/media/jscss/css/mrjsontable.css" rel="stylesheet" />
+<script type="text/javascript">
+    var json_dump;
+    json_dump = {{ json_dump|safe }};
+    
+    console.log("json_dump is: " + json_dump);
+
+</script>
+
+<p>Hi, so this is the json data gotten..</p>
+
+<p>JData is: 
+  {{json_dump|safe}}</p>
+
+
+<p> Author name: {{ author_name }}, Author Url {{author_url }} </p>
+
+<div id="mydiv"></div>
+<script>
+
+/*
+
+
+            $(function () {
+                $(".mrjsontable").mrjsontable({
+                    tableClass: "my-table",
+                    pageSize: 9,
+                    columns: [
+                        new $.fn.mrjsontablecolumn({
+                            heading: "Name",
+                            data: "name"
+                        }),
+                        {
+                            heading: "Age",
+                            data: "age",
+                            type: "int",
+                            sortable: true
+                        },
+                        new $.fn.mrjsontablecolumn({
+                            heading: "Height",
+                            data: "height",
+                            type: "float",
+                            sortable: true,
+                            starthidden: true
+                        }),
+                        new $.fn.mrjsontablecolumn({
+                            heading: "Weight",
+                            data: "weight",
+                            type: "int",
+                            sortable: false,
+                        }),
+                        new $.fn.mrjsontablecolumn({
+                            heading: "DOB",
+                            data: "dob",
+                            type: "datetime"
+                        })
+                    ],
+                    data: [
+                        { name: "Bob", age: 14, height: 14.2, weight: 84, dob: "1984-04-17T14:48:00" },
+                        { name: "Bill", age: 24, height: 16.6, weight: 96, dob: "Mon, 16 April 1984 14:48:00 GMT" },
+                        { name: "Barry", age: 18, height: 12.9, weight: 73, dob: "April 15, 1984" },
+                        { name: "Barney", age: 56, height: 14.2, weight: 84, dob: "1984-04-14T14:48:00" },
+                        { name: "Bart", age: 3, height: 16.6, weight: 96, dob: "Mon, 13 April 1984 14:48:00 GMT" },
+                        { name: "Bartholomew", age: 54, height: 12.9, weight: 73, dob: "April 12, 1984" },
+                        { name: "Ben", age: 52, height: 14.2, weight: 84, dob: "1984-04-11T14:48:00" },
+                        { name: "Benedict", age: 78, height: 16.6, weight: 96, dob: "Mon, 10 April 1984 14:48:00 GMT" },
+                        { name: "Benjamin", age: 67, height: 12.9, weight: 73, dob: "April 9, 1984" },
+                        { name: "Bernard", age: 34, height: 14.2, weight: 84, dob: "1984-04-08T14:48:00" },
+                        { name: "Blake", age: 54, height: 16.6, weight: 96, dob: "Mon, 7 April 1984 14:48:00 GMT" },
+                        { name: "Boris", age: 66, height: 12.9, weight: 73, dob: "April 6, 1984" },
+                        { name: "Brad", age: 88, height: 14.2, weight: 84, dob: "1984-04-05T14:48:00" },
+                        { name: "Braden", age: 90, height: 16.6, weight: 96, dob: "Mon, 4 April 1984 14:48:00 GMT" },
+                        { name: "Bradley", age: 103, height: 12.9, weight: 73, dob: "April 3, 1984" },
+                        { name: "Brody", age: 16, height: 14.2, weight: 84, dob: "1984-04-02T14:48:00" }
+                    ]
+                });
+            });
+        
+
+*/
+	
+
+          $(function () {
+		json_dump = {{json_dump|safe}};
+		console.log("json_dump 2 is: " + json_dump);
+		$("#mydiv").mrjsontable({
+                    columns: [
+                        new $.fn.mrjsontablecolumn({
+                            heading: "Name",
+                            data: "author_name"
+                        }),
+                        {
+                            heading: "Title",
+                            data: "title"
+                        },
+                        new $.fn.mrjsontablecolumn({
+                            heading: "Height",
+                            data: "height",
+                            type: "float",
+                            sortable: true,
+                            starthidden: true
+                        }),
+                        new $.fn.mrjsontablecolumn({
+                            heading: "src",
+                            data: "src",
+                            type: "int",
+                            sortable: false,
+                        })
+                    ],
+                    data:[ json_dump ]
+                });
+            });
+
+
+
+
+</script>
+
