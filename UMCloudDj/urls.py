@@ -21,6 +21,8 @@ from django.contrib import admin
 #UMCloudDj.uploadeXe
 
 urlpatterns = patterns('',
+	url(r'^getreportzambia/', 'UMCloudDj.views.get_report_zambia'),
+	url(r'^reports/$', 'UMCloudDj.views.report_selection_view', name='reports'),
 	url(r'^jsontest/$', 'UMCloudDj.views.readjsonfromlrs_view', name='jsontest'),
 	url(r'^sendtestlog/$', 'UMCloudDj.views.sendtestlog_view', name='sendtestlog'),
 	url(r'^getcourse/$', 'UMCloudDj.views.getcourse_view', name='getcourse'),

@@ -6,3 +6,4 @@ class ExeUploadForm(forms.Form):
         label='Select .elp file'
 	#content_types = 'application/elp'
     )
+

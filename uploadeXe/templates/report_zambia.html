@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Generate a Report {% endblock %}
+{% block content %}
+
+<p> Hi. the variables you provided were: </p>
+
+<p> Activity: {{activity}}
+    Date_since: {{date_since}}
+    Date_until: {{date_until}}
+</p>
+
+<p> The endpoint URL for the query is: {{lrs_endpoint}} </p>
+<p> The statements gotten from the above query is: </p>
+
+{% for jd in data.statements %}
+     <li>JSON.statements-{{ forloop.counter }}: {{ jd }} </li>
+{% endfor %}
+
+
+<h3>Thank You</h3>
+
+{% endblock %}

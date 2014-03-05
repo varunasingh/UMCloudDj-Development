@@ -21,12 +21,57 @@ from uploadeXe.models import Ustadmobiletest
 
 #UMCloudDj.uploadeXe
 
+def get_report_zambia(request, onfail='/reports'):
+    	print("Getting variables..")
+    	date_since = request.POST['since']
+    	date_until = request.POST['until']
+    	activity = request.POST['activity']
+    	print("Got variables. They are: ")
+    	print(activity)
+    	print(date_since)
+    	print(date_until)
+	#Code for report making here.
+	lrs_endpoint = "http://svr2.ustadmobile.com:8001/xAPI/statements" + "?" + "&since=" + date_since + "&until=" + date_until + "&activity=" + activity
+	#BASIC AUTHENTICATION
+        username="testuser"
+        password="testpassword"
+        req = urllib2.Request(lrs_endpoint)
+        base64string = base64.encodestring('%s:%s' % (username, password)).replace('\n', '')
+        req.add_header("Authorization", "Basic %s" % base64string)
+        req.add_header("X-Experience-API-Version", "1.0.1")
+	#GETTING JSON String from URL
+        jdata_string = urllib2.urlopen(req).read() #gets string..
+        jdata = json.dumps(jdata_string) #puts in a JSON string  #JSON encoding
+        data = json.loads(jdata_string) #puts in a JSON #JSON decoding # to a python dictionary
+
+	#response = []
+	#for ja in data.statements:
+		#if ja.object.id == activity:
+			
+			#response.append({})
+			#if js.object.result.success == true:
+					
+
+
+	##play with the data now.
+
+    	return render_to_response("report_zambia.html", {'activity':activity, 'date_since':date_since , 'date_until':date_until , 'data':data , 'lrs_endpoint':lrs_endpoint }, context_instance=RequestContext(request))
+
+def report_selection_view(request):
+	c = {}
+        c.update(csrf(request))
+        #return render_to_response('report_selection.html', c) #Somehow messes with the css and includes of scripts. This is not such sensitive data, so leaving.
+	return render(request, "report_selection.html")
+
+
 def readjsonfromlrs_view(request):
 	lrsurl = "http://cloud.scorm.com/ScormEngineInterface/TCAPI/public/statements?limit=25&related_activities=false&related_agents=false"
 	lrsurl = "http://www.youtube.com/oembed?url=http://www.youtube.com/watch?v=HOEpcI6e_Zc&format=json"
 	lrsurl = "http://gdata.youtube.com/feeds/api/playlists/PLE-68G1RgFNzzgniTuuctub872JuwjJJw?v=2&alt=json"
 	lrsurl = "http://cloud.scorm.com/ScormEngineInterface/TCAPI/public/statements?limit=70&related_activities=false&related_agents=false"
 	lrsurl = "http://svr2.ustadmobile.com:8001/xAPI/statements?limit=7"
+	#Search and Filter like: http://svr2.ustadmobile.com:8001/xAPI/statements?limit=7&activity=http://www.ustadmobile.com/looking_at_things&activity=http://www.ustadmobile.com/looking_at_things&since=2014-02-02&until=2014-02-03
+
 	
 	#BASIC AUTHENTICATION
 	username="testuser"

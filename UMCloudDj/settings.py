@@ -39,6 +39,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'uploadeXe',
+    'datetimewidget', #Varuna Singh datetimewidget test
 )
 
 MIDDLEWARE_CLASSES = (
@@ -48,6 +49,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
 )
 
 ROOT_URLCONF = 'UMCloudDj.urls'
@@ -115,5 +117,4 @@ STATIC_URL = '/static/'
 #Added by Varuna Singh 13012014
 # URL of the login page
 LOGIN_URL = '/login/'
-
 

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.db import models
+
 import os
 import uuid
 import time
@@ -26,6 +27,8 @@ class Ustadmobiletest(models.Model):
    pub_date = models.DateTimeField(auto_now_add=True)
    upd_date = models.DateTimeField(auto_now=True)
    
+class DateTimeModel(models.Model):
+   start = models.DateTimeField()
 
 
 # Create your models here.

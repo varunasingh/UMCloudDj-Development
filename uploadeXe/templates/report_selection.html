@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}Generate a Report {% endblock %}
+{% block content %}
+{% if form.errors %}
+    <p class="error"> Sorry, that is not a valid selection</p>
+{% endif %}
+<p></p>
+<i>Select the filters below to generate a report</i>
+<p></p>
+
+<!--
+          <div class="well">
+            <input type="text" class="span2" value="02/16/12" data-date-format="mm/dd/yy" id="datepicker" >
+          </div>
+	<script> $("#datepicker").datepicker(); </script>
+-->
+
+<form action="/getreportzambia/" method="POST"> {% csrf_token %}
+    <div data-role="fieldcontain">
+        <label for="date_since">Since:</label><input type="date" name="since" id="since" value="" />
+    </div>
+    <div data-role="fieldcontain">
+        <label for="date_until">Until:</label><input type="date" name="until" id="until" value="" />
+    </div>
+    <div data-role="fieldcontain">
+        <label for="activity">Activity:</label><input type="text" name="activity" id="activity" value="" />
+    </div>
+
+    <button type="submit" name="submit" value="submit-value">Submit</button>
+</form>
+
+
+{% endblock %}
+
