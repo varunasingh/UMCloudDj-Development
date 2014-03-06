@@ -1,6 +1,6 @@
 ﻿
-.mrjt .legend { border: 1px solid #DCDCDC; text-align: right; float: right; padding: 3px; border-radius: 5px; margin: 10px 0px; }
-    .mrjt .legend label { margin-right: 10px; }
+.mrjt .customlegend { border: 1px solid #DCDCDC; text-align: right; float: right; padding: 3px; border-radius: 5px; margin: 10px 0px; }
+    .mrjt .customlegend label { margin-right: 10px; }
 
 .mrjt table { width: 100%; clear: both; margin: 10px 0px; }
     .mrjt table th { text-align: left; background: #EEE; padding: 5px 10px; }

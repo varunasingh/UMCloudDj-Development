@@ -23,18 +23,21 @@ from uploadeXe.models import Ustadmobiletest
 
 def get_report_zambia(request, onfail='/reports'):
     	print("Getting variables..")
-    	date_since = request.POST['since']
-    	date_until = request.POST['until']
+    	date_since = request.POST['since_1_alt']
+    	date_until = request.POST['until_1_alt']
     	activity = request.POST['activity']
     	print("Got variables. They are: ")
     	print(activity)
     	print(date_since)
     	print(date_until)
 	#Code for report making here.
-	lrs_endpoint = "http://svr2.ustadmobile.com:8001/xAPI/statements" + "?" + "&since=" + date_since + "&until=" + date_until + "&activity=" + activity
+	umlrs = "http://svr2.ustadmobile.com:8001/xAPI/statements" #Should be part of 
+	lrs_endpoint = umlrs + "?" + "&since=" + date_since + "&until=" + date_until + "&activity=" + activity
 	#BASIC AUTHENTICATION
         username="testuser"
+	#username = request.POST['username']
         password="testpassword"
+	#password = request.POST['password']
         req = urllib2.Request(lrs_endpoint)
         base64string = base64.encodestring('%s:%s' % (username, password)).replace('\n', '')
         req.add_header("Authorization", "Basic %s" % base64string)
@@ -43,19 +46,19 @@ def get_report_zambia(request, onfail='/reports'):
         jdata_string = urllib2.urlopen(req).read() #gets string..
         jdata = json.dumps(jdata_string) #puts in a JSON string  #JSON encoding
         data = json.loads(jdata_string) #puts in a JSON #JSON decoding # to a python dictionary
+	print(data['statements'])
 
-	#response = []
-	#for ja in data.statements:
-		#if ja.object.id == activity:
-			
-			#response.append({})
-			#if js.object.result.success == true:
-					
-
+	response = []
+	for ja in data['statements']:
+		if ja['object']['id'] == activity:
+			#response.append({'timestamp':ja.timestamp, 'user': ja.actor.name, 'response': ja.result.response, 'success': ja.result.success, 'correctResponsePattern': ja.object.correctResponsesPattern})
+			response.append({'timestamp':ja['timestamp'], 'user':ja['actor']['name'], 'verb':ja['verb']['display']['en-US'], 'desscription':ja['object']['definition']['description']['en-GB'] })
+	#print("The response is:")
+	#print(response)
 
 	##play with the data now.
 
-    	return render_to_response("report_zambia.html", {'activity':activity, 'date_since':date_since , 'date_until':date_until , 'data':data , 'lrs_endpoint':lrs_endpoint }, context_instance=RequestContext(request))
+    	return render_to_response("report_zambia.html", {'activity':activity, 'date_since':date_since , 'date_until':date_until , 'data':data , 'lrs_endpoint':lrs_endpoint , 'response':response }, context_instance=RequestContext(request))
 
 def report_selection_view(request):
 	c = {}

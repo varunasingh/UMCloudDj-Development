@@ -22,7 +22,7 @@
 
         var $mrjsontableContainer = $("<div>", { "data-so": "A", "data-ps": opts.pageSize }).addClass("mrjt");
 
-        var $visibleColumnsCBList = $("<div>").addClass("legend");
+        var $visibleColumnsCBList = $("<div>").addClass("customlegend");
 
         var $table = $("<table>").addClass(opts.tableClass);
 

@@ -9,7 +9,7 @@
 	  }
 
 	  #page {
-		width: 960px;
+		width: 1960px;
 		text-align: left;
 		background-color: grey;
 	  }
@@ -22,7 +22,7 @@
 
 	  #content {
 		float: left;
-		width: 600px;
+		width: 1000px;
 		border: 1px solid #f00;
 		padding: 10px;
 	  }
@@ -30,16 +30,28 @@
 	  #header {
 		float: top;
 		border: 2px solid grey;
-		width: 820px;
+		width: 1220px;
 	  }
 	</style>
 
 	<script src="{{ MEDIA_URL }}jscss/js/jquery-1.11.0.js"></script>
     	<link href="{{ MEDIA_URL }}jscss/css/bootstrap.css" rel="stylesheet" type="text/css"/>
-	<link href="{{ MEDIA_URL }}jscss/css/datepicker.css" rel="stylesheet" type="text/css"/>
 
-    	<script src="{{ MEDIA_URL }}jscss/js/bootstrap.js"></script>
-	<script src="{{ MEDIA_URL }}jscss/js/bootstrap-datepicker.js"></script>
+    	<!--<script src="{{ MEDIA_URL }}jscss/js/bootstrap.js"></script>-->
+	
+	<script src="{{ MEDIA_URL }}jscss/js/mrjsontable.js"></script>
+	<link href="{{ MEDIA_URL }}jscss/css/mrjsontable.css" rel="stylesheet" />
+	
+	<!--<script src="{{ MEDIA_URL}}jscss/jqui/ui/jquery.ui.core.js"></script>-->
+	<script src="{{ MEDIA_URL}}jscss/jqui/ui/minified/jquery-ui.min.js"></script>
+	<script src="{{ MEDIA_URL}}jscss/jqui/ui/jquery.ui.widget.js"></script>
+	<script src="{{ MEDIA_URL}}jscss/jqui/ui/jquery.ui.slider.js"></script>
+	<script src="{{ MEDIA_URL}}jscss/jqui/ui/jquery.ui.datepicker.js"></script>
+	<link rel="stylesheet" href="{{ MEDIA_URL}}jscss/jqui/themes/base/jquery.ui.all.css">
+
+	<script src="{{ MEDIA_URL }}jscss/js/jquery-ui-timepicker-addon.js"></script>
+        <link rel="stylesheet" href="{{ MEDIA_URL }}jscss/css/jquery-ui-timepicker-addon.css" type="text/css"/>
+	<link rel="stylesheet" href="{{ MEDIA_URL }}jscss/jqui/themes/base/jquery.ui.slider.css">
 
 </head>
 

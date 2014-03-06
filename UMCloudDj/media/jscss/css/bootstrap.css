@@ -1069,7 +1069,8 @@ textarea {
 }
 
 label {
-  display: block;
+  display: inline-block;
+  /* #used to be block */
   margin-bottom: 5px;
 }
 

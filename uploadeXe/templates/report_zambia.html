@@ -4,19 +4,84 @@
 
 <p> Hi. the variables you provided were: </p>
 
-<p> Activity: {{activity}}
-    Date_since: {{date_since}}
-    Date_until: {{date_until}}
-</p>
-
-<p> The endpoint URL for the query is: {{lrs_endpoint}} </p>
+<li> Activity: <i>{{activity}}</i></li>
+<li>Date_since: <i>{{date_since}}</i></li>
+<li>Date_until: <i>{{date_until}}</i></li>
+<p></p>
+<p> The endpoint URL for the query is: <i>{{lrs_endpoint}}</i> </p>
+<p></p>
 <p> The statements gotten from the above query is: </p>
 
+<div id="mydiv"></div>
+
+<p></p>
+<p>The above table is from the below statements</p>
 {% for jd in data.statements %}
      <li>JSON.statements-{{ forloop.counter }}: {{ jd }} </li>
+     <li></li>
 {% endfor %}
+
+<!-- {{response}} -->
+
+<script>
+        $(function () {
+		var activity = "{{activity}}";
+		console.log("activity is : " + activity);
+                var json_dump = "{{response}}";
+                var statements_dump;
+                //statements_dump = "{{statements}}";
+                console.log("statements_dump is: " + statements_dump);
+                var st;
+
+                if (json_dump !=null && json_dump !=" "){
+                        console.log("Getting JSON by variable");
+                        st = JSON.parse(json_dump.replace(/u&#39;/g,"\"").replace(/&#39;/g, "\"").replace(/False/g, "false").replace(/True/g, "true"));
+                        console.log("st variable: " + st);
+                 }
+
+                 //if (statements_dump.trim() !== null){
+                        //console.log("Getting JSON by JSON");
+                        //st = JSON.parse(statements_dump.replace(/u&#39;/g,"\"").replace(/&#39;/g, "\"").replace(/False/g, "false").replace(/True/g, "true"));
+                        //console.log("st JSON: " + st);
+                 //}
+
+                 $("#mydiv").mrjsontable({
+                    pageSize: 9,
+                    columns: [
+                        new $.fn.mrjsontablecolumn({
+                            heading: "Date/Time",
+                            data: "timestamp"
+                        }),
+                        new $.fn.mrjsontablecolumn({
+                            heading: "User",
+                            data: "user",
+                        }),
+                        new $.fn.mrjsontablecolumn({
+                            heading: "Activity Verb",
+                            data: "verb",
+                        }),
+                        new $.fn.mrjsontablecolumn({
+                            heading: "Desc",
+                            data: "desscription",
+                        }),
+                        //new $.fn.mrjsontablecolumn({
+                            //heading: "Activity Type",
+                            //data: "",
+                        //})
+                    ],
+                    data: st
+
+               });
+           });
+
+
+
+</script>
+
+
 
 
 <h3>Thank You</h3>
 
 {% endblock %}
+
