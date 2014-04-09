@@ -46,7 +46,7 @@ def get_report_zambia(request, onfail='/reports'):
         jdata_string = urllib2.urlopen(req).read() #gets string..
         jdata = json.dumps(jdata_string) #puts in a JSON string  #JSON encoding
         data = json.loads(jdata_string) #puts in a JSON #JSON decoding # to a python dictionary
-	print(data['statements'])
+	#print(data['statements'])
 
 	response = []
 	for ja in data['statements']:
@@ -175,6 +175,46 @@ def sendtestlog_view(request):
 	
 
 	#return redirect("/")
+	
+
+
+@csrf_exempt
+def sendelpfile_view(request):
+	print("Receiving the elp file..")
+
+	if request.method == 'POST':
+		print 'POST request recieved.'
+		username = request.POST.get('username');
+		password = request.POST.get('password');
+		print "The username/password is" 
+		print username 
+		print password
+
+		#Code for Authenticating the user
+
+		user = authenticate(username=request.POST['username'], password=request.POST['password'])
+    		if user is not None:
+        		#We Sign the user..
+			response = HttpResponse("LOGIN A SUCCESS")
+			return response
+    		else:
+        		#Show a "incorrect credentials" message
+			response = HttpResponse("LOGIN FAILED")
+			return response
+
+
+		#If authenticated, code for getting the file uploaded and saving it.
+
+	else:
+		print 'Not a POST request';
+		response2 = HttpResponse("NOT a POST request")
+        	return response2
+	
+
+
+	
+
+	
 	
 
 def getcourse_view(request):
