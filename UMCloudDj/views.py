@@ -184,31 +184,166 @@ def sendelpfile_view(request):
 
 	if request.method == 'POST':
 		print 'POST request recieved.'
+		print 'Login request coming from outside (eXe)'
 		username = request.POST.get('username');
 		password = request.POST.get('password');
-		print "The username/password is" 
+		print "The username is" 
 		print username 
-		print password
+		print "The file: " 
+		print request.FILES
 
 		#Code for Authenticating the user
 
 		user = authenticate(username=request.POST['username'], password=request.POST['password'])
     		if user is not None:
         		#We Sign the user..
-			response = HttpResponse("LOGIN A SUCCESS")
-			return response
+			login(request, user)
+
+			#Try to save the file
+			newdoc = Document(exefile = request.FILES['exeuploadelp'])
+		        uid = str(getattr(newdoc, 'exefile'))
+            		print("File name to upload:")
+            		print(uid)
+            		appLocation = (os.path.dirname(os.path.realpath(__file__)))
+            		#Get the file and run eXe command
+            		#Get url / path
+            		setattr (newdoc, 'url', 'bull')
+            		newdoc.save()
+            		os.system("echo Current location:")
+            		os.system("pwd")
+            		uid = str(getattr(newdoc, 'exefile'))
+            		print("File saved as: ")
+            		print(uid)
+            		unid = uid.split('.um.')[-2]
+            		unid = unid.split('/')[-1]  #Unique id here.
+            		print("Unique id:")
+            		print (unid)
+
+			#Code for elp to ustadmobile export
+
+			setattr(newdoc, 'uid', unid)
+			#os.system('tree')
+            		print("Possible command: ")
+            		print('exe_do -x ustadmobile ' + appLocation + '/../UMCloudDj/media/' + uid + ' ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid )
+            		if os.system('exe_do -x ustadmobile ' + appLocation + '/../UMCloudDj/media/' + uid + ' ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid ) == 0: # If command ran successfully,
+                		uidwe = uid.split('.um.')[-1]
+                		uidwe = uidwe.split('.elp')[-2]
+                		print("Folder name: " + uidwe)
+                		if os.system('cp ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/ustadpkg_html5.xml ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '_ustadpkg_html5.xml' ) == 0: #ie if command got executed in success
+                        		setattr(newdoc, 'url', "cow")
+                        		newdoc.save()
+                        		setattr(newdoc, 'success', "YES") 	#Might need to do this AFTER the course has finished testing..10/04/20141339
+                        		courseURL = '/media/eXeExport' + '/' + unid + '/' + uidwe + '/' + 'deviceframe.html'
+                        		setattr(newdoc, 'url', courseURL)
+                        		setattr(newdoc, 'name', uidwe)
+                        		setattr(newdoc, 'userid', request.user.id)
+                        		newdoc.save()
+                        		print("Starting grunt process..")
+
+
+					#Start..
+					"""
+
+                        		os.system('mv ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/ustadmobile-settings.js ' +  appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/ustadmobile-settings.js.origi')
+		
+                       			os.system('cp ' + appLocation + '/../UMCloudDj/media/gruntConfig/Gruntfile.js ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/')
+                       			os.system('cp ' + appLocation + '/../UMCloudDj/media/gruntConfig/package.json ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/')
+                       			os.system('cp ' + appLocation + '/../UMCloudDj/media/gruntConfig/ustadmobile-settings.js ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/ustadmobile-settings.js' )
+                       			os.system('cp ' + appLocation + '/../UMCloudDj/media/gruntConfig/umpassword.html ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/umpassword.html')
+                       			os.system('cd ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/')
+                       			print ('Trying this: ' + 'npm install grunt-contrib-qunit --save-dev -g --prefix ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/')
+                       			os.system('npm install grunt-contrib-qunit --save-dev -g --prefix ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/')
+                       			os.system('mv ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/lib/node_modules/ '+ appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/')
+                       			print('Trying this: ' + 'grunt --base ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/ --gruntfile ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/Gruntfile.js')
+		
+                       			#Not running grunt until eXe changes are made - VarunaSingh 180220141732
+                                        if os.system('grunt --base ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/ --gruntfile ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/Gruntfile.js'):
+                   				os.system('mv ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/ustadmobile-settings.js.origi ' +  appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/ustadmobile-settings.js')
+                            			print("Grunt ran successfully. ")
+						
+						#Return upload and processing success with Course ID returned
+						#uploadresponse = HttpResponse(status=200)
+						print "Course ID: "
+						print getattr(newdoc, 'id')
+						#uploadresponse['courseid'] = getattr(newdoc, 'id')
+						#uploadresponse['coursename'] = getattr(newdoc, 'name')
+						#return uploadresponse
+
+                        		else:
+                            			#Grunt run failed.
+                            			print("Unable to run grunt. Test failed. ")
+                            			os.system('mv ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/ustadmobile-settings.js.origi ' +  appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/ustadmobile-settings.js')
+                            			setattr(newdoc, 'success', "NO")
+
+						uploadresponse = HttpResponse(status=500)
+						uploadresponse.write("Course testing failed but uploaded")
+						uploadresponse['error'] = "Grunt test failed"
+						return uploadresponse
+
+
+
+					"""
+					#End.
+
+               			else:
+                       			#Couldn't copy html file xml to main directoy. Something went wrong in the exe export
+                       			setattr(newdoc, 'success', "NO")
+                       			newdoc.save()
+				
+					uploadresponse = HttpResponse(status=500)
+                                        uploadresponse.write("Exe Export failed but uploaded")
+                                        uploadresponse['error'] = "Exe export failed"
+                                        return uploadresponse
+
+          		else:
+                    		#Exe didn't run. exe_do : something went wrong in eXe.
+                    		setattr(newdoc, 'success', "NO")
+				
+				uploadresponse = HttpResponse(status=500)
+                                uploadresponse.write("Exe Export faild but uploaded")
+                                uploadresponse['error'] = "Exe export failed to start"
+                                return uploadresponse
+
+
+				
+			
+            		#Saving to database.
+            		newdoc.save()
+			#Return upload and processing success with Course ID returned
+                        uploadresponse = HttpResponse(status=200)
+                        print "Course ID: "
+                        print getattr(newdoc, 'id')
+                        uploadresponse['courseid'] = getattr(newdoc, 'id')
+                        uploadresponse['coursename'] = getattr(newdoc, 'name')
+                        return uploadresponse
+
+
+
+			
+			#response = HttpResponse("LOGIN A SUCCESS")
+			#return response
     		else:
         		#Show a "incorrect credentials" message
-			response = HttpResponse("LOGIN FAILED")
-			return response
+			uploadresponse = HttpResponse(status=403)
+			uploadresponse.write("LOGIN FAILED. USERNAME and PASSWORD DO NOT MATCH. AUTHENTICATION FAILURE")
+			return uploadresponse
+
+			#response = HttpResponse("LOGIN FAILED")
+			#return response
 
 
 		#If authenticated, code for getting the file uploaded and saving it.
 
 	else:
 		print 'Not a POST request';
-		response2 = HttpResponse("NOT a POST request")
-        	return response2
+		
+		uploadresponse = HttpResponse(status=500)
+		uploadresponse.write("Request is not POST")
+		uploadresponse['error'] = "Request is not POST"
+		return uploadresponse
+
+		#response2 = HttpResponse("NOT a POST request")
+        	#return response2
 	
 
 
