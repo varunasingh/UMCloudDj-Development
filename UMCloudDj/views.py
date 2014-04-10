@@ -177,6 +177,30 @@ def sendtestlog_view(request):
 	#return redirect("/")
 	
 
+@csrf_exempt
+def checklogin_view(request):
+        print("Checking log in details..")
+
+        if request.method == 'POST':
+                print 'POST request recieved.'
+                print 'Login request coming from outside (eXe)'
+                username = request.POST.get('username');
+                password = request.POST.get('password');
+                print "The username is"
+                print username
+
+                #Code for Authenticating the user
+	
+		user = authenticate(username=request.POST['username'], password=request.POST['password'])
+                if user is not None:
+			authresponse = HttpResponse(status=200)
+			authresponse.write("User: " + username + " authentication a success.")
+			return authresponse
+		else:
+			authresponse = HttpResponse(status=403)
+			authresponse.write("User: " + username + " authentication failed.")
+			return authresponse
+
 
 @csrf_exempt
 def sendelpfile_view(request):
