@@ -8,13 +8,16 @@ from django.shortcuts import redirect
 from django.contrib import auth
 from django.template import RequestContext
 from uploadeXe.models import Document
+from uploadeXe.models import Ustadmobiletest
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.core import serializers
+import datetime
 import os
 #import urllib, json
 import urllib
 import urllib2, base64, json
+import glob #For file ^VS 130420141454
 #from UMCloudDj.models import Ustadmobiletest
 from uploadeXe.models import Ustadmobiletest
 #from django.utils import simplejson
@@ -38,6 +41,8 @@ def get_report_zambia(request, onfail='/reports'):
 	#username = request.POST['username']
         password="testpassword"
 	#password = request.POST['password']
+	#Username and password to be in sync or already known by Django. For now using the only test account on the TinCan LRS.
+
         req = urllib2.Request(lrs_endpoint)
         base64string = base64.encodestring('%s:%s' % (username, password)).replace('\n', '')
         req.add_header("Authorization", "Basic %s" % base64string)
@@ -370,10 +375,79 @@ def sendelpfile_view(request):
         	#return response2
 	
 
+def testelpfiles_view(request):
+	appLocation = (os.path.dirname(os.path.realpath(__file__)))
+	#Log start time here..
+	cmdStartTime = datetime.datetime.today()
+	#Code here..
+	print "hello there"
+	for dir in os.listdir('/home/varuna/umcdj/UMCloudDj/UMCloudDj/media/eXeUpload/'):
+		print dir
+	print "glob"
+	print glob.glob('/home/varuna/umcdj/UMCloudDj/UMCloudDj/media/eXeUpload/*elp');
+	"""
+	testelpfiles = glob.glob('/home/varuna/umcdj/UMCloudDj/UMCloudDj/media/eXeTestElp/*elp');
+	for testelp in testelpfiles:
+		print ("[testelpfiles]: FOR LOOP BEGINS. FILE: " + testelp);
+		unid = testelp.split('.um.')[-2]
+		unid = unid.split('/')[-1]
+		print("[testelpfiles] unid: " + unid)
+		
+		#if os.system('exe_do -x ustadmobile ' + appLocation + '/../UMCloudDj/media/eXeTestElp/' + testelp + ' ' + appLocation + '/../UMCloudDj/media/eXeTestExport/' + unid ) == 0: # If command ran successfully,
+		if os.system('exe_do -x ustadmobile ' + testelp + ' ' + appLocation + '/../UMCloudDj/media/eXeTestExport/' + unid ) == 0: # If command ran successfully,
+			print("[testelpfiles] Exe Exported successfully..")
+			uidwe = testelp.split('.um.')[-1]
+    			uidwe = uidwe.split('.elp')[-2]
+			print("[testelpfiles] uidwe: " + uidwe)
+			print("[testelpfiles] Starting grunt process..")
+                        os.system('mv ' + appLocation + '/../UMCloudDj/media/eXeTestExport/' + unid + '/' + uidwe + '/ustadmobile-settings.js ' +  appLocation + '/../UMCloudDj/media/eXeTestExport/' + unid + '/' + uidwe + '/ustadmobile-settings.js.origi')
+                        os.system('cp ' + appLocation + '/../UMCloudDj/media/gruntConfig/Gruntfile.js ' + appLocation + '/../UMCloudDj/media/eXeTestExport/' + unid + '/' + uidwe + '/')
+                        os.system('cp ' + appLocation + '/../UMCloudDj/media/gruntConfig/package.json ' + appLocation + '/../UMCloudDj/media/eXeTestExport/' + unid + '/' + uidwe + '/')
+                        os.system('cp ' + appLocation + '/../UMCloudDj/media/gruntConfig/ustadmobile-settings.js ' + appLocation + '/../UMCloudDj/media/eXeTestExport/' + unid + '/' + uidwe + '/ustadmobile-settings.js' )
+                        os.system('cp ' + appLocation + '/../UMCloudDj/media/gruntConfig/umpassword.html ' + appLocation + '/../UMCloudDj/media/eXeTestExport/' + unid + '/' + uidwe + '/umpassword.html')
+                        os.system('cd ' + appLocation + '/../UMCloudDj/media/eXeTestExport/' + unid + '/' + uidwe + '/')
+                        print ('Trying this: ' + 'npm install grunt-contrib-qunit --save-dev -g --prefix ' + appLocation + '/../UMCloudDj/media/eXeTestExport/' + unid + '/' + uidwe + '/')
+                        os.system('npm install grunt-contrib-qunit --save-dev -g --prefix ' + appLocation + '/../UMCloudDj/media/eXeTestExport/' + unid + '/' + uidwe + '/')
+                        os.system('mv ' + appLocation + '/../UMCloudDj/media/eXeTestExport/' + unid + '/' + uidwe + '/lib/node_modules/ '+ appLocation + '/../UMCloudDj/media/eXeTestExport/' + unid + '/' + uidwe + '/')
+                        print('Trying this: ' + 'grunt --base ' + appLocation + '/../UMCloudDj/media/eXeTestExport/' + unid + '/' + uidwe + '/ --gruntfile ' + appLocation + '/../UMCloudDj/media/eXeTestExport/' + unid + '/' + uidwe + '/Gruntfile.js')
+			
+			#Running grunt..
+                        if os.system('grunt --base ' + appLocation + '/../UMCloudDj/media/eXeTestExport/' + unid + '/' + uidwe + '/ --gruntfile ' + appLocation + '/../UMCloudDj/media/eXeTestExport/' + unid + '/' + uidwe + '/Gruntfile.js'):
+				os.system('mv ' + appLocation + '/../UMCloudDj/media/eXeTestExport/' + unid + '/' + uidwe + '/ustadmobile-settings.js.origi ' +  appLocation + '/../UMCloudDj/media/eXeTestExport/' + unid + '/' + uidwe + '/ustadmobile-settings.js')
+		    		print("Grunt ran successfully. ")
+			else:
+		    		#Grunt run failed. 
+		    		print("Unable to run grunt. Test failed. ")
+		    		os.system('mv ' + appLocation + '/../UMCloudDj/media/eXeTestExport/' + unid + '/' + uidwe + '/ustadmobile-settings.js.origi ' +  appLocation + '/../UMCloudDj/media/eXeTestExport/' + unid + '/' + uidwe + '/ustadmobile-settings.js')
 
-	
+		else:
+			#Exe didn't run. exe_do : something went wrong in eXe.
+			print("[testelpfiles] exe_do did not run.")
 
-	
+	#cmdStartTime = datetime.datetime.today()
+	"""
+	cmdEndTime = datetime.datetime.today()
+
+	#Ustadmobiletest
+	#matchedCourse = Document.objects.filter(id=str(courseid)).get(id=str(courseid))
+	print datetime.date.today()
+	matchedCourseTestResults = Ustadmobiletest.objects.filter(dategroup='grunt', pub_date__gte=cmdStartTime, pub_date__lte=cmdEndTime)
+	if matchedCourseTestResults:
+		print("[testelpfiles] Test results exists")
+		for matchedCourseResult in matchedCourseTestResults:
+			print ("[testelpfiles]: Result: ")
+			print (matchedCourseResult.name)
+
+		uploadresponse = HttpResponse(status=200)
+        	uploadresponse.write("All good.")
+        	return uploadresponse
+
+	else:
+		print ("[testelpfiles] No results exists.")
+		uploadresponse = HttpResponse(status=200)
+        	uploadresponse.write("Something went wrong or no tests were run")
+        	return uploadresponse
+
 	
 
 def getcourse_view(request):
@@ -382,6 +456,7 @@ def getcourse_view(request):
 	#return render_to_response(
 	#documents = Document.objects.filter(userid=request.user.id)
 	matchedCourse = Document.objects.filter(id=str(courseid)).get(id=str(courseid))
+	#Use get when you want to get a single object. Use filter when you want to get a list.
 	if matchedCourse:
 		print("Course exists!")
 		#print(matchedCourse.username)
