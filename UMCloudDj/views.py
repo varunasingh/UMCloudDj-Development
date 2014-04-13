@@ -13,6 +13,7 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from django.core import serializers
 import datetime
+import time
 import os
 #import urllib, json
 import urllib
@@ -24,6 +25,7 @@ from uploadeXe.models import Ustadmobiletest
 
 #UMCloudDj.uploadeXe
 
+@login_required(login_url='/login/')
 def get_report_zambia(request, onfail='/reports'):
     	print("Getting variables..")
     	date_since = request.POST['since_1_alt']
@@ -70,6 +72,16 @@ def report_selection_view(request):
         c.update(csrf(request))
         #return render_to_response('report_selection.html', c) #Somehow messes with the css and includes of scripts. This is not such sensitive data, so leaving.
 	return render(request, "report_selection.html")
+
+def elptestresults_selection_view(request):
+	c= {}
+	c.update(csrf(request))
+	return render(request, "elptestresults_selection.html")
+
+def apptestresults_selection_view(request):
+	c = {}
+	c.update(csrf(request))
+	return render(request, "apptestresults_selection.html")
 
 
 def readjsonfromlrs_view(request):
@@ -271,7 +283,7 @@ def sendelpfile_view(request):
 
 
 					#Start..
-					"""
+					#""" Start commenting if Testing doesn' t work with eXe and server's exe_do
 
                         		os.system('mv ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/ustadmobile-settings.js ' +  appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/ustadmobile-settings.js.origi')
 		
@@ -311,7 +323,7 @@ def sendelpfile_view(request):
 
 
 
-					"""
+					#""" End commenting if Testing doesn' t work with eXe and server's exe_do
 					#End.
 
                			else:
@@ -374,22 +386,23 @@ def sendelpfile_view(request):
 		#response2 = HttpResponse("NOT a POST request")
         	#return response2
 	
-
+@login_required(login_url='/login/')
 def testelpfiles_view(request):
 	appLocation = (os.path.dirname(os.path.realpath(__file__)))
 	#Log start time here..
 	cmdStartTime = datetime.datetime.today()
+	print ("The Start time is: " + str(cmdStartTime))
 	#Code here..
 	print "hello there"
-	for dir in os.listdir('/home/varuna/umcdj/UMCloudDj/UMCloudDj/media/eXeUpload/'):
+	for dir in os.listdir(appLocation + '/../UMCloudDj/media/eXeTestElp/'):
 		print dir
 	print "glob"
-	print glob.glob('/home/varuna/umcdj/UMCloudDj/UMCloudDj/media/eXeUpload/*elp');
-	"""
-	testelpfiles = glob.glob('/home/varuna/umcdj/UMCloudDj/UMCloudDj/media/eXeTestElp/*elp');
+	print glob.glob(appLocation + '/../UMCloudDj/media/eXeTestElp/*elp');
+	testelpfiles = glob.glob(appLocation + '/../UMCloudDj/media/eXeTestElp/*elp');
 	for testelp in testelpfiles:
 		print ("[testelpfiles]: FOR LOOP BEGINS. FILE: " + testelp);
-		unid = testelp.split('.um.')[-2]
+		#unid = testelp.split('.um.')[-2] #OLD
+		unid = testelp.split('.elp')[-2]
 		unid = unid.split('/')[-1]
 		print("[testelpfiles] unid: " + unid)
 		
@@ -424,31 +437,115 @@ def testelpfiles_view(request):
 			#Exe didn't run. exe_do : something went wrong in eXe.
 			print("[testelpfiles] exe_do did not run.")
 
-	#cmdStartTime = datetime.datetime.today()
-	"""
 	cmdEndTime = datetime.datetime.today()
 
-	#Ustadmobiletest
-	#matchedCourse = Document.objects.filter(id=str(courseid)).get(id=str(courseid))
-	print datetime.date.today()
 	matchedCourseTestResults = Ustadmobiletest.objects.filter(dategroup='grunt', pub_date__gte=cmdStartTime, pub_date__lte=cmdEndTime)
 	if matchedCourseTestResults:
 		print("[testelpfiles] Test results exists")
-		for matchedCourseResult in matchedCourseTestResults:
-			print ("[testelpfiles]: Result: ")
-			print (matchedCourseResult.name)
+		#for matchedCourseResult in matchedCourseTestResults:
+			#print ("[testelpfiles]: Result: ")
+			#print (matchedCourseResult.name)
+		
+		matchedCourseResultList = list(matchedCourseTestResults)
+		#jdata = json.dumps(matchedCourseResultList)
+		#jdata = json.dumps(list(matchedCourseTestResults).values())
+		#print (jdata)
+		success="success"
 
-		uploadresponse = HttpResponse(status=200)
-        	uploadresponse.write("All good.")
-        	return uploadresponse
+		#context_instance=RequestContext(request)
+                #response = render_to_response("testelpfiles-result.html", {'result': success}, context_instance=RequestContext(request))
+                #return response
 
 	else:
 		print ("[testelpfiles] No results exists.")
-		uploadresponse = HttpResponse(status=200)
-        	uploadresponse.write("Something went wrong or no tests were run")
-        	return uploadresponse
+		failed="fail"
+		#context_instance=RequestContext(request)
+                #response = render_to_response("testelpfiles-result.html", {'result': failed} , context_instance=RequestContext(request))
+                #return response
+	success="success"
+	failed="fail"
+	context_instance=RequestContext(request)
+        response = render_to_response("testelpfiles-result.html", {'result': success}, context_instance=RequestContext(request))
+        return response
 
+
+def testresults_function(typeofdata, date_from, date_to):
+	today = datetime.datetime.today()
+	yesterday = datetime.datetime.now() - datetime.timedelta(days = 1)
+	if typeofdata == "elp":
+		matchedCourseTestResults = (Ustadmobiletest.objects.filter(dategroup='grunt', pub_date__gte=date_from, pub_date__lte=date_to).values('id', 'name', 'dategroup', 'pub_date', 'result'))
+	if typeofdata == "app":
+		matchedCourseTestResults = (Ustadmobiletest.objects.filter(pub_date__gte=date_from, pub_date__lte=date_to).exclude(dategroup='grunt').values('id', 'name', 'dategroup', 'pub_date', 'result','platform','ustad_version','runtime'))
+	return matchedCourseTestResults
+
+@login_required(login_url='/login/')
+def showappunittestresults_view(request):
+	today = datetime.datetime.today()
+        yesterday = datetime.datetime.now() - datetime.timedelta(days = 1)
+	if request.method == 'POST':
+		print("POST request to get UstadMobile App unit test results")
+		print("Getting variables..")
+                date_since = request.POST['since_1_alt']
+                date_until = request.POST['until_1_alt']
+                print("Got variables. They are: ")
+                print(date_since)
+                print(date_until)
+
+		#json_object = testresults_function("app", yesterday, today)
+		json_object = testresults_function("app", date_since, date_until)
+
+        	response =[]
+        	for ja in json_object:
+                	jatime = ja['pub_date']
+                	jatime=str(jatime)
+                	response.append({'id':ja['id'], 'name':ja['name'], 'dategroup':ja['dategroup'],'pub_date':jatime,'result':ja['result'], 'platform':ja['platform'], 'ustad_version':ja['ustad_version'], 'runtime':ja['runtime']})
+	        return render_to_response("apptestresults.html", {'data': response, 'date_since':date_since , 'date_until':date_until}, context_instance=RequestContext(request))
+
+        if request.method == 'GET':
+                print("Not a POST response")
+                return render_to_response("apptestresults.html", {'data': ''}, context_instance=RequestContext(request))
+
+
+
+        json_object = testresults_function("app", yesterday, today)
+
+        response =[]    
+        for ja in json_object:
+                jatime = ja['pub_date']
+                jatime=str(jatime)
+                response.append({'id':ja['id'], 'name':ja['name'], 'dategroup':ja['dategroup'],'pub_date':jatime,'result':ja['result']})
+
+        return render_to_response("apptestresults.html", {'data': response}, context_instance=RequestContext(request))
 	
+@login_required(login_url='/login/')
+def showelptestresults_view(request):
+	today = datetime.datetime.today()
+        yesterday = datetime.datetime.now() - datetime.timedelta(days = 1)
+	if request.method == 'POST':
+		print("POST request to get elp test results..")
+		print("Getting variables..")
+        	date_since = request.POST['since_1_alt']
+        	date_until = request.POST['until_1_alt']
+        	print("Got variables. They are: ")
+        	print(date_since)
+        	print(date_until)
+
+		#json_object = testresults_function("elp", yesterday, today)
+
+		json_object = testresults_function("elp", date_since, date_until)
+
+		response =[]	
+		for ja in json_object:
+			jatime = ja['pub_date']
+			jatime=str(jatime)
+			response.append({'id':ja['id'], 'name':ja['name'], 'dategroup':ja['dategroup'],'pub_date':jatime,'result':ja['result']})
+	
+		return render_to_response("elptestresults.html", {'data': response, 'date_since':date_since , 'date_until':date_until}, context_instance=RequestContext(request))
+
+	if request.method == 'GET':
+		print("Not a POST response")
+		return render_to_response("elptestresults.html", {'data': ''}, context_instance=RequestContext(request))
+		
 
 def getcourse_view(request):
 	courseid = request.GET.get('id')

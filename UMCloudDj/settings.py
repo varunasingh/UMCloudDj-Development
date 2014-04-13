@@ -39,7 +39,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'uploadeXe',
-    'datetimewidget', #Varuna Singh datetimewidget test
+    #'datetimewidget', #Varuna Singh datetimewidget test
 )
 
 MIDDLEWARE_CLASSES = (
