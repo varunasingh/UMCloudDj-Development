@@ -83,7 +83,27 @@ def apptestresults_selection_view(request):
 	c.update(csrf(request))
 	return render(request, "apptestresults_selection.html")
 
+def readjsonfromrequest_view(request):
+	if request.method == 'GET':
+		jsonstring = request.GET.get('data',0)
+		if jsonstring == 0:
+			endpoint="INVALID. NO JSON STRING IN GET REQUEST"
+			return render_to_response("json_view.html", {'json_dump': '', 'endpoint':endpoint}, context_instance=RequestContext(request))
+		else:
+			print ("The json string is: " + jsonstring)
+			json_dumps = json.dumps(jsonstring)
+			json_loads = json.loads(jsonstring)
+			print ("JSON FROM REQUEST")
+			print (jsonstring)
+			endpoint = "data"
+			return render_to_response("json_view.html", {'json_dump':json_dumps, 'endpoint':endpoint}, context_instance=RequestContext(request))
+	else:
+		json_string = ""
+		endpoint="INVALID. NOT A GET REQUEST"
+		json_dumps = json.dumps(json_string)
+		return render_to_response("json_view.html", {'json_dump':json_dumps, 'endpoint':endpoint}, context_instance=RequestContext(request))
 
+	
 def readjsonfromlrs_view(request):
 	lrsurl = "http://cloud.scorm.com/ScormEngineInterface/TCAPI/public/statements?limit=25&related_activities=false&related_agents=false"
 	lrsurl = "http://www.youtube.com/oembed?url=http://www.youtube.com/watch?v=HOEpcI6e_Zc&format=json"
@@ -114,7 +134,7 @@ def readjsonfromlrs_view(request):
 	#return HttpResponse(json.dumps(json_string2, ensure_ascii=False), content_type="application/json; encoding=utf-8")
 
 	#To return JSON as variable to template
-	return render_to_response("json_view.html", {'json_dump':data}, context_instance=RequestContext(request))
+	return render_to_response("json_view.html", {'json_dump':data, 'endpoint': lrsurl}, context_instance=RequestContext(request))
 
 	#To return only the JSON object
 	#resp = HttpResponse(content_type="application/json")
