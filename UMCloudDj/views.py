@@ -88,26 +88,30 @@ def readjsonfromrequest_view(request):
 		jsonstring = request.GET.get('data',0)
 		if jsonstring == 0:
 			endpoint="INVALID. NO DATA IN GET REQUEST"
+			print (endpoint)
 			return render_to_response("json_view.html", {'json_dump': '', 'endpoint':endpoint}, context_instance=RequestContext(request))
 		else:
 			print ("The json string is: " + jsonstring)
 			if jsonstring == "":
 				endpoint="INVALID. NULL STRING IN REQUEST"
+				print (endpoint)
 				return render_to_response("json_view.html", {'json_dump': '', 'endpoint':endpoint}, context_instance=RequestContext(request))
 			else:
 				try:
 					json_dumps = json.dumps(jsonstring)
 					json_loads = json.loads(jsonstring)
 					print ("JSON FROM REQUEST")
-					print (jsonstring)
 					endpoint = "data"
+					print (endpoint)
 					return render_to_response("json_view.html", {'json_dump':json_dumps, 'endpoint':endpoint}, context_instance=RequestContext(request))
 				except ValueError, e:
 					endpoint="INVALID. INVALID JSON passed to REQUEST"
+					print (endpoint)
 					return render_to_response("json_view.html", {'json_dump':'', 'endpoint':endpoint}, context_instance=RequestContext(request))
 	else:
 		json_string = ""
 		endpoint="INVALID. NOT A GET REQUEST"
+		print (endpoint)
 		json_dumps = json.dumps(json_string)
 		return render_to_response("json_view.html", {'json_dump':json_dumps, 'endpoint':endpoint}, context_instance=RequestContext(request))
 
