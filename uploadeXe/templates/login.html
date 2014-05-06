@@ -9,7 +9,8 @@
 <p></p>
 <form action="/auth/" method="POST"> {% csrf_token %}
     <div data-role="fieldcontain">
-        <label for="email">Email:</label><input type="email" name="email" id="email" value="" />
+        <!--<label for="email">Email:</label><input type="email" name="email" id="email" value="" />-->
+	<label for="email">Email:</label><input name="email" id="email" value="" />
     </div>
     <div data-role="fieldcontain">
         <label for="password">Password:</label><input type="password" name="password" id="password" value="" />

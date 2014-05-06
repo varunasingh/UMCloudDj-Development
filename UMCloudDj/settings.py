@@ -85,6 +85,20 @@ MEDIA_URL = '/media/'
 # http://www.i18nguy.com/unicode/language-identifiers.html
 LANGUAGE_CODE = 'en-us'
 
+#Authentication backend for authenticating against custom backend and extending and syncing new users
+
+#Checks in Django first, then in Custom Backend
+AUTHENTICATION_BACKENDS = ( 'django.contrib.auth.backends.ModelBackend', 'UMCloudDj.authbackend.backend.MyCustomBackend', )
+
+#Checks in Custom Backend first, then in Django
+#AUTHENTICATION_BACKENDS = ( 'UMCloudDj.authbackend.backend.MyCustomBackend', 'django.contrib.auth.backends.ModelBackend', )
+
+#Checks only in Django (default)
+#AUTHENTICATION_BACKENDS = ( 'UMCloudDj.authbackend.backend.MyCustomBackend', )
+
+#Checks only in Custom Backend
+#AUTHENTICATION_BACKENDS = ( 'UMCloudDj.authbackend.backend.MyCustomBackend', )
+
 #TIME_ZONE = 'UTC'
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
