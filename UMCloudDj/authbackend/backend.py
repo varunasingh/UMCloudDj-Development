@@ -1,6 +1,7 @@
 # import the User object
 from django.contrib.auth.models import User
 from django.contrib import auth
+import xmlrpclib as xmlrpc 	#Used for authenticating against wordpress using xmlrpc client
 
 # Name my backend 'MyCustomBackend'
 class MyCustomBackend:
@@ -30,7 +31,9 @@ class MyCustomBackend:
 	    print("User Does Not Exists")
 
 	    #Check user credentials
-	    if password == username[::-1]:
+
+	    s = xmlrpc.ServerProxy('http://www.ustadmobile.com/xmlrpc.php')	#Getting the xmlrpc link for ustadmobile.com wordpress
+	    if s.wpse39662.login(username,password):				#Returns true if user is successfully authenticated, False if not
 	    	print("Username and Password check success for new user.")
 		print("Checking new user in Django..")
 		#Create user.
