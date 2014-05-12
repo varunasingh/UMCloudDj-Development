@@ -297,8 +297,8 @@ def sendelpfile_view(request):
 			setattr(newdoc, 'uid', unid)
 			#os.system('tree')
             		print("Possible command: ")
-            		print('exe_do -x ustadmobile ' + appLocation + '/../UMCloudDj/media/' + uid + ' ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid )
-            		if os.system('exe_do -x ustadmobile ' + appLocation + '/../UMCloudDj/media/' + uid + ' ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid ) == 0: # If command ran successfully,
+            		print('exe_do -s ustadMobileTestMode=True -x ustadmobile ' + appLocation + '/../UMCloudDj/media/' + uid + ' ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid )
+            		if os.system('exe_do -s ustadMobileTestMode=True -x ustadmobile ' + appLocation + '/../UMCloudDj/media/' + uid + ' ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid ) == 0: # If command ran successfully,
                 		uidwe = uid.split('.um.')[-1]
                 		uidwe = uidwe.split('.elp')[-2]
                 		print("Folder name: " + uidwe)
