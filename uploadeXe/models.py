@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.db import models
+from django.contrib.auth.models import User #Added user.
+from django.core.urlresolvers import reverse #Added reverse..
 import os
 import uuid
 import time
@@ -39,4 +41,20 @@ class Ustadmobiletest(models.Model):
    pub_date = models.DateTimeField(auto_now_add=True)
    upd_date = models.DateTimeField(auto_now=True)
 
+class Role(models.Model):
+   #Assuming Django makes ID auto increment for every model by default
+   role_name = models.CharField(max_length=300)
+   role_desc = models.CharField(max_length=300)
+   def __unicode__(self):
+	return self.role_name
+   def get_absolute_url(self):
+	return reverse('role_edit', kwargs={'pk': self.pk})
+
+class User_Roles(models.Model):
+   name = models.CharField(max_length=200)
+   user_userid = models.ForeignKey(User)
+   role_roleid = models.ForeignKey(Role)
+   add_date = models.DateTimeField(auto_now_add=True)
+
+   
 # Create your models here.

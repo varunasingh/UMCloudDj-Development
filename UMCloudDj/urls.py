@@ -41,6 +41,28 @@ urlpatterns = patterns('',
         url(r'^$', 'UMCloudDj.views.secured'),
 	url(r'^logout/$', 'UMCloudDj.views.logout_view'),
 	url(r'^register/$', 'UMCloudDj.views.register_view', name='register'),
+
+	url(r'^roles/$', 'UMCloudDj.views.role_list', name='role_list'),
+  	url(r'^rolenew/$', 'UMCloudDj.views.role_create', name='role_new'),
+  	url(r'^roleedit/(?P<pk>\d+)$', 'UMCloudDj.views.role_update', name='role_edit'),
+  	url(r'^roledelete/(?P<pk>\d+)$', 'UMCloudDj.views.role_delete', name='role_delete'),
+
+	url(r'^users/$', 'UMCloudDj.views.user_list', name='user_list'),
+        url(r'^usernew/$', 'UMCloudDj.views.user_create', name='user_new'),
+        url(r'^useredit/(?P<pk>\d+)$', 'UMCloudDj.views.user_update', name='user_edit'),
+        url(r'^userdelete/(?P<pk>\d+)$', 'UMCloudDj.views.user_delete', name='user_delete'),
+
+	url(r'^organisations/$', 'organisation.views.organisation_list', name='organisation_list'),
+        url(r'^organisationnew/$', 'organisation.views.organisation_create', name='organisation_new'),
+        url(r'^organisationedit/(?P<pk>\d+)$', 'organisation.views.organisation_update', name='organisation_edit'),
+        url(r'^organisationdelete/(?P<pk>\d+)$', 'organisation.views.organisation_delete', name='organisation_delete'),
+
+	url(r'^umpackages/$', 'organisation.views.umpackage_list', name='umpackage_list'),
+        url(r'^umpackagenew/$', 'organisation.views.umpackage_create', name='umpackage_new'),
+        url(r'^umpackageedit/(?P<pk>\d+)$', 'organisation.views.umpackage_update', name='umpackage_edit'),
+        url(r'^umpackagedelete/(?P<pk>\d+)$', 'organisation.views.umpackage_delete', name='umpackage_delete'),
+
+
 	#url(r'^progressbarupload/', include('progressbarupload.urls')),
 
  	#For upload feature. Need both for file upload. The second one re directs to the url and first one does somehting related to that. 

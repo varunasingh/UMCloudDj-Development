@@ -1,6 +1,6 @@
 from django.core.context_processors import csrf
 from django.views.decorators.csrf import csrf_exempt
-from django.shortcuts import render_to_response, redirect
+from django.shortcuts import render_to_response, redirect, get_object_or_404 #Added 404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -9,6 +9,15 @@ from django.contrib import auth
 from django.template import RequestContext
 from uploadeXe.models import Document
 from uploadeXe.models import Ustadmobiletest
+
+#Testing..
+from uploadeXe.models import Role
+from uploadeXe.models import User_Roles
+from django.forms import ModelForm
+from organisation.models import Organisation
+from organisation.models import UMCloud_Package
+from organisation.models import User_Organisations
+
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.core import serializers
@@ -24,6 +33,118 @@ from uploadeXe.models import Ustadmobiletest
 #from django.utils import simplejson
 
 #UMCloudDj.uploadeXe
+
+###################################
+# Role CRUD
+
+class RoleForm(ModelForm):
+    class Meta:
+        model = Role
+
+def role_list(request, template_name='role/role_list.html'):
+    roles = Role.objects.all()
+    data = {}
+    data['object_list'] = roles
+    return render(request, template_name, data)
+
+def role_create(request, template_name='role/role_form.html'):
+    form = RoleForm(request.POST or None)
+    if form.is_valid():
+        form.save()
+        return redirect('role_list')
+    return render(request, template_name, {'form':form})
+
+def role_update(request, pk, template_name='role/role_form.html'):
+    role = get_object_or_404(Role, pk=pk)
+    form = RoleForm(request.POST or None, instance=role)
+    if form.is_valid():
+        form.save()
+        return redirect('role_list')
+    return render(request, template_name, {'form':form})
+
+def role_delete(request, pk, template_name='role/role_confirm_delete.html'):
+    role = get_object_or_404(Role, pk=pk)    
+    if request.method=='POST':
+        role.delete()
+        return redirect('role_list')
+    return render(request, template_name, {'object':role})
+
+#@login_required(login_url='/login/')
+####################################
+
+
+###################################
+# USER CRUD
+
+class UserForm(ModelForm):
+    class Meta:
+        model = User
+
+def user_list(request, template_name='user/user_list.html'):
+    users = User.objects.all()
+    user_roles = []
+    for user in users:
+	role = User_Roles.objects.get(user_userid=user).role_roleid
+	print("For " + user.email + "Role: " + role.role_name)
+	user_roles.append(role)
+
+    data = {}
+    #data['object_list'] = users
+    data['object_list'] = zip(users,user_roles)
+    data['role_list'] = user_roles
+    
+    return render(request, template_name, data)
+
+def user_create(request, template_name='user/user_form.html'):
+    form = UserForm(request.POST or None)
+    roles = Role.objects.all()
+    organisations = Organisation.objects.all()
+    data = {}
+    data['object_list'] = roles
+    data['organisation_list'] = organisations
+
+
+    """
+    if form.is_valid():
+	print("ACTIVE")
+        form.save()
+        return redirect('user_list')
+    """
+
+    if request.method == 'POST':
+	post = request.POST;
+	if not user_exists(post['email']):
+		print("Creating the user..")
+        	user = create_user_more(username=post['email'], email=post['email'], password=post['password'], first_name=post['first_name'], last_name=post['last_name'], roleid=post['role'])
+		return redirect('user_list')
+    	else:
+        	#Show message that the username/email address already exists in our database.
+        	return redirect('user_list')
+
+    return render(request, template_name, data)
+
+	
+
+def user_update(request, pk, template_name='user/user_form.html'):
+    user = get_object_or_404(User, pk=pk)
+    form = UserForm(request.POST or None, instance=user)
+    if form.is_valid():
+        form.save()
+        return redirect('user_list')
+    return render(request, template_name, {'form':form})
+
+def user_delete(request, pk, template_name='user/user_confirm_delete.html'):
+    user = get_object_or_404(User, pk=pk)
+    if request.method=='POST':
+        user.delete()
+        return redirect('user_list')
+    return render(request, template_name, {'object':user})
+
+#@login_required(login_url='/login/')
+####################################
+
+
+
 
 @login_required(login_url='/login/')
 def get_report_zambia(request, onfail='/reports'):
@@ -651,6 +772,21 @@ def create_user(username, email, password):
     user.set_password(password)
     user.save()
     return user
+
+def create_user_more(username, email, password, first_name, last_name, roleid):
+    user = User(username=username, email=email, first_name=first_name, last_name=last_name)
+    user.set_password(password)
+    user.save()
+    role=Role.objects.get(pk=roleid)
+
+    #Create role mapping. 
+    user_role = User_Roles(name="blah", user_userid=user, role_roleid=role)
+    #user_role = User_Roles(user_userid=user)
+    user_role.save()
+    
+    print("User Role mapping success.")
+    return user
+
 
 def user_exists(username):
     user_count = User.objects.filter(username=username).count()

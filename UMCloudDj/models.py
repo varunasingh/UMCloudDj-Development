@@ -30,5 +30,7 @@ class Ustadmobiletest(models.Model):
 class DateTimeModel(models.Model):
    start = models.DateTimeField()
 
+class testTable(models.Model):
+   name = models.CharField(max_length=300)
 
 # Create your models here.
