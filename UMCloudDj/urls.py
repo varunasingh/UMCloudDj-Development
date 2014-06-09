@@ -62,6 +62,16 @@ urlpatterns = patterns('',
         url(r'^umpackageedit/(?P<pk>\d+)$', 'organisation.views.umpackage_update', name='umpackage_edit'),
         url(r'^umpackagedelete/(?P<pk>\d+)$', 'organisation.views.umpackage_delete', name='umpackage_delete'),
 
+	url(r'^schools/$', 'school.views.school_list', name='school_list'),
+        url(r'^schoolnew/$', 'school.views.school_create', name='school_new'),
+        url(r'^schooledit/(?P<pk>\d+)$', 'school.views.school_update', name='school_edit'),
+        url(r'^schooldelete/(?P<pk>\d+)$', 'school.views.school_delete', name='school_delete'),
+
+	url(r'^allclasses/$', 'allclass.views.allclass_list', name='allclass_list'),
+        url(r'^allclassnew/$', 'allclass.views.allclass_create', name='allclass_new'),
+        url(r'^allclassedit/(?P<pk>\d+)$', 'allclass.views.allclass_update', name='allclass_edit'),
+        url(r'^allclassdelete/(?P<pk>\d+)$', 'allclass.views.allclass_delete', name='allclass_delete'),
+
 
 	#url(r'^progressbarupload/', include('progressbarupload.urls')),
 

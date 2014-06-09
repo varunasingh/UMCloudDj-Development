@@ -3,11 +3,16 @@
 {% block content %}
 
 <h1>Users</h1>
+Format:
 <ul>
-	{% for user, role in object_list %}
+<li>ID: EMAIL (ROLE) Organisation (Delete option)</li>
+</ul>
+<ul>
+	{% for user, role, organisation in object_list %}
 	   <li>{{ user.id }}  :
     		<a>{{ user.username }}</a>
     		<a>({{ role.role_name}} )</a>
+		<a> {{ organisation.organisation_name }}</a>
     		<a href="{% url "user_delete" user.id %}">  (Delete)</a>
     	   </li>
 

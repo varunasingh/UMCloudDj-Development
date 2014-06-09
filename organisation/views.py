@@ -14,6 +14,7 @@ from django.forms import ModelForm
 from organisation.models import Organisation
 from organisation.models import UMCloud_Package
 from organisation.models import User_Organisations
+from organisation.models import Organisation_Package
 
 from django.http import HttpResponse
 from django.shortcuts import render
@@ -36,16 +37,65 @@ class OrganisationForm(ModelForm):
 
 def organisation_list(request, template_name='organisation/organisation_list.html'):
     organisations = Organisation.objects.all()
+    organisation_packages = []
+    for organisation in organisations:
+	umpackage = Organisation_Package.objects.get(organisation_organisationid=organisation).set_package
+	organisation_packages.append(umpackage)
+
+
     data = {}
-    data['object_list'] = organisations
+    #data['object_list'] = organisations
+    data['object_list'] = zip(organisations,organisation_packages)
+    data['umpackage_list'] = organisation_packages
+    return render(request, template_name, data)
+    
+def organisation_exists(name):
+    organisation_count = Organisation.objects.filter(organisation_name=name).count()
+    if organisation_count == 0:
+        return False
+    return True
+
+def create_organisation(organisation_name, organisation_desc, umpackageid):
+    organisation = Organisation(organisation_name=organisation_name, organisation_desc=organisation_desc)
+    organisation.save()
+    umpackage = UMCloud_Package.objects.get(pk=umpackageid)
+
+    #Create UMCloud Package - Organisation mapping
+    organisation_package = Organisation_Package(organisation_organisationid=organisation, set_package=umpackage)
+    organisation_package.save()
+
+    print("Organisation Package mapping success.")
+    return organisation
+
+
+def organisation_create(request, template_name='organisation/organisation_create.html'):
+    form = OrganisationForm(request.POST or None)
+    umpackages = UMCloud_Package.objects.all()
+    data = {}
+    data['object_list'] = umpackages
+    
+    if request.method == 'POST':
+        post = request.POST;
+        if not organisation_exists(post['organisation_name']):
+                print("Creating the organisation..")
+		organisation = create_organisation(organisation_name=post['organisation_name'], organisation_desc=post['organisation_desc'], umpackageid=post['umpackageid'])
+                return redirect('organisation_list')
+        else:
+                #Show message that the username/email address already exists in our database.
+                return redirect('organisation_list')
+
     return render(request, template_name, data)
 
-def organisation_create(request, template_name='organisation/organisation_form.html'):
+
+
+
+    """
     form = OrganisationForm(request.POST or None)
     if form.is_valid():
         form.save()
         return redirect('organisation_list')
     return render(request, template_name, {'form':form})
+    """
 
 def organisation_update(request, pk, template_name='organisation/organisation_form.html'):
     organisation = get_object_or_404(Organisation, pk=pk)

@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Manage Schools{% endblock %}
+{% block content %}
+
+<h1>Schools</h1>
+<ul>
+    {% for school, organisation in object_list %}
+    <li>{{ school.id }}  :  
+    <a href="{% url "school_edit" school.id %}">{{ school.school_name }} </a> ({{school.school_desc}})
+    of Organisation: {{ organisation.organisation_name }}
+    <a href="{% url "school_delete" school.id %}">  (Delete)</a>
+    </li>
+    {% endfor %}
+</ul>
+
+<a href="{% url "school_new" %}">New</a>
+
+{% endblock %}

@@ -83,15 +83,24 @@ class UserForm(ModelForm):
 def user_list(request, template_name='user/user_list.html'):
     users = User.objects.all()
     user_roles = []
+    user_organisations = []
     for user in users:
+	#user_role = User_Roles.objects.get(user_userid=user)
+	#print("HERE: user_role is:")
+	#print(user_role.role_roleid)
+
 	role = User_Roles.objects.get(user_userid=user).role_roleid
-	print("For " + user.email + "Role: " + role.role_name)
+ 	print (role)
+	organisation = User_Organisations.objects.get(user_userid=user).organisation_organisationid
+	print("For " + user.email + "Role: " + role.role_name + " of Organisation: " + organisation.organisation_name)
 	user_roles.append(role)
+	user_organisations.append(organisation)
 
     data = {}
     #data['object_list'] = users
-    data['object_list'] = zip(users,user_roles)
+    data['object_list'] = zip(users,user_roles, user_organisations)
     data['role_list'] = user_roles
+    data['organisation_list'] = user_organisations
     
     return render(request, template_name, data)
 
@@ -115,7 +124,7 @@ def user_create(request, template_name='user/user_form.html'):
 	post = request.POST;
 	if not user_exists(post['email']):
 		print("Creating the user..")
-        	user = create_user_more(username=post['email'], email=post['email'], password=post['password'], first_name=post['first_name'], last_name=post['last_name'], roleid=post['role'])
+        	user = create_user_more(username=post['email'], email=post['email'], password=post['password'], first_name=post['first_name'], last_name=post['last_name'], roleid=post['role'], organisationid=post['organisation'])
 		return redirect('user_list')
     	else:
         	#Show message that the username/email address already exists in our database.
@@ -773,16 +782,21 @@ def create_user(username, email, password):
     user.save()
     return user
 
-def create_user_more(username, email, password, first_name, last_name, roleid):
+def create_user_more(username, email, password, first_name, last_name, roleid, organisationid):
     user = User(username=username, email=email, first_name=first_name, last_name=last_name)
     user.set_password(password)
     user.save()
     role=Role.objects.get(pk=roleid)
+    organisation = Organisation.objects.get(pk=organisationid)
 
     #Create role mapping. 
     user_role = User_Roles(name="blah", user_userid=user, role_roleid=role)
     #user_role = User_Roles(user_userid=user)
     user_role.save()
+
+    #Create organisation mapping.
+    user_organisation = User_Organisations(user_userid=user, organisation_organisationid=organisation)
+    user_organisation.save()
     
     print("User Role mapping success.")
     return user

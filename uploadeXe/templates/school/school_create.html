@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Add a School {% endblock %}
+{% block content %}
+
+<form id="newschoolform" method="post">{% csrf_token %}
+    <h1>Create a New School</h1>
+    <div data-role="fieldcontain">
+        <label for="school_name">School Name:  </label><input type="text" name="school_name" id="school_name" value="" />
+    </div>
+    <div data-role="fieldcontain">
+        <label for="school_desc">School Desc:  </label><input type="text" name="school_desc" id="school_desc" value="" />
+    </div>
+   Organisation: <select form="newschoolform" name="organisationid">
+        {% for organisation in object_list %}
+        <option value="{{ organisation.id }}">{{ organisation.organisation_name }}</option>
+        {% endfor %}
+   </select>
+   <br></br>
+
+    <input type="submit" value="Submit" />
+</form>
+
+
+{% endblock %}

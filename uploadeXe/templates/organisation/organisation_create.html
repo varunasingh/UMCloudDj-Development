@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Add an Organisation {% endblock %}
+{% block content %}
+
+<form id="neworganisationform" method="post">{% csrf_token %}
+    <h1>Create a New Organisation</h1>
+    <div data-role="fieldcontain">
+        <label for="organisation_name">Organisation Name:  </label><input type="text" name="organisation_name" id="organisation_name" value="" />
+    </div>
+    <div data-role="fieldcontain">
+        <label for="organisation_desc">Organisation Desc:  </label><input type="text" name="organisation_desc" id="organisation_desc" value="" />
+    </div>
+   Billing Package: <select form="neworganisationform" name="umpackageid">
+        {% for umpackage in object_list %}
+        <option value="{{ umpackage.id }}">{{ umpackage.package_name }}</option>
+        {% endfor %}
+   </select>
+   <br></br>
+
+    <input type="submit" value="Submit" />
+</form>
+
+
+{% endblock %}

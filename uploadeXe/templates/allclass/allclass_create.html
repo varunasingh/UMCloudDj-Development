@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Add a Class {% endblock %}
+{% block content %}
+
+<form id="newclassform" method="post">{% csrf_token %}
+    <h1>Create a New Class</h1>
+    <div data-role="fieldcontain">
+        <label for="class_name">Class Name:  </label><input type="text" name="class_name" id="class_name" value="" />
+    </div>
+    <div data-role="fieldcontain">
+        <label for="class_desc">Class Desc:  </label><input type="text" name="class_desc" id="class_desc" value="" />
+    </div>
+    <div data-role="fieldcontain">
+        <label for="class_location">Class Location:  </label><input type="text" name="class_location" id="class_location" value="" />
+    </div>
+   School: <select form="newclassform" name="schoolid">
+        {% for school in object_list %}
+        <option value="{{ school.id }}">{{ school.school_name }}</option>
+        {% endfor %}
+   </select>
+   <p></p>
+   Teacher: <select form="newclassform" name="teacherid">
+        	{% for teacher in teacher_list %}
+        	<option value="{{ teacher.id }}">{{ teacher.first_name }} {{teacher.last_name}} ({{ teacher.email }})</option>
+        	{% endfor %}
+   </select>
+   <p></p>
+   <!--- Make this multi select and figure that thing out.. -->
+   Students: <select form="newclassform" name="studentid">
+        	{% for student in student_list %}
+        	<option value="{{ student.id }}">{{ student.first_name }} {{student.last_name}} ({{student.email}})</option>
+        	{% endfor %}
+   </select>
+
+   <br></br>
+
+    <input type="submit" value="Submit" />
+</form>
+
+
+{% endblock %}

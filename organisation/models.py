@@ -17,6 +17,9 @@ class User_Organisations(models.Model):
    add_date = models.DateTimeField(auto_now_add=True)
    user_userid = models.ForeignKey(User)
    organisation_organisationid = models.ForeignKey(Organisation)
+
+class Organisation_Package(models.Model):
+   organisation_organisationid = models.ForeignKey(Organisation)
    set_package = models.ForeignKey(UMCloud_Package)
 
 

@@ -54,7 +54,9 @@ class User_Roles(models.Model):
    name = models.CharField(max_length=200)
    user_userid = models.ForeignKey(User)
    role_roleid = models.ForeignKey(Role)
+   #role_roleid = models.ManyToManyField(Role)
    add_date = models.DateTimeField(auto_now_add=True)
-
+   def first(self):
+	return self[0]
    
 # Create your models here.
