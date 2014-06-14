@@ -31,6 +31,12 @@
         	<option value="{{ student.id }}">{{ student.first_name }} {{student.last_name}} ({{student.email}})</option>
         	{% endfor %}
    </select>
+   <p></p>
+   Select Students: <select multiple="multiple"  name="studentids" id="studentids" >
+    {% for student in student_list %}
+    	<option value="{{student.id}}">{{student.first_name}} {{student.last_name}} ({{student.email}})</option>
+    {% endfor %}
+   </select>
 
    <br></br>
 

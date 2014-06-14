@@ -76,7 +76,7 @@ def allclass_create(request, template_name='allclass/allclass_create.html'):
         post = request.POST;
         if not allclass_exists(post['class_name']):
                 print("Creating the Class..")
-                allclass = create_allclass(class_name=post['class_name'], class_desc=post['class_desc'], class_location=post['class_location'], schoolid=post['schoolid'])
+                allclass = create_allclass(class_name=post['class_name'], class_desc=post['class_desc'], class_location=post['class_location'], schoolid=post['schoolid'], studentids=post.getlist('studentids'))
                 return redirect('allclass_list')
         else:
                 #Show message that the class name already exists in our database. (For the current organisation)
@@ -106,7 +106,9 @@ def allclass_exists(name):
     return True
 
 
-def create_allclass(class_name, class_desc, class_location, schoolid):
+def create_allclass(class_name, class_desc, class_location, schoolid, studentids):
+    print("student ids: ")
+    print(studentids)
     allclass = Allclass(allclass_name=class_name, allclass_desc=class_desc, allclass_location=class_location)
     allclass.save()
     school = School.objects.get(pk=schoolid)

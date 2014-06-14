@@ -797,6 +797,9 @@ def create_user_more(username, email, password, first_name, last_name, roleid, o
     #Create organisation mapping.
     user_organisation = User_Organisations(user_userid=user, organisation_organisationid=organisation)
     user_organisation.save()
+
+    #Create same user in UM-TinCan LRS
+
     
     print("User Role mapping success.")
     return user
