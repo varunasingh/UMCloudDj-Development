@@ -17,6 +17,7 @@ from django.forms import ModelForm
 from organisation.models import Organisation
 from organisation.models import UMCloud_Package
 from organisation.models import User_Organisations
+from users.models import UserProfile
 
 from django.http import HttpResponse
 from django.shortcuts import render
@@ -748,7 +749,8 @@ def getcourse_view(request):
 def register_view(request):
 	c = {}
 	c.update(csrf(request))
-	return render_to_response('signup.html', c)
+	#return render_to_response('signup.html', c)
+	return render_to_response('user/user_create_website.html', c)
 
 def my_view(request):
         current_user = request.user.username
@@ -782,6 +784,41 @@ def create_user(username, email, password):
     user.save()
     return user
 
+def create_user_website(username, email, password, first_name, last_name, website, job_title, company_name):
+    #Usage:
+    #user = create_user_website(username=post['email'], email=post['email'], password=post['password'], 
+    # first_name=post['first_name'], last_name=post['last_name'], website=post['website'], 
+    # job_title=post['job_title'], company_name=post['company_name'])
+    user = User(username=username, email=email, first_name=first_name, last_name=last_name)
+    user.set_password(password)
+    user.save()
+    print("User object created..")
+    print("Creating profile..")
+    
+    """
+    user_profile = user.get_profile()
+    user_profile.website = website
+    user_profile.job_title = job_title
+    user_profile.company_name = company_name
+    user_profile.save()
+    """
+    user_profile = UserProfile(user=user, website=website, job_title=job_title, company_name=company_name)
+    user_profile.save()
+    print("User profile created..")
+
+    student_role = Role.objects.get(pk=6)
+    new_role_mapping = User_Roles(name="website", user_userid=user, role_roleid=student_role)
+    new_role_mapping.save()
+
+    individual_organisation = Organisation.objects.get(pk=1)
+    new_organisation_mapping = User_Organisations(user_userid=user, organisation_organisationid=individual_organisation)
+    new_organisation_mapping.save()
+
+    #Check if previous were a success.
+    print("User Role mapping (website) success.")
+    return user
+
+
 def create_user_more(username, email, password, first_name, last_name, roleid, organisationid):
     user = User(username=username, email=email, first_name=first_name, last_name=last_name)
     user.set_password(password)
@@ -811,6 +848,8 @@ def user_exists(username):
         return False
     return True
 
+"""
+#Old sign up page logic
 def sign_up_in(request):
     post = request.POST
     if not user_exists(post['email']): 
@@ -818,6 +857,22 @@ def sign_up_in(request):
         return auth_and_login(request)
     else:
  	#Show message that the username/email address already exists in our database.
+        return redirect("/login/")
+
+def logout_view(request):
+    logout(request)
+    return redirect('login')
+    #return render_to_response('login.html')
+"""
+def sign_up_in(request):
+    print("Creating new user from website..")
+    post = request.POST
+    if not user_exists(post['email']): 
+        #user = create_user(username=post['email'], email=post['email'], password=post['password'])
+	user = create_user_website(username=post['email'], email=post['email'], password=post['password'], first_name=post['first_name'], last_name=post['last_name'], website=post['website'], job_title=post['job_title'], company_name=post['company_name'])
+        return auth_and_login(request)
+    else:
+        #Show message that the username/email address already exists in our database.
         return redirect("/login/")
 
 def logout_view(request):

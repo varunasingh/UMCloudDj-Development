@@ -51,12 +51,21 @@
     "model": "organisation.umcloud_package",
     "pk": 1,
     "fields": {
-      "package_name" : "Default",
-      "package_desc" :"Default Package for all new organisations.",
-      "max_students" : 10000,
-      "max_publishers" : 100,
-      "price_rate_permonth" : 4.2
+      "package_name" : "WebsitePackage",
+      "package_desc" :"Default Package for all new organisations and users registering from the umcloud website.",
+      "max_students" : 30,
+      "max_publishers" : 3,
+      "price_rate_permonth" : 0
+    }
+  },
+  {
+    "model": "organisation.organisation",
+    "pk": 1,
+    "fields": {
+      "organisation_name" : "IndividualOrg",
+      "organisation_desc" : "This is the default organisation for users from the website."
     }
   }
+
 
 ]

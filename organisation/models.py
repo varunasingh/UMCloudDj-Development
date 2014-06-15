@@ -1,10 +1,12 @@
 from django.db import models
+import datetime
 from django.contrib.auth.models import User
 
 class Organisation(models.Model):
    organisation_name = models.CharField(max_length=300)
    organisation_desc = models.CharField(max_length=1000)
-   add_date = models.DateTimeField(auto_now_add=True)
+   add_date = models.DateTimeField(default=datetime.datetime.now)
+   #add_date = models.DateTimeField(auto_now_add=True)
 
 class UMCloud_Package(models.Model):
    package_name = models.CharField(max_length=300)
@@ -14,7 +16,8 @@ class UMCloud_Package(models.Model):
    price_rate_permonth = models.FloatField()
 
 class User_Organisations(models.Model):
-   add_date = models.DateTimeField(auto_now_add=True)
+   #add_date = models.DateTimeField(auto_now_add=True)
+   add_date = models.DateTimeField(default=datetime.datetime.now)
    user_userid = models.ForeignKey(User)
    organisation_organisationid = models.ForeignKey(Organisation)
 

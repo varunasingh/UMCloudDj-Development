@@ -42,6 +42,7 @@ INSTALLED_APPS = (
     'organisation',
     'school',
     'allclass',
+    'users',
     #'datetimewidget', #Varuna Singh datetimewidget test
 )
 
@@ -87,6 +88,10 @@ MEDIA_URL = '/media/'
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
 LANGUAGE_CODE = 'en-us'
+
+#Added AUTHENTICATION PROFILE TO EXTEND USER MODEL OF DJANGO
+#AUTH_PROFILE_MODULE = 'users.UserProfile'
+#This has been depreciated as of Django 1.5
 
 #Authentication backend for authenticating against custom backend and extending and syncing new users
 
