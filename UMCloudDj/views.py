@@ -767,7 +767,7 @@ def loginview(request):
 	return render_to_response('login.html', c)
 
 #This is the def that will authenticate the user over the umcloud website
-def auth_and_login(request, onsuccess='/uploadeXe/', onfail='/login'):
+def auth_and_login(request, onsuccess='/', onfail='/login'):
     #Returns user object if parameters match the database.
     user = authenticate(username=request.POST['email'], password=request.POST['password'])
     if user is not None:

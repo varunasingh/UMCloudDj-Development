@@ -9,20 +9,20 @@
 	  }
 
 	  #page {
-		width: 1960px;
+		width: 1760px;
 		text-align: left;
 		background-color: grey;
 	  }
 
 	  #sidebar {
 		float: left;
-		width: 200px;
+		width: 203px;
 		border: 1px solid blue;
 	  }
 
 	  #content {
 		float: left;
-		width: 1000px;
+		width: 800px;
 		border: 1px solid #f00;
 		padding: 10px;
 	  }
@@ -30,38 +30,55 @@
 	  #header {
 		float: top;
 		border: 2px solid grey;
-		width: 1220px;
+		width: 1023px;
 	  }
 	</style>
+	<!--PrimeUI Stuff-->
+		<link rel="stylesheet" href="{{ MEDIA_URL }}jscss/jqui/themes/base/jquery-ui.css" />
+                <link rel="stylesheet" href="{{ MEDIA_URL }}jscss/primeui/primeui-1.1/themes/aristo/theme.css" />
+                <link rel="stylesheet" href="{{ MEDIA_URL }}jscss/primeui/primeui-1.1-min.css" />
+                <script type="text/javascript" src="{{ MEDIA_URL}}jscss/js/jquery-1.11.0.js"></script>
+                <script type="text/javascript" src="{{ MEDIA_URL }}jscss/jqui/ui/jquery-ui.js"></script>
+                <script type="text/javascript" src="{{ MEDIA_URL }}jscss/primeui/primeui-1.1-min.js"></script>
 
-	<link type="text/css" rel="stylesheet" href="{{ MEDIA_URL}}/jscss/primeui/primeui-1.1-min.css" />
-	<script type="text/javascript" src="{{ MEDIA_URL}}/jscss/primeui/primeui-1.1-min.js"></script>
+	<!--PrimeUI Stuff ends.-->
 
-	<script src="{{ MEDIA_URL }}jscss/js/jquery-1.11.0.js"></script>
     	<link href="{{ MEDIA_URL }}jscss/css/bootstrap.css" rel="stylesheet" type="text/css"/>
-
     	<!--<script src="{{ MEDIA_URL }}jscss/js/bootstrap.js"></script>-->
 	
 	<script src="{{ MEDIA_URL }}jscss/js/mrjsontable.js"></script>
 	<link href="{{ MEDIA_URL }}jscss/css/mrjsontable.css" rel="stylesheet" />
 	
 	<!--<script src="{{ MEDIA_URL}}jscss/jqui/ui/jquery.ui.core.js"></script>-->
+
+<!--
+We need this back (backup)
+
 	<script src="{{ MEDIA_URL}}jscss/jqui/ui/minified/jquery-ui.min.js"></script>
 	<script src="{{ MEDIA_URL}}jscss/jqui/ui/jquery.ui.widget.js"></script>
 	<script src="{{ MEDIA_URL}}jscss/jqui/ui/jquery.ui.slider.js"></script>
 	<script src="{{ MEDIA_URL}}jscss/jqui/ui/jquery.ui.datepicker.js"></script>
 	<link rel="stylesheet" href="{{ MEDIA_URL}}jscss/jqui/themes/base/jquery.ui.all.css">
-
+-->
 	<script src="{{ MEDIA_URL }}jscss/js/jquery-ui-timepicker-addon.js"></script>
         <link rel="stylesheet" href="{{ MEDIA_URL }}jscss/css/jquery-ui-timepicker-addon.css" type="text/css"/>
 	<link rel="stylesheet" href="{{ MEDIA_URL }}jscss/jqui/themes/base/jquery.ui.slider.css">
+
+	<script type="text/javascript">
+          $(function() { 
+                        $('#pm1').puimenu(); 
+			//$('button').puibutton();
+                }
+          ); 
+	</script>
+
 
 </head>
 
 <body>
 	<div id="header">
 		 <img src="/media/images/logoUMlong.png" alt="Ustad_Mobile_UMCloud_logo" align=""/>
-		<p><i>Welcome to Ustad Mobile Cloud Django v 0.0.1, deja-vu 1990</i></p>
+		<p><i>Welcome to Ustad Mobile Cloud Django v 0.2.1, deja-vu 1992</i></p>
 		{% if current_user %}
 			<i>Logged in as: {{current_user}}</i>
 		{% endif %}
@@ -73,9 +90,9 @@
 	<div id="sidebar">
 		{% block sidebar %}
 		<!--<img src="../media/images/logoUMlong.png" alt="Ustad_Mobile_UMCloud_logo"/>-->
-		<ul>
-			<li><a href="/">Home</a></li>
-			<li><a href="/logout/">Logout</a></li>
+		<ul id="pm1">
+			<li><a data-icon="ui-icon-home" href="/">Home</a></li>
+			<li><a data-icon="ui-icon-power" href="/logout/">Logout</a></li>
 		</ul>
 		{% endblock %}
 	</div>
