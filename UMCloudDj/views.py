@@ -41,13 +41,14 @@ from uploadeXe.models import Ustadmobiletest
 class RoleForm(ModelForm):
     class Meta:
         model = Role
-
+@login_required(login_url='/login/')
 def role_list(request, template_name='role/role_list.html'):
     roles = Role.objects.all()
     data = {}
     data['object_list'] = roles
     return render(request, template_name, data)
 
+@login_required(login_url='/login/')
 def role_create(request, template_name='role/role_form.html'):
     form = RoleForm(request.POST or None)
     if form.is_valid():
@@ -55,6 +56,7 @@ def role_create(request, template_name='role/role_form.html'):
         return redirect('role_list')
     return render(request, template_name, {'form':form})
 
+@login_required(login_url='/login/')
 def role_update(request, pk, template_name='role/role_form.html'):
     role = get_object_or_404(Role, pk=pk)
     form = RoleForm(request.POST or None, instance=role)
@@ -63,6 +65,7 @@ def role_update(request, pk, template_name='role/role_form.html'):
         return redirect('role_list')
     return render(request, template_name, {'form':form})
 
+@login_required(login_url='/login/')
 def role_delete(request, pk, template_name='role/role_confirm_delete.html'):
     role = get_object_or_404(Role, pk=pk)    
     if request.method=='POST':
@@ -81,15 +84,12 @@ class UserForm(ModelForm):
     class Meta:
         model = User
 
+@login_required(login_url='/login/')
 def user_list(request, template_name='user/user_list.html'):
     users = User.objects.all()
     user_roles = []
     user_organisations = []
     for user in users:
-	#user_role = User_Roles.objects.get(user_userid=user)
-	#print("HERE: user_role is:")
-	#print(user_role.role_roleid)
-
 	role = User_Roles.objects.get(user_userid=user).role_roleid
  	print (role)
 	organisation = User_Organisations.objects.get(user_userid=user).organisation_organisationid
@@ -105,6 +105,7 @@ def user_list(request, template_name='user/user_list.html'):
     
     return render(request, template_name, data)
 
+@login_required(login_url='/login/')
 def user_create(request, template_name='user/user_form.html'):
     form = UserForm(request.POST or None)
     roles = Role.objects.all()
@@ -112,14 +113,6 @@ def user_create(request, template_name='user/user_form.html'):
     data = {}
     data['object_list'] = roles
     data['organisation_list'] = organisations
-
-
-    """
-    if form.is_valid():
-	print("ACTIVE")
-        form.save()
-        return redirect('user_list')
-    """
 
     if request.method == 'POST':
 	post = request.POST;
@@ -134,7 +127,7 @@ def user_create(request, template_name='user/user_form.html'):
     return render(request, template_name, data)
 
 	
-
+@login_required(login_url='/login/')
 def user_update(request, pk, template_name='user/user_form.html'):
     user = get_object_or_404(User, pk=pk)
     form = UserForm(request.POST or None, instance=user)
@@ -143,6 +136,7 @@ def user_update(request, pk, template_name='user/user_form.html'):
         return redirect('user_list')
     return render(request, template_name, {'form':form})
 
+@login_required(login_url='/login/')
 def user_delete(request, pk, template_name='user/user_confirm_delete.html'):
     user = get_object_or_404(User, pk=pk)
     if request.method=='POST':

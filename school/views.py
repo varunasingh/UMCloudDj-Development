@@ -34,6 +34,7 @@ class SchoolForm(ModelForm):
     class Meta:
         model = School
 
+@login_required(login_url='/login/')
 def school_list(request, template_name='school/school_list.html'):
     schools = School.objects.all()
     organisation_schools = []
@@ -47,6 +48,7 @@ def school_list(request, template_name='school/school_list.html'):
     data['orgschools_list'] = organisation_schools
     return render(request, template_name, data)
 
+@login_required(login_url='/login/')
 def school_create(request, template_name='school/school_create.html'):
     form = SchoolForm(request.POST or None)
     organisations = Organisation.objects.all()
@@ -65,6 +67,7 @@ def school_create(request, template_name='school/school_create.html'):
 
     return render(request, template_name, data)
 
+@login_required(login_url='/login/')
 def school_update(request, pk, template_name='school/school_form.html'):
     school = get_object_or_404(School, pk=pk)
     form = SchoolForm(request.POST or None, instance=school)
@@ -73,6 +76,7 @@ def school_update(request, pk, template_name='school/school_form.html'):
         return redirect('school_list')
     return render(request, template_name, {'form':form})
 
+@login_required(login_url='/login/')
 def school_delete(request, pk, template_name='school/school_confirm_delete.html'):
     school = get_object_or_404(School, pk=pk)
     if request.method=='POST':
@@ -80,12 +84,14 @@ def school_delete(request, pk, template_name='school/school_confirm_delete.html'
         return redirect('school_list')
     return render(request, template_name, {'object':school})
 
+@login_required(login_url='/login/')
 def school_exists(name):
     school_count = School.objects.filter(school_name=name).count()
     if school_count == 0:
         return False
     return True
 
+@login_required(login_url='/login/')
 def create_school(school_name, school_desc, organisationid):
     school = School(school_name=school_name, school_desc=school_desc)
     school.save()

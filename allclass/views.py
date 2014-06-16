@@ -40,6 +40,7 @@ class AllclassForm(ModelForm):
     class Meta:
         model = Allclass
 
+@login_required(login_url='/login/')
 def allclass_list(request, template_name='allclass/allclass_list.html'):
     allclasses = Allclass.objects.all()
     school_allclasses = []
@@ -53,6 +54,7 @@ def allclass_list(request, template_name='allclass/allclass_list.html'):
     data['school_list'] = school_allclasses
     return render(request, template_name, data)
 
+@login_required(login_url='/login/')
 def allclass_create(request, template_name='allclass/allclass_create.html'):
     form = AllclassForm(request.POST or None)
     schools = School.objects.all()
@@ -84,6 +86,7 @@ def allclass_create(request, template_name='allclass/allclass_create.html'):
 
     return render(request, template_name, data)
 
+@login_required(login_url='/login/')
 def allclass_update(request, pk, template_name='allclass/allclass_form.html'):
     allclass = get_object_or_404(Allclass, pk=pk)
     form = AllclassForm(request.POST or None, instance=allclass)
@@ -92,6 +95,7 @@ def allclass_update(request, pk, template_name='allclass/allclass_form.html'):
         return redirect('allclass_list')
     return render(request, template_name, {'form':form})
 
+@login_required(login_url='/login/')
 def allclass_delete(request, pk, template_name='allclass/allclass_confirm_delete.html'):
     allclass = get_object_or_404(Allclass, pk=pk)
     if request.method=='POST':
@@ -99,13 +103,14 @@ def allclass_delete(request, pk, template_name='allclass/allclass_confirm_delete
         return redirect('allclass_list')
     return render(request, template_name, {'object':allclass})
 
+@login_required(login_url='/login/')
 def allclass_exists(name):
     allclass_count = Allclass.objects.filter(allclass_name=name).count()
     if allclass_count == 0:
         return False
     return True
 
-
+@login_required(login_url='/login/')
 def create_allclass(class_name, class_desc, class_location, schoolid, studentids):
     print("student ids: ")
     print(studentids)
