@@ -5,7 +5,7 @@
 	<style type="text/css">
 
 	  body{
-		text-align: center;
+		text-align: left;
 	  }
 
 	  #page {
@@ -15,22 +15,27 @@
 	  }
 
 	  #sidebar {
+		margin-top:-5px;
 		float: left;
 		width: 203px;
-		border: 1px solid blue;
+		border: 0px solid blue;
+		padding: 5px;
 	  }
 
 	  #content {
 		float: left;
 		width: 800px;
-		border: 1px solid #f00;
-		padding: 10px;
+		border: 1px solid grey;
+		padding: 5px;
+		border-radius: 5px;
 	  }
 
 	  #header {
 		float: top;
 		border: 2px solid grey;
-		width: 1023px;
+		width: 1011px;
+   		padding: 5px;
+		border-radius: 5px;
 	  }
 	</style>
 	<!--PrimeUI Stuff-->
@@ -71,19 +76,16 @@ We need this back (backup)
                 }
           ); 
 	</script>
-
-
 </head>
 
 <body>
 	<div id="header">
-		 <img src="/media/images/logoUMlong.png" alt="Ustad_Mobile_UMCloud_logo" align=""/>
-		<p><i>Welcome to Ustad Mobile Cloud Django v 0.2.1, deja-vu 1992</i></p>
+		<p></p>
+		<a href="/"><img src="/media/images/logoUMlong.png" alt="Ustad_Mobile_UMCloud_logo" align=""/></a><i>    (UMCloudDj v0.2.1)</i>
+		<!--<p><i>Welcome to Ustad Mobile Cloud Django (UMCloudDj) v 0.2.1, deja-vu 1992</i></p>-->
 		{% if current_user %}
 			<i>Logged in as: {{current_user}}</i>
 		{% endif %}
-
-		<!--<i>{{current_user}}</i>-->
 	</div>
 	<p></p>
 	<div id="page">

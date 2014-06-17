@@ -18,6 +18,7 @@ from organisation.models import Organisation
 from organisation.models import UMCloud_Package
 from organisation.models import User_Organisations
 from users.models import UserProfile
+from django import forms
 
 from django.http import HttpResponse
 from django.shortcuts import render
@@ -81,8 +82,26 @@ def role_delete(request, pk, template_name='role/role_confirm_delete.html'):
 # USER CRUD
 
 class UserForm(ModelForm):
+    password = forms.CharField(widget=forms.PasswordInput, required=False)
     class Meta:
         model = User
+	fields = ('username', 'email', 'password', 'first_name', 'last_name', 'is_active')
+	widgets = {
+        'password': forms.PasswordInput(),
+    	}
+
+    def save(self, commit=True):
+    	user = super(UserForm, self).save(commit=False)
+	password = self.cleaned_data["password"]
+	if password:
+		print("New password specified")
+    		user.set_password(self.cleaned_data["password"])
+	else:
+		print("password not specified.")
+		user.set_password(user.password)
+    	if commit:
+		user.save()
+    	return user
 
 @login_required(login_url='/login/')
 def user_list(request, template_name='user/user_list.html'):
@@ -106,7 +125,7 @@ def user_list(request, template_name='user/user_list.html'):
     return render(request, template_name, data)
 
 @login_required(login_url='/login/')
-def user_create(request, template_name='user/user_form.html'):
+def user_create(request, template_name='user/user_create.html'):
     form = UserForm(request.POST or None)
     roles = Role.objects.all()
     organisations = Organisation.objects.all()
@@ -118,7 +137,7 @@ def user_create(request, template_name='user/user_form.html'):
 	post = request.POST;
 	if not user_exists(post['email']):
 		print("Creating the user..")
-        	user = create_user_more(username=post['email'], email=post['email'], password=post['password'], first_name=post['first_name'], last_name=post['last_name'], roleid=post['role'], organisationid=post['organisation'])
+        	user = create_user_more(username=post['username'], email=post['email'], password=post['password'], first_name=post['first_name'], last_name=post['last_name'], roleid=post['role'], organisationid=post['organisation'])
 		return redirect('user_list')
     	else:
         	#Show message that the username/email address already exists in our database.
@@ -128,7 +147,7 @@ def user_create(request, template_name='user/user_form.html'):
 
 	
 @login_required(login_url='/login/')
-def user_update(request, pk, template_name='user/user_form.html'):
+def user_update(request, pk, template_name='user/user_update.html'):
     user = get_object_or_404(User, pk=pk)
     form = UserForm(request.POST or None, instance=user)
     if form.is_valid():
