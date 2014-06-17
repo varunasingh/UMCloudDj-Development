@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}User DataTable List{% endblock %}
+{% block content %}
+
+<script type="text/javascript">
+  $(function() { 
+    $('#tblusers').puidatatable({
+            caption: 'Users',
+            paginator: {
+                rows: 5
+            },
+            columns: [
+                {field:'pk', headerText: 'ID', sortable:true},
+                //{field:'model', headerText: 'Django Model', sortable:true},
+		{field:'username', headerText: 'Username', sortable:true},
+		{field:'first_name', headerText: 'First Name', sortable:true},
+		{field:'last_name', headerText: 'Last Name', sortable:true},
+		{field:'is_active', headerText: 'Is Active', sortable:true},
+
+            ],
+            datasource: [
+		{% if users_as_json %}
+    			{% for c in users_as_json %}
+			{"pk":"{{c.pk}}","model":"{{c.model}}","username":"{{c.fields.username}}", "first_name":"{{c.fields.first_name}}","last_name":"{{c.fields.last_name}}", "is_active":"{{c.fields.is_active}}"}{% if not forloop.last %},{% endif %}
+    			{% endfor %}
+		{% endif %}
+		],
+            selectionMode: 'single',
+            rowSelect: function(event, data) {
+		console.log("Wassup?")
+                $('#messages').puigrowl('show', [{severity:'info', summary: 'Row Selected', detail: (data.username + ' ' + data.pk)}]);
+		var edit="/useredit/"+data.pk;
+		window.open(edit, "_self");
+            },
+            rowUnselect: function(event, data) {
+                $('#messages').puigrowl('show', [{severity:'info', summary: 'Row Unselected', detail: (data.brand + ' ' + data.vin)}]);
+            }
+   });
+  }
+  ); 
+
+
+</script>
+
+<div id="tblusers"> </div>
+<!--
+<h1>Users</h1>
+Format:
+<ul>
+<li>ID: EMAIL (ROLE) Organisation (Delete option)</li>
+</ul>
+<ul>
+	{% for user, role, organisation in data.object_list %}
+	   <li>{{ user.id }}  :
+		<a href="{% url "user_edit" user.id %}">{{ user.username }}</a>
+    		<a>({{ role.role_name}} )</a>
+		<a> {{ organisation.organisation_name }}</a>
+    		<a href="{% url "user_delete" user.id %}">  (Delete)</a>
+    	   </li>
+
+	{% endfor %}
+
+</ul>
+-->
+{% endblock %}
