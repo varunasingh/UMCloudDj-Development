@@ -50,6 +50,17 @@ def role_list(request, template_name='role/role_list.html'):
     return render(request, template_name, data)
 
 @login_required(login_url='/login/')
+def role_table(request, template_name='role/role_table.html'):
+    roles = Role.objects.all()
+    data = {}
+    data['object_list'] = roles
+    roles_as_json = serializers.serialize('json', roles)
+    roles_as_json =json.loads(roles_as_json)
+
+    return render(request, template_name, {'data':data, 'roles_as_json':roles_as_json})
+
+
+@login_required(login_url='/login/')
 def role_create(request, template_name='role/role_form.html'):
     form = RoleForm(request.POST or None)
     if form.is_valid():
@@ -80,6 +91,7 @@ def role_delete(request, pk, template_name='role/role_confirm_delete.html'):
 
 ###################################
 # USER CRUD
+
 
 class UserForm(ModelForm):
     password = forms.CharField(widget=forms.PasswordInput, required=False)
@@ -123,6 +135,30 @@ def user_list(request, template_name='user/user_list.html'):
     data['organisation_list'] = user_organisations
     
     return render(request, template_name, data)
+
+@login_required(login_url='/login/')
+def user_table(request, template_name='user/user_table.html'):
+    users = User.objects.all()
+    user_roles = []
+    user_organisations = []
+    #users_as_json = []
+    for user in users:
+	role = User_Roles.objects.get(user_userid=user).role_roleid
+	organisation = User_Organisations.objects.get(user_userid=user).organisation_organisationid
+	user_roles.append(role)
+	user_organisations.append(organisation)
+    data = {}
+    data['object_list'] = zip(users,user_roles,user_organisations)
+    data['role_list'] = user_roles
+    data['organisation_list'] = user_organisations
+    users_as_json = serializers.serialize('json', users)
+    print("users_as_json: ")
+    print(users_as_json)
+    #data['users_as_json'] = users_as_json
+
+    users_as_json =json.loads(users_as_json)
+    return render(request, template_name, {'data':data, 'users_as_json':users_as_json})
+
 
 @login_required(login_url='/login/')
 def user_create(request, template_name='user/user_create.html'):

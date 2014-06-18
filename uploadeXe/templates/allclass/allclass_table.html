@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}Manage Classes{% endblock %}
+{% block content %}
+
+    <script type="text/javascript">
+  $(function() { 
+    $('#tblallclasses').puidatatable({
+            caption: 'Classes',
+            paginator: {
+                rows: 5
+            },
+            columns: [
+                {field:'pk', headerText: 'ID', sortable:true},
+                //{field:'model', headerText: 'Django Model', sortable:true},
+                {field:'allclass_name', headerText: 'Class Name', sortable:true},
+                {field:'allclass_desc', headerText: 'Description', sortable:true},
+                {field:'allclass_location', headerText: 'Location', sortable:true},
+
+            ],
+            datasource: [
+                {% if allclasses_as_json %}
+                        {% for c in allclasses_as_json %}
+                        {"pk":"{{c.pk}}","allclass_name":"{{c.fields.allclass_name}}","allclass_desc":"{{c.fields.allclass_desc}}", "allclass_desc":"{{c.fields.allclass_location}}"}{% if not forloop.last %},{% endif %}
+                        {% endfor %}
+                {% endif %}
+                ],
+            selectionMode: 'single',
+            rowSelect: function(event, data) {
+                console.log("Wassup?")
+                $('#messages').puigrowl('show', [{severity:'info', summary: 'Row Selected', detail: (data.allclass_name + ' ' + data.pk)}]);
+                var edit="/allclassedit/"+data.pk;
+                window.open(edit, "_self");
+            },
+            rowUnselect: function(event, data) {
+                //$('#messages').puigrowl('show', [{severity:'info', summary: 'Row Unselected', detail: (data.brand + ' ' + data.vin)}]);
+            }
+   });
+  }
+  ); 
+
+
+</script>
+<i>Click a row to edit the Class</i>
+<div id="tblallclasses"> </div>
+<a href="/allclassnew/"><button id="newallclass" type="button">New Class</button></a>  
+                                                                             
+
+<!--
+<h1>Classes</h1>
+<ul>
+    {% for allclass, school in object_list %}
+    <li>{{ allclass.id }}  :  
+    <a href="{% url "allclass_edit" allclass.id %}">{{ allclass.allclass_name }} </a> ({{allclass.allclass_desc}})
+    of School: {{ school.school_name }}
+    <a href="{% url "allclass_delete" allclass.id %}">  (Delete)</a>
+    </li>
+    {% endfor %}
+</ul>
+
+<a href="{% url "allclass_new" %}">New</a>
+-->
+
+{% endblock %}

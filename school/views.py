@@ -49,6 +49,50 @@ def school_list(request, template_name='school/school_list.html'):
     return render(request, template_name, data)
 
 @login_required(login_url='/login/')
+def school_table(request, template_name='school/school_table.html'):
+    schools = School.objects.all()
+    organisation_schools = []
+    for school in schools:
+        organisation = Organisation_Schools.objects.get(school_schoolid=school).organisation_organisationid
+        organisation_schools.append(organisation)
+
+    data = {}
+    data['object_list'] = schools
+    data['object_list'] = zip(schools, organisation_schools)
+    data['orgschools_list'] = organisation_schools
+    schools_as_json = serializers.serialize('json', schools)
+    schools_as_json =json.loads(schools_as_json)
+
+    return render(request, template_name, {'data':data, 'schools_as_json':schools_as_json})
+
+@login_required(login_url='/login/')
+def school_exists(name):
+    print("Checking..")
+    school_count = School.objects.filter(school_name=name).count()
+    if school_count == 0:
+        return False
+    return True
+
+@login_required(login_url='/login/')
+def create_school(school_name, school_desc, organisationid):
+    print("Creating school object")
+    school = School(school_name=school_name, school_desc=school_desc)
+    school.save()
+
+    print("Creating organisation school mapping..")
+    organisation = Organisation.objects.get(pk=organisationid)
+
+    #Create Organisation - School mapping
+    organisation_school = Organisation_Schools(school_schoolid=school, organisation_organisationid=organisation)
+    organisation_school.save()
+
+    print("Organisation School mapping success.")
+    return school
+
+
+
+
+@login_required(login_url='/login/')
 def school_create(request, template_name='school/school_create.html'):
     form = SchoolForm(request.POST or None)
     organisations = Organisation.objects.all()
@@ -57,13 +101,43 @@ def school_create(request, template_name='school/school_create.html'):
 
     if request.method == 'POST':
         post = request.POST;
-        if not school_exists(post['school_name']):
-                print("Creating the School..")
-                school = create_school(school_name=post['school_name'], school_desc=post['school_desc'], organisationid=post['organisationid'])
-                return redirect('school_list')
-        else:
-                #Show message that the school name already exists in our database.
-                return redirect('school_list')
+        #try:
+	if 1 > 0:
+		name = post['school_name']
+		print(name)
+		school_count = School.objects.filter(school_name=name).count()
+        	#if not school_exists(post['school_name']):
+		print("school_count:")
+		print(school_count)
+		if school_count == 0:
+                	print("Creating the School..")
+			print("Creating school object")
+			school_name = post['school_name']
+			school_desc = post['school_desc']
+			organisationid = post['organisationid']
+    			school = School(school_name=school_name, school_desc=school_desc)
+    			school.save()
+    
+    			print("Creating organisation school mapping..")
+    			organisation = Organisation.objects.get(pk=organisationid)
+    
+    			#Create Organisation - School mapping
+    			organisation_school = Organisation_Schools(school_schoolid=school, organisation_organisationid=organisation)
+    			organisation_school.save()
+
+    			print("Organisation School mapping success.")
+
+                	#school = create_school(school_name=post['school_name'], school_desc=post['school_desc'], organisationid=post['organisationid'])
+                	return redirect('school_list')
+        	else:
+                	#Show message that the school name already exists in our database.
+                	return redirect('school_list')
+	#except:
+	else:
+		#pass
+		print('Something went wrong')
+	#return('school_list')
+	
 
     return render(request, template_name, data)
 
@@ -83,26 +157,5 @@ def school_delete(request, pk, template_name='school/school_confirm_delete.html'
         school.delete()
         return redirect('school_list')
     return render(request, template_name, {'object':school})
-
-@login_required(login_url='/login/')
-def school_exists(name):
-    school_count = School.objects.filter(school_name=name).count()
-    if school_count == 0:
-        return False
-    return True
-
-@login_required(login_url='/login/')
-def create_school(school_name, school_desc, organisationid):
-    school = School(school_name=school_name, school_desc=school_desc)
-    school.save()
-    organisation = Organisation.objects.get(pk=organisationid)
-
-    #Create Organisation - School mapping
-    organisation_school = Organisation_Schools(school_schoolid=school, organisation_organisationid=organisation)
-    organisation_school.save()
-
-    print("Organisation School mapping success.")
-    return school
-
 
 # Create your views here.

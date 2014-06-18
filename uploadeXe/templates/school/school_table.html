@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}Manage Schools{% endblock %}
+{% block content %}
+
+<script type="text/javascript">
+  $(function() { 
+    $('#tblschools').puidatatable({
+            caption: 'Schools',
+            paginator: {
+                rows: 5
+            },
+            columns: [
+                {field:'pk', headerText: 'ID', sortable:true},
+                //{field:'model', headerText: 'Django Model', sortable:true},
+                {field:'school_name', headerText: 'School Name', sortable:true},
+                {field:'school_desc', headerText: 'Desc', sortable:true},
+
+            ],
+            datasource: [
+                {% if schools_as_json %}
+                        {% for c in schools_as_json %}
+                        {"pk":"{{c.pk}}", "school_name":"{{c.fields.school_name}}","school_desc":"{{c.fields.school_desc}}"}{% if not forloop.last %},{% endif %}
+                        {% endfor %}
+                {% endif %}
+                ],
+            selectionMode: 'single',
+            rowSelect: function(event, data) {
+                console.log("Wassup?")
+                $('#messages').puigrowl('show', [{severity:'info', summary: 'Row Selected', detail: (data.school_name + ' ' + data.pk)}]);
+                var edit="/schooledit/"+data.pk;
+                window.open(edit, "_self");
+            },
+            rowUnselect: function(event, data) {
+                //$('#messages').puigrowl('show', [{severity:'info', summary: 'Row Unselected', detail: (data.brand + ' ' + data.vin)}]);
+            }
+   });
+  }
+  ); 
+
+
+</script>
+<i>Click a row to edit School</i>
+<div id="tblschools"> </div>
+<a href="/schoolnew/"><button id="newschool" type="button">New School</button></a>  
+                                                                             
+
+
+<!--
+<h1>Schools</h1>
+<ul>
+    {% for school, organisation in object_list %}
+    <li>{{ school.id }}  :  
+    <a href="{% url "school_edit" school.id %}">{{ school.school_name }} </a> ({{school.school_desc}})
+    of Organisation: {{ organisation.organisation_name }}
+    <a href="{% url "school_delete" school.id %}">  (Delete)</a>
+    </li>
+    {% endfor %}
+</ul>
+<a href="{% url "school_new" %}">New</a>
+-->
+
+{% endblock %}

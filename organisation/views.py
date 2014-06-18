@@ -48,6 +48,23 @@ def organisation_list(request, template_name='organisation/organisation_list.htm
     data['object_list'] = zip(organisations,organisation_packages)
     data['umpackage_list'] = organisation_packages
     return render(request, template_name, data)
+
+def organisation_table(request, template_name='organisation/organisation_table.html'):
+    organisations = Organisation.objects.all()
+    organisation_packages = []
+    for organisation in organisations:
+        umpackage = Organisation_Package.objects.get(organisation_organisationid=organisation).set_package
+        organisation_packages.append(umpackage)
+
+    data = {}
+    #data['object_list'] = organisations
+    data['object_list'] = zip(organisations,organisation_packages)
+    data['umpackage_list'] = organisation_packages
+    organisations_as_json = serializers.serialize('json', organisations)
+    organisations_as_json =json.loads(organisations_as_json)
+
+    return render(request, template_name, {'data': data, 'organisations_as_json':organisations_as_json})
+
     
 def organisation_exists(name):
     organisation_count = Organisation.objects.filter(organisation_name=name).count()
@@ -126,6 +143,16 @@ def umpackage_list(request, template_name='organisation/umpackage_list.html'):
     data = {}
     data['object_list'] = umpackages
     return render(request, template_name, data)
+
+
+def umpackage_table(request, template_name='organisation/umpackage_table.html'):
+    umpackages = UMCloud_Package.objects.all()
+    data = {}
+    data['object_list'] = umpackages
+    umpackages_as_json = serializers.serialize('json', umpackages)
+    umpackages_as_json =json.loads(umpackages_as_json)
+
+    return render(request, template_name, {'data':data, 'umpackages_as_json':umpackages_as_json})
 
 def umpackage_create(request, template_name='organisation/umpackage_form.html'):
     form = UMCloud_PackageForm(request.POST or None)

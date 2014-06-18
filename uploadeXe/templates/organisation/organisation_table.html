@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}Manage Organisations - UstadMobile Cloud {% endblock %}
+{% block content %}
+
+
+<script type="text/javascript">
+  $(function() { 
+    $('#tblorganisations').puidatatable({
+            caption: 'Organisations',
+            paginator: {
+                rows: 5
+            },
+            columns: [
+                {field:'pk', headerText: 'ID', sortable:true},
+                //{field:'model', headerText: 'Django Model', sortable:true},
+                {field:'organisation_name', headerText: 'Organisation Name', sortable:true},
+                {field:'organisation_desc', headerText: 'Organisation Desc', sortable:true},
+                {field:'add_date', headerText: 'Date Added', sortable:true},
+
+            ],
+            datasource: [
+                {% if organisations_as_json %}
+                        {% for c in organisations_as_json %}
+                        {"pk":"{{c.pk}}","model":"{{c.model}}","organisation_name":"{{c.fields.organisation_name}}", "organisation_desc":"{{c.fields.organisation_desc}}","add_date":"{{c.fields.add_date}}"}{% if not forloop.last %},{% endif %}
+                        {% endfor %}
+                {% endif %}
+                ],
+            selectionMode: 'single',
+            rowSelect: function(event, data) {
+                console.log("Wassup?")
+                $('#messages').puigrowl('show', [{severity:'info', summary: 'Row Selected', detail: (data.organisation_name + ' ' + data.pk)}]);
+                var edit="/organisationedit/"+data.pk;
+                window.open(edit, "_self");
+            },
+            rowUnselect: function(event, data) {
+                //$('#messages').puigrowl('show', [{severity:'info', summary: 'Row Unselected', detail: (data.brand + ' ' + data.vin)}]);
+            }
+   });
+  }
+  ); 
+</script>
+
+<i>Click a row to edit Organisation</i>
+<div id="tblorganisations"> </div>
+<a href="/organisationnew/"><button id="neworganisation" type="button">New Organisation</button></a>  
+                                                                             
+
+
+<!--
+<h1>Organisations</h1>
+<ul>
+    {% for organisation, umpackage in object_list %}
+    <li>{{ organisation.id }}  :  
+    <a href="{% url "organisation_edit" organisation.id %}">{{ organisation.organisation_name }} </a> ({{organisation.organisation_desc}})
+    of Package: {{ umpackage.package_name }}
+    <a href="{% url "organisation_delete" organisation.id %}">  (Delete)</a>
+    </li>
+    {% endfor %}
+</ul>
+
+<a href="{% url "organisation_new" %}">New</a>
+-->
+
+{% endblock %}

@@ -54,6 +54,26 @@ def allclass_list(request, template_name='allclass/allclass_list.html'):
     data['school_list'] = school_allclasses
     return render(request, template_name, data)
 
+
+@login_required(login_url='/login/')
+def allclass_table(request, template_name='allclass/allclass_table.html'):
+    allclasses = Allclass.objects.all()
+    school_allclasses = []
+    for allclass in allclasses:
+        school = School_Allclasses.objects.get(allclass_classid=allclass).school_schoolid
+        school_allclasses.append(school)
+
+    data = {}
+    data['object_list'] = allclasses
+    data['object_list'] = zip(allclasses, school_allclasses)
+    data['school_list'] = school_allclasses
+    allclasses_as_json = serializers.serialize('json', allclasses)
+    allclasses_as_json =json.loads(allclasses_as_json)
+
+    return render(request, template_name, {'data':data, 'allclasses_as_json':allclasses_as_json})
+    #return render(request, template_name, data)
+
+
 @login_required(login_url='/login/')
 def allclass_create(request, template_name='allclass/allclass_create.html'):
     form = AllclassForm(request.POST or None)
@@ -76,11 +96,33 @@ def allclass_create(request, template_name='allclass/allclass_create.html'):
 
     if request.method == 'POST':
         post = request.POST;
-        if not allclass_exists(post['class_name']):
+	print("checking..")
+	class_name = post['class_name']
+	allclass_count = Allclass.objects.filter(allclass_name=class_name).count()
+    	if allclass_count == 0:
+        #if not allclass_exists(post['class_name']):
                 print("Creating the Class..")
-                allclass = create_allclass(class_name=post['class_name'], class_desc=post['class_desc'], class_location=post['class_location'], schoolid=post['schoolid'], studentids=post.getlist('studentids'))
+		class_name=post['class_name']
+		class_desc=post['class_desc']
+		class_location=post['class_location']
+		schoolid=post['schoolid']
+		studentids=post.getlist('studentids')
+		print("student ids: ")
+    		print(studentids)
+    		allclass = Allclass(allclass_name=class_name, allclass_desc=class_desc, allclass_location=class_location)
+    		allclass.save()
+    		school = School.objects.get(pk=schoolid)
+
+    		#Create Class - School mapping
+    		school_allclass = School_Allclasses(allclass_classid=allclass, school_schoolid=school)
+    		school_allclass.save()
+
+    		print("Class School mapping success.")
+
+                #allclass = create_allclass(class_name=post['class_name'], class_desc=post['class_desc'], class_location=post['class_location'], schoolid=post['schoolid'], studentids=post.getlist('studentids'))
                 return redirect('allclass_list')
         else:
+		print("Class already exists")
                 #Show message that the class name already exists in our database. (For the current organisation)
                 return redirect('allclass_list')
 

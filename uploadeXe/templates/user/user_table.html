@@ -33,7 +33,7 @@
 		window.open(edit, "_self");
             },
             rowUnselect: function(event, data) {
-                $('#messages').puigrowl('show', [{severity:'info', summary: 'Row Unselected', detail: (data.brand + ' ' + data.vin)}]);
+                //$('#messages').puigrowl('show', [{severity:'info', summary: 'Row Unselected', detail: (data.brand + ' ' + data.vin)}]);
             }
    });
   }
@@ -41,8 +41,9 @@
 
 
 </script>
-
+<i>Click a row to edit User</i>
 <div id="tblusers"> </div>
+<a href="/usernew/"><button id="newuser" type="button">New User</button></a>  
 <!--
 <h1>Users</h1>
 Format:
