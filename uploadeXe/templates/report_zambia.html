@@ -4,48 +4,27 @@
 
 <p> Hi. the variables you provided were: </p>
 
-<li> Activity: <i>{{activity}}</i></li>
 <li>Date_since: <i>{{date_since}}</i></li>
 <li>Date_until: <i>{{date_until}}</i></li>
+<li>For user: testuser</li>
 <p></p>
 <!--<p> The endpoint URL for the query is: <i>{{lrs_endpoint}}</i> </p>-->
 <p></p>
 <p> The statements gotten from the above query is: </p>
 
-<div id="mydiv"></div>
-
-<!--
-<p></p>
-<p>The above table is from the below statements</p>
-{% for jd in data.statements %}
-     <li>JSON.statements-{{ forloop.counter }}: {{ jd }} </li>
-     <li></li>
-{% endfor %}
--->
-
-<!-- {{response}} -->
+<!--<div id="mydiv"></div>-->
 
 <script>
         $(function () {
 		var activity = "{{activity}}";
-		console.log("activity is : " + activity);
                 var json_dump = "{{response}}";
                 var statements_dump;
-                //statements_dump = "{{statements}}";
-                console.log("statements_dump is: " + statements_dump);
                 var st;
 
                 if (json_dump !=null && json_dump !=" "){
                         console.log("Getting JSON by variable");
                         st = JSON.parse(json_dump.replace(/u&#39;/g,"\"").replace(/&#39;/g, "\"").replace(/False/g, "false").replace(/True/g, "true"));
-                        console.log("st variable: " + st);
                  }
-
-                 //if (statements_dump.trim() !== null){
-                        //console.log("Getting JSON by JSON");
-                        //st = JSON.parse(statements_dump.replace(/u&#39;/g,"\"").replace(/&#39;/g, "\"").replace(/False/g, "false").replace(/True/g, "true"));
-                        //console.log("st JSON: " + st);
-                 //}
 
                  $("#mydiv").mrjsontable({
                     pageSize: 9,
@@ -64,26 +43,65 @@
                         }),
                         new $.fn.mrjsontablecolumn({
                             heading: "Desc",
-                            data: "desscription",
+                            data: "description",
                         }),
-                        //new $.fn.mrjsontablecolumn({
-                            //heading: "Activity Type",
-                            //data: "",
-                        //})
                     ],
                     data: st
 
                });
            });
 
+</script>
+
+<script type="text/javascript">
+  $(function() { 
+    $('#tblstatements').puidatatable({
+            caption: 'Activity Report',
+            paginator: {
+                rows:10 
+            },
+            columns: [
+                {field:'date_time', headerText: 'Time', sortable:true},
+                {field:'user_name', headerText: 'User', sortable:true},
+		{field:'activity_type', headerText: 'Activity Verb', sortable:true},
+                {field:'interaction_type', headerText: 'Activity Type', sortable:true},
+		{field:'interaction_name', headerText: 'Question', sortable:true},
+		{field:'result_response', headerText: 'Answered', sortable:true},
+		{field:'result_success', headerText: 'Result', sortable:true},
+		//Time Varuna Answered Activity Choice Question
+            ],
+            datasource: [
+                {% if statements_as_json %}
+                        {% for c in statements_as_json %}
+                        	{% with c.result.response as answerid %}
+                                	{% for d in c.object.definition.choices %}
+                                        	{% if answerid in d.id %}
+                                                	{% with d.description.en_US as answerdesc %}
+								{"date_time":"{{c.timestamp}}","user_name":"{{c.actor.name}}","activity_type":"{{c.verb.display.en_US.strip}}", "interaction_type":"{{c.object.objectType}}({{c.object.definition.interactionType}})","interaction_name":"{{c.object.definition.name.en_US.strip}}", "result_response":"{{answerdesc.strip}}", "result_success":"{{c.result.success}}"},
+                                                	{% endwith %}
+                                        	{% endif %}
+                                	{% endfor %}
+                        	{% endwith %}
+                        {% endfor %}
+                {% endif %}
+                ],
+            selectionMode: 'single',
+            rowSelect: function(event, data) {
+                console.log("Wassup?")
+                $('#messages').puigrowl('show', [{severity:'info', summary: 'Row Selected', detail: (data.username + ' ' + data.pk)}]);
+            },
+            rowUnselect: function(event, data) {
+                //$('#messages').puigrowl('show', [{severity:'info', summary: 'Row Unselected', detail: (data.brand + ' ' + data.vin)}]);
+            }
+   });
+  }
+  ); 
 
 
 </script>
+<div id="tblstatements"> </div>
 
 
-
-
-<h3>Thank You</h3>
 
 {% endblock %}
 

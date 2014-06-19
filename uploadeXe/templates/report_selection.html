@@ -5,33 +5,12 @@
     <p class="error"> Sorry, that is not a valid selection</p>
 {% endif %}
 <p></p>
-<i>Select the filters below to generate a report</i>
+<i>Select the filters below to generate a report for testuser</i>
 <p></p>
 
-<!--
-          <div class="well">
-            <input type="text" class="span2" value="02/16/12" data-date-format="mm/dd/yy" id="datepicker" >
-          </div>
-	<script> $("#datepicker").datepicker(); </script>
--->
-<!--
-<div>
-	<input type="text" name="basic_example_1" id="basic_example_1" value="" />
-</div>		
-
--->
 
 <form action="/getreportzambia/" method="POST"> {% csrf_token %}
 
-<!--
-    <div data-role="fieldcontain">
-        <label for="activity">LRS Username:</label><input type="text" name="username" id="username" value="" />
-    </div>
-
-    <div data-role="fieldcontain">
-        <label for="activity">LRS Password:</label><input type="password" name="password" id="password" value="" />
-    </div>
--->
     <div>
         Since:<input type="text" name="since_1" id="since_1" value="" />
     </div>
@@ -47,17 +26,9 @@
     <div style="display: none;">
         <input type="text" name="until_1_alt" id="until_1_alt" value="" style="cursor: pointer;">
     </div>
-<!--
-    <div data-role="fieldcontain">
-        <label for="date_since">Since:</label><input type="date" name="since" id="since" value="" />
-    </div>
-    <div data-role="fieldcontain">
-        <label for="date_until">Until:</label><input type="date" name="until" id="until" value="" />
-    </div>
--->
-    <div data-role="fieldcontain">
+    <!--<div data-role="fieldcontain">
         <label for="activity">Activity:</label><input type="text" name="activity" id="activity" value="" />
-    </div>
+    </div>-->
 
     <button type="submit" name="submit" value="submit-value">Submit</button>
 </form>
@@ -81,4 +52,3 @@
 </script>
 
 {% endblock %}
-
