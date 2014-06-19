@@ -2,9 +2,23 @@
 {% block title %}Edit User{% endblock %}
 {% block content %}
 
+<script>
+	$(function() {  
+            $('#id_username').puiinputtext();  
+	    $('#id_email').puiinputtext();
+  
+            });  
+
+</script>
+
 <form method="post">{% csrf_token %}
     {{ form.as_p }}
     <input type="submit" value="Submit" />
+	<br></br>
+
+        <p><label for="id_username2">Test Username:</label>
+        {{ form.username }}</p>
 </form>
+    
 
 {% endblock %}

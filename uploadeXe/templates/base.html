@@ -3,6 +3,14 @@
 <head>
 	<title>{% block title %}Home{% endblock %} Ustad Mobile Cloud Django</title>
 	<style type="text/css">
+	  body {
+  		margin: 0;
+  		font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  		font-size: 14px;
+  		line-height: 20px;
+  		color: #333333;
+  		background-color: #ffffff;
+	}
 
 	  body{
 		text-align: left;
@@ -38,6 +46,10 @@
 		border-radius: 5px;
 	  }
 	</style>
+
+	<!-- Favicon goes here-->
+	<link rel="icon" href="/media/favicon.ico" type="image/x-icon">
+
 	<!--PrimeUI Stuff-->
 		<link rel="stylesheet" href="{{ MEDIA_URL }}jscss/jqui/themes/base/jquery-ui.css" />
                 <link rel="stylesheet" href="{{ MEDIA_URL }}jscss/primeui/primeui-1.1/themes/aristo/theme.css" />
@@ -45,37 +57,23 @@
                 <script type="text/javascript" src="{{ MEDIA_URL}}jscss/js/jquery-1.11.0.js"></script>
                 <script type="text/javascript" src="{{ MEDIA_URL }}jscss/jqui/ui/jquery-ui.js"></script>
                 <script type="text/javascript" src="{{ MEDIA_URL }}jscss/primeui/primeui-1.1-min.js"></script>
-
 	<!--PrimeUI Stuff ends.-->
-
-    	<link href="{{ MEDIA_URL }}jscss/css/bootstrap.css" rel="stylesheet" type="text/css"/>
-    	<!--<script src="{{ MEDIA_URL }}jscss/js/bootstrap.js"></script>-->
 	
+	<!-- JSON table: MrJSONTable-->
 	<script src="{{ MEDIA_URL }}jscss/js/mrjsontable.js"></script>
 	<link href="{{ MEDIA_URL }}jscss/css/mrjsontable.css" rel="stylesheet" />
 	
-	<!--<script src="{{ MEDIA_URL}}jscss/jqui/ui/jquery.ui.core.js"></script>-->
-
-<!--
-We need this back (backup)
-
-	<script src="{{ MEDIA_URL}}jscss/jqui/ui/minified/jquery-ui.min.js"></script>
-	<script src="{{ MEDIA_URL}}jscss/jqui/ui/jquery.ui.widget.js"></script>
-	<script src="{{ MEDIA_URL}}jscss/jqui/ui/jquery.ui.slider.js"></script>
-	<script src="{{ MEDIA_URL}}jscss/jqui/ui/jquery.ui.datepicker.js"></script>
-	<link rel="stylesheet" href="{{ MEDIA_URL}}jscss/jqui/themes/base/jquery.ui.all.css">
--->
+	<!--jQuery UI TimePicker-->
 	<script src="{{ MEDIA_URL }}jscss/js/jquery-ui-timepicker-addon.js"></script>
         <link rel="stylesheet" href="{{ MEDIA_URL }}jscss/css/jquery-ui-timepicker-addon.css" type="text/css"/>
 	<link rel="stylesheet" href="{{ MEDIA_URL }}jscss/jqui/themes/base/jquery.ui.slider.css">
 
+	<!--Bootstrap-->
+	<link href="{{ MEDIA_URL }}jscss/css/bootstrap.css" rel="stylesheet" type="text/css"/>
 	<script type="text/javascript">
           $(function() { 
                         $('#pm1').puimenu(); 
-			//$('button').puibutton();
-                
-
-	}
+		}
           ); 
 	</script>
 </head>
@@ -84,7 +82,6 @@ We need this back (backup)
 	<div id="header">
 		<p></p>
 		<a href="/"><img src="/media/images/logoUMlong.png" alt="Ustad_Mobile_UMCloud_logo" align=""/></a><i>    (UMCloudDj v0.2.1)</i>
-		<!--<p><i>Welcome to Ustad Mobile Cloud Django (UMCloudDj) v 0.2.1, deja-vu 1992</i></p>-->
 		{% if current_user %}
 			<i>Logged in as: {{current_user}}</i>
 		{% endif %}
@@ -93,7 +90,6 @@ We need this back (backup)
 	<div id="page">
 	<div id="sidebar">
 		{% block sidebar %}
-		<!--<img src="../media/images/logoUMlong.png" alt="Ustad_Mobile_UMCloud_logo"/>-->
 		<ul id="pm1">
 			<li><a data-icon="ui-icon-home" href="/">Home</a></li>
 			<li><a data-icon="ui-icon-power" href="/logout/">Logout</a></li>

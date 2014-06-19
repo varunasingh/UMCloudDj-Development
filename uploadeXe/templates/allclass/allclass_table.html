@@ -20,7 +20,7 @@
             datasource: [
                 {% if allclasses_as_json %}
                         {% for c in allclasses_as_json %}
-                        {"pk":"{{c.pk}}","allclass_name":"{{c.fields.allclass_name}}","allclass_desc":"{{c.fields.allclass_desc}}", "allclass_desc":"{{c.fields.allclass_location}}"}{% if not forloop.last %},{% endif %}
+                        {"pk":"{{c.pk}}","allclass_name":"{{c.fields.allclass_name}}","allclass_desc":"{{c.fields.allclass_desc}}", "allclass_location":"{{c.fields.allclass_location}}"}{% if not forloop.last %},{% endif %}
                         {% endfor %}
                 {% endif %}
                 ],
