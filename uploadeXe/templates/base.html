@@ -3,6 +3,21 @@
 <head>
 	<title>{% block title %}Home{% endblock %} Ustad Mobile Cloud Django</title>
 	<style type="text/css">
+
+	table { table-layout: fixed; width: 100%; }
+table tr { border-bottom:1px solid #e9e9e9; }
+table thead td, th {border-left: 1px solid #f2f2f2; border-right: 1px solid #d5d5d5; background: #ddd url("../images/sprites4.png") repeat-x scroll 0 100% ; font-weight: bold; text-align:left;}
+table tr td, th { border:1px solid #D5D5D5; padding:15px;}
+table tr:hover { background:#fcfcfc;}
+table tr ul.actions {margin: 0;}
+table tr ul.actions li {display: inline; margin-right: 5px;}
+td.last {
+    width: 1px;
+    white-space: nowrap;
+}
+	  span.tab{
+    		padding: 0 80px; /* Or desired space*/
+	  }
 	  body {
   		margin: 0;
   		font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -49,33 +64,39 @@
 
 	<!-- Favicon goes here-->
 	<link rel="icon" href="/media/favicon.ico" type="image/x-icon">
-
 	<!--PrimeUI Stuff-->
-		<link rel="stylesheet" href="{{ MEDIA_URL }}jscss/jqui/themes/base/jquery-ui.css" />
-                <link rel="stylesheet" href="{{ MEDIA_URL }}jscss/primeui/primeui-1.1/themes/aristo/theme.css" />
-                <link rel="stylesheet" href="{{ MEDIA_URL }}jscss/primeui/primeui-1.1-min.css" />
-                <script type="text/javascript" src="{{ MEDIA_URL}}jscss/js/jquery-1.11.0.js"></script>
-                <script type="text/javascript" src="{{ MEDIA_URL }}jscss/jqui/ui/jquery-ui.js"></script>
-                <script type="text/javascript" src="{{ MEDIA_URL }}jscss/primeui/primeui-1.1-min.js"></script>
+		<link rel="stylesheet" href="{{ STATIC_URL }}jscss/jqui/themes/base/jquery-ui.css" />
+                <link rel="stylesheet" href="{{ STATIC_URL }}jscss/primeui/primeui-1.1/themes/aristo/theme.css" />
+                <link rel="stylesheet" href="{{ STATIC_URL }}jscss/primeui/primeui-1.1-min.css" />
+                <script type="text/javascript" src="{{ STATIC_URL}}jscss/js/jquery-1.11.0.js" %}"></script>
+                <script type="text/javascript" src="{{ STATIC_URL }}jscss/jqui/ui/jquery-ui.js"></script>
+                <script type="text/javascript" src="{{ STATIC_URL }}jscss/primeui/primeui-1.1-min.js"></script>
 	<!--PrimeUI Stuff ends.-->
 	
 	<!-- JSON table: MrJSONTable-->
-	<script src="{{ MEDIA_URL }}jscss/js/mrjsontable.js"></script>
-	<link href="{{ MEDIA_URL }}jscss/css/mrjsontable.css" rel="stylesheet" />
+	<script src="{{ STATIC_URL }}jscss/js/mrjsontable.js"></script>
+	<link href="{{ STATIC_URL }}jscss/css/mrjsontable.css" rel="stylesheet" />
 	
 	<!--jQuery UI TimePicker-->
-	<script src="{{ MEDIA_URL }}jscss/js/jquery-ui-timepicker-addon.js"></script>
-        <link rel="stylesheet" href="{{ MEDIA_URL }}jscss/css/jquery-ui-timepicker-addon.css" type="text/css"/>
-	<link rel="stylesheet" href="{{ MEDIA_URL }}jscss/jqui/themes/base/jquery.ui.slider.css">
+	<script src="{{ STATIC_URL }}jscss/js/jquery-ui-timepicker-addon.js"></script>
+        <link rel="stylesheet" href="{{ STATIC_URL }}jscss/css/jquery-ui-timepicker-addon.css" type="text/css"/>
+	<link rel="stylesheet" href="{{ STATIC_URL }}jscss/jqui/themes/base/jquery.ui.slider.css">
 
 	<!--Bootstrap-->
-	<link href="{{ MEDIA_URL }}jscss/css/bootstrap.css" rel="stylesheet" type="text/css"/>
+<!--<link href="{{ STATIC_URL }}jscss/css/bootstrap.css" rel="stylesheet" type="text/css"/>-->
+
+
+	<script src="{{ STATIC_URL }}jscss/dynatable/jquery.dynatable.js"></script>
+	<link rel="stylesheet" href="{{ STATIC_URL }}jscss/dynatable/jquery.dynatable.css" type="text/css"/>
+
 	<script type="text/javascript">
           $(function() { 
                         $('#pm1').puimenu(); 
 		}
           ); 
 	</script>
+
+	{% block scriptjs %}{% endblock %}
 </head>
 
 <body>

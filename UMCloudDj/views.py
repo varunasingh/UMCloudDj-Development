@@ -59,6 +59,31 @@ def role_table(request, template_name='role/role_table.html'):
 
     return render(request, template_name, {'data':data, 'roles_as_json':roles_as_json})
 
+@login_required(login_url='/login/')
+def role_dynatable(request, template_name='table/dynatable.html'):
+    roles=Role.objects.all()
+    data={}
+    data['object_list']=roles;
+    data_as_json=serializers.serialize('json', roles)
+    data_as_json=json.loads(data_as_json)
+    pagetitle="UstadMobile Roles"
+    newtypeid="newrole"
+    newtypelink="/rolenew/"
+    tabletypeid="tblroles"
+    table_headers_html=[]
+    table_headers_name=[]
+    table_headers_html.append("pk")
+    table_headers_name.append("ID")
+    #table_headers_html.append("model");
+    table_headers_html.append("fields.role_name")
+    table_headers_name.append("Role Name")
+    table_headers_html.append("fields.role_desc")
+    table_headers_name.append("Role Desc")
+    table_headers_html = zip(table_headers_html, table_headers_name)
+    logicpopulation = '{"pk":"{{c.pk}}","model":"{{c.model}}", "role_name":"{{c.fields.role_name}}","role_desc":"{{c.fields.role_desc}}"}{% if not forloop.last %},{% endif %}'
+
+    return render(request, template_name, {'data':data, 'data_as_json':data_as_json, 'table_headers_html':table_headers_html, 'pagetitle':pagetitle, 'newtypeid':newtypeid, 'tabletypeid':tabletypeid, 'newtypelink':newtypelink, 'logicpopulation':logicpopulation}, context_instance=RequestContext(request))
+
 
 @login_required(login_url='/login/')
 def role_create(request, template_name='role/role_form.html'):
@@ -206,7 +231,7 @@ def user_delete(request, pk, template_name='user/user_confirm_delete.html'):
 
 
 @login_required(login_url='/login/')
-def get_report_zambia(request, onfail='/reports'):
+def get_report_zambia(request, onfail='/mcqreports'):
     	print("Getting variables..")
     	date_since = request.POST['since_1_alt']
     	date_until = request.POST['until_1_alt']
@@ -804,7 +829,7 @@ def register_view(request):
 	c = {}
 	c.update(csrf(request))
 	#return render_to_response('signup.html', c)
-	return render_to_response('user/user_create_website.html', c)
+	return render_to_response('user/user_create_website.html', c, context_instance=RequestContext(request))
 
 def my_view(request):
         current_user = request.user.username
@@ -818,7 +843,7 @@ def my_view(request):
 def loginview(request):
 	c = {}
 	c.update(csrf(request))
-	return render_to_response('login.html', c)
+	return render_to_response('login.html', c, context_instance=RequestContext(request))
 
 #This is the def that will authenticate the user over the umcloud website
 def auth_and_login(request, onsuccess='/', onfail='/login'):
@@ -901,7 +926,6 @@ def user_exists(username):
     if user_count == 0:
         return False
     return True
-
 """
 #Old sign up page logic
 def sign_up_in(request):
@@ -912,12 +936,13 @@ def sign_up_in(request):
     else:
  	#Show message that the username/email address already exists in our database.
         return redirect("/login/")
+"""
 
 def logout_view(request):
     logout(request)
     return redirect('login')
     #return render_to_response('login.html')
-"""
+
 def sign_up_in(request):
     print("Creating new user from website..")
     post = request.POST
@@ -943,3 +968,22 @@ def secured(request):
 	{'current_user': current_user},
 	context_instance=RequestContext(request)
     )
+
+@login_required(login_url='/login/')
+def upload_view(request):
+    current_user = request.user.username
+    return render_to_response("upload.html", {'current_user': current_user},
+        context_instance=RequestContext(request))
+
+@login_required(login_url='/login/')
+def management_view(request):
+    current_user = request.user.username
+    return render_to_response("manage.html", {'current_user': current_user},
+        context_instance=RequestContext(request))
+
+@login_required(login_url='/login/')
+def reports_view(request):
+    current_user = request.user.username
+    return render_to_response("reports.html", {'current_user': current_user},
+        context_instance=RequestContext(request))
+

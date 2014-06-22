@@ -5,36 +5,66 @@
     <p class="error"> Sorry, that is not a valid entry</p>
 {% endif %}
 
+{% block scriptjs %}
+<script type="text/javascript">
+          $(function() { 
+			$('#username').puiinputtext();
+			$('#email').puiinputtext();
+			$('#password').puiinputtext();
+			$('#first_name').puiinputtext();
+			$('#last_name').puiinputtext();
+			$('#website').puiinputtext();
+			$('#job_title').puiinputtext();
+			$('#company_name').puiinputtext();	
+			$('#submit').puibutton();
+			$('#createuser').puipanel();
+                }
+          ); 
+</script>
+{% endblock %}
 
 <form action="/signup/" id="newuserform" method="post">{% csrf_token %}
     <!--{{ form.as_p }}-->
-    <h1>Create a New User</h1>
-    <div data-role="fieldcontain">
-        <label for="username">Username: &nbsp  </label><input type="text" name="username" id="username" value="" />
+
+    <div id="createuser" title="Create a New User">
+    <p></p>
+
+    <div data-role="fieldcontain" style="padding-bottom:5px">
+        <!--<label for="username">Username: &nbsp  </label>-->
+	<input type="text" name="username" id="username" placeholder="Username" style="height: 30px; width: 250px;" value="" />
     </div>
-    <div data-role="fieldcontain">
-        <label for="email">Email:  &nbsp&nbsp</label><input type="email" name="email" id="email" value="" />
+    <div data-role="fieldcontain" style="padding-bottom:5px">
+        <!--<label for="email">Email:  &nbsp&nbsp</label>-->
+	<input type="email" name="email" id="email" placeholder="Email" style="height: 30px; width: 250px;" value="" />
     </div>
-    <div data-role="fieldcontain">
-        <label for="password">Password:</label><input type="password" name="password" id="password" value="" />
+    <div data-role="fieldcontain" style="padding-bottom:5px">
+        <!--<label for="password">Password:</label>-->
+	<input type="password" name="password" id="password" placeholder="Password" style="height: 30px; width: 250px;" value="" />
     </div>
-    <div data-role="fieldcontain">
-        <label for="first_name">First Name:  </label><input type="text" name="first_name" id="first_name" value="" />
+    <div data-role="fieldcontain" style="padding-bottom:5px">
+        <!--<label for="first_name">First Name:  </label>-->
+	<input type="text" name="first_name" id="first_name" placeholder="First Name" style="height: 30px; width: 250px;" value="" />
     </div>
-    <div data-role="fieldcontain">
-        <label for="last_name">Last Name:  </label><input type="text" name="last_name" id="last_name" value="" />
+    <div data-role="fieldcontain" style="padding-bottom:5px">
+        <!--<label for="last_name">Last Name:  </label>-->
+	<input type="text" name="last_name" id="last_name" placeholder="Last Name" style="height: 30px; width: 250px;" value="" />
     </div>
-    <div data-role="fieldcontain">
-        <label for="last_name">Website:  </label><input type="text" name="website" id="website" value="" />
+    <div data-role="fieldcontain" style="padding-bottom:5px">
+        <!--<label for="last_name">Website:  </label>-->
+	<input type="text" name="website" id="website" placeholder="Website" style="height: 30px; width: 250px;" value="" />
     </div>
-    <div data-role="fieldcontain">
-        <label for="job_title">Job Title:  </label><input type="text" name="job_title" id="job_title" value="" />
+    <div data-role="fieldcontain" style="padding-bottom:5px">
+        <!--<label for="job_title">Job Title:  </label>-->
+	<input type="text" name="job_title" id="job_title" placeholder="Job Title" style="height: 30px; width: 250px;" value="" />
     </div>
-    <div data-role="fieldcontain">
-        <label for="company_name">Organisation name:  </label><input type="text" name="company_name" id="company_name" value="" />
+    <div data-role="fieldcontain" style="padding-bottom:5px">
+        <!--<label for="company_name">Organisation name:  </label>-->
+	<input type="text" name="company_name" id="company_name" placeholder="Organisation Name" style="height: 30px; width: 250px;" value="" />
     </div>
-    <br></br>
-    <input type="submit" value="Create my account" />
+    <p></p>
+	 <button id="submit" type="submit" name="submit" value="Create">Create my account</button>
+    </div>
+
 </form>
 
 

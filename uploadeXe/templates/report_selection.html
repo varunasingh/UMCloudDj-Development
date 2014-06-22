@@ -4,6 +4,19 @@
 {% if form.errors %}
     <p class="error"> Sorry, that is not a valid selection</p>
 {% endif %}
+
+{% block scriptjs %}
+<script type="text/javascript">
+          $(function() { 
+			$('#since_1').puiinputtext();
+			$('#until_1').puiinputtext();
+			$('#submit').puibutton();
+			
+                }
+          ); 
+        </script>
+{% endblock %}
+
 <p></p>
 <i>Select the filters below to generate a report for testuser</i>
 <p></p>
@@ -11,16 +24,18 @@
 
 <form action="/getreportzambia/" method="POST"> {% csrf_token %}
 
-    <div>
-        Since:<input type="text" name="since_1" id="since_1" value="" />
+    <div style="padding-bottom:10px;">
+        <!--Since:-->
+	<input type="text" name="since_1" id="since_1" style="height: 30px; width: 250px;" placeholder="Since" value="" />
     </div>
 
     <div style="display: none;">
     <input type="text" name="since_1_alt" id="since_1_alt" value="" style="cursor: pointer;">
     </div>
 
-    <div >
-        Until:<input type="text" name="until_1" id="until_1" value="" />
+    <div style="padding-bottom:10px;">
+        <!--Until:&nbsp;&nbsp;-->
+	<input type="text" name="until_1" id="until_1" style="height: 30px; width: 250px;" placeholder="Until"  value="" />
     </div>
 
     <div style="display: none;">
@@ -30,7 +45,7 @@
         <label for="activity">Activity:</label><input type="text" name="activity" id="activity" value="" />
     </div>-->
 
-    <button type="submit" name="submit" value="submit-value">Submit</button>
+    <button id="submit" type="submit" name="submit" value="submit-value">Submit</button>
 </form>
 
 <script>

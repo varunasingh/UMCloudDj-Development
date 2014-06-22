@@ -1,13 +1,23 @@
 {% extends "base.html" %}
 {% block title %}UstadMobile Roles{% endblock %}
+{% block scriptjs %}
+<script type="text/javascript">
+          $(function() { 
+                        $('#newrole').puibutton(); 
+                }
+          ); 
+</script>
+{% endblock %}
 {% block content %}
 
 <script type="text/javascript">
   $(function() { 
+
     $('#tblroles').puidatatable({
             caption: 'Roles',
+	    scrollWidth: '75%',
             paginator: {
-                rows: 5
+                rows: 10
             },
             columns: [
                 {field:'pk', headerText: 'ID', sortable:true},
@@ -43,21 +53,6 @@
 <div id="tblroles"> </div>
 <a href="/rolenew/"><button id="newrole" type="button">New Role</button></a>  
                                                                              
-
-
-
-<!--<h1>Roles</h1>
-<ul>
-    {% for role in object_list %}
-    <li>{{ role.name }}  :  
-    <a href="{% url "role_edit" role.id %}">{{ role.role_name }}</a>
-    <a href="{% url "role_delete" role.id %}">  (Delete)</a>
-    </li>
-    {% endfor %}
-</ul>
-
-<a href="{% url "role_new" %}">New</a>-->
-
 
 
 

@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block scriptjs %}
+<script type="text/javascript">
+          $(function() { 
+                        $('#roletable').puibutton(); 
+			$('#usertable').puibutton(); 
+			$('#orgtable').puibutton(); 
+			$('#umpackagetable').puibutton(); 
+			$('#schooltable').puibutton(); 
+			$('#allclasstable').puibutton(); 
+			$('#dynatableroles').puibutton();
+                }
+          ); 
+</script>
+{% endblock %}
+
+{% block content %}
+<h2>Manage Models and Relationships</h2> <img src="/media/images/user-home.png" align="right">
+<p><i>Here are your options for management</i></p> 
+     <div id="toolbarbottom" class="toolbar" >
+	<ul>
+		<a href="/rolestable/"><button id="roletable" type="button"style="width:200px;height:100px;" >Manage Roles</button></a>
+		<a href="/userstable/"><button id="usertable" type="button" style="width:200px;height:100px;">Manage Users</button></a>
+		<a href="/organisationstable/"><button id="orgtable" type="button"style="width:200px;height:100px;">Manage Org</button></a>
+		<a href="/umpackagestable/"><button id="umpackagetable" type="button"style="width:200px;height:100px;">Manage Subscription</button></a>
+		<a href="/schoolstable/"><button id="schooltable" type="button"style="width:200px;height:100px;">Manage Schools</button></a>
+		<a href="/allclassestable/"><button id="allclasstable" type="button"style="width:200px;height:100px;">Manage Classes</button></a>
+		<a href="/dynatableroles/"><button id="dynatableroles" type="button"style="width:200px;height:100px;">Dynatable Roles</button></a>
+
+	</ul>
+    </div>
+
+{% endblock %}

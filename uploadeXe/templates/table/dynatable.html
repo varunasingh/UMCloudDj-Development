@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}{{pagetitle}}{% endblock %}
+{% block scriptjs %}
+<script type="text/javascript">
+          $(function() { 
+
+			var newtypeid="{{newtypeid}}";
+                        $('#{{newtypeid}}').puibutton(); 
+			$(function() { 
+        			$('#{{tabletypeid}}').dynatable({
+        				dataset: {
+        				records:[
+                				{% if data_as_json %}
+                        				{% for c in data_as_json %}
+								{"pk":"{{c.pk}}","model":"{{c.model}}", "fields.role_name":"{{c.fields.role_name}}","fields.role_desc":"{{c.fields.role_desc}}"}{% if not forloop.last %},{% endif %}
+                        				{% endfor %}
+                				{% endif %}
+                				]
+        				}
+    				});
+  			});
+
+	});
+</script>
+{% endblock %}
+{% block content %}
+
+
+                                                                             
+<table id="{{tabletypeid}}">
+  <thead>
+    {% for d, f in table_headers_html %}
+	<th data-dynatable-column="{{d}}" >{{f}}</th>
+    {% endfor %}
+  </thead>
+  <tbody>
+  </tbody>
+</table>
+
+<i>Click a row to edit a Role</i>
+<br></br>
+<a href="{{newtypelink}}"><button id="{{newtypeid}}" type="button">New</button></a>
+<br></br>
+
+
+
+{% endblock %}

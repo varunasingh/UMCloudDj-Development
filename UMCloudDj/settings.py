@@ -136,7 +136,10 @@ STATIC_ROOT = os.path.join(PROJECT_ROOT, 'static')
 
 STATIC_URL = '/static/'
 
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, "static"),
+)
+
 #Added by Varuna Singh 13012014
 # URL of the login page
 LOGIN_URL = '/login/'
-

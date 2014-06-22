@@ -1,27 +1,44 @@
 {% extends "base.html" %}
 {% block title %}Login {% endblock %}
+
+{% block scriptjs %}
+<script type="text/javascript">
+          $(function() { 
+			$('#email').puiinputtext();
+			$('#password').puiinputtext();
+			$('#loginpanel').puipanel(); 
+			$('#submit').puibutton();
+			$('#register').puibutton();
+                }
+          ); 
+</script>
+{% endblock %}
+
+
 {% block content %}
-{% if form.errors %}
-    <p class="error"> Sorry, that is not a valid username/password</p>
-{% endif %}
-<p></p>
-<i>Login below to use Ustad Mobile Cloud Django</i>
-<p></p>
-<form action="/auth/" method="POST"> {% csrf_token %}
-    <div data-role="fieldcontain">
-        <!--<label for="email">Email:</label><input type="email" name="email" id="email" value="" />-->
-	<label for="email">Email:</label><input name="email" id="email" value="" />
-    </div>
-    <div data-role="fieldcontain">
-        <label for="password">Password:</label><input type="password" name="password" id="password" value="" />
-    </div>    
-    <button type="submit" name="submit" value="submit-value">Sign in</button>
-</form>
-<br></br>
-<!--
-<i>Registration link removed. Please make an account with us. Contact us at ustadmobile.com</i>-->
-<i>Click register to create a new basic account with us</i>
-<form action="/register/">
-	<input type="submit" value="Register">
-</form>
+
+	{% if form.errors %}
+    		<p class="error"> Sorry, that is not a valid username/password</p>
+	{% endif %}
+	
+	<form action="/auth/" method="POST"> {% csrf_token %}
+		<div id="loginpanel" title="Log in to Ustad Mobile Cloud">  
+		<div data-role="fieldcontain">
+                <label for="email">Username: &nbsp;</label><input type="text" name="email" id="email" value="" />
+                </div>
+                <div data-role="fieldcontain">
+                <label for="password">Password:&nbsp;&nbsp;&nbsp;</label><input type="password" name="password" id="password" value="" />
+                </div>
+		<p></p>
+                <button id="submit" type="submit" name="submit" value="submit-value">Sign in</button>
+
+		</div>  
+	</form>
+
+	<br></br>
+	<i>Click register to create a new basic account with us</i>
+	<form action="/register/">
+		<button id="register" type="submit" name="register" value="Register">Register</button>
+	</form>
+
 {% endblock %}

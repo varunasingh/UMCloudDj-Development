@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block scriptjs %}
+<script type="text/javascript">
+          $(function() { 
+                        $('#uploadelp').puibutton(); 
+                }
+          ); 
+</script>
+{% endblock %}
+
+{% block content %}
+<h2>Upload Ustad Mobile Courses (eXe)</h2> <img src="/media/images/user-home.png" align="right">
+<p><i></i></p> 
+     <div id="toolbarbottom" class="toolbar" >
+	<ul>
+                <a href="/uploadeXe/"><button id="uploadelp" type="button"style="width:200px;height:100px"> Upload & View eXe elp courses</button></a>
+
+	</ul>
+    </div>
+
+{% endblock %}

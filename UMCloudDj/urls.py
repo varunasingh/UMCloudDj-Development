@@ -21,8 +21,12 @@ from django.contrib import admin
 #UMCloudDj.uploadeXe
 
 urlpatterns = patterns('',
+	url(r'^upload/', 'UMCloudDj.views.upload_view'),
+	url(r'^management/', 'UMCloudDj.views.management_view'),
+	url(r'^reports/', 'UMCloudDj.views.reports_view'),
+
 	url(r'^getreportzambia/', 'UMCloudDj.views.get_report_zambia'),
-	url(r'^reports/$', 'UMCloudDj.views.report_selection_view', name='reports'),
+	url(r'^mcqreports/$', 'UMCloudDj.views.report_selection_view', name='mcqreports'),
 	url(r'^jsonurltest/$', 'UMCloudDj.views.readjsonfromlrs_view', name='jsonurltest'),
 	url(r'^jsontest/$', 'UMCloudDj.views.readjsonfromrequest_view', name='jsontest'),
 	url(r'^sendtestlog/$', 'UMCloudDj.views.sendtestlog_view', name='sendtestlog'),
@@ -78,10 +82,14 @@ urlpatterns = patterns('',
         url(r'^allclassedit/(?P<pk>\d+)$', 'allclass.views.allclass_update', name='allclass_edit'),
         url(r'^allclassdelete/(?P<pk>\d+)$', 'allclass.views.allclass_delete', name='allclass_delete'),
 
+	url(r'^dynatableroles/$', 'UMCloudDj.views.role_dynatable', name='role_dynatable'),
+
 
 	#url(r'^progressbarupload/', include('progressbarupload.urls')),
 
  	#For upload feature. Need both for file upload. The second one re directs to the url and first one does somehting related to that. 
 	(r'^uploadeXe/', include('uploadeXe.urls')),
 	(r'^uploadeXe/$', RedirectView.as_view(url='/uploadeXe/list/')), # Just for ease of use.
+
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+

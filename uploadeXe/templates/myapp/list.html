@@ -2,6 +2,15 @@
 
 {% block title %}Upload eXe course {% endblock %}
 
+{% block scriptjs %} 
+<script type="text/javascript">
+          $(function() { 
+                        $('#submit').puibutton(); 
+                }
+          ); 
+</script>
+{% endblock %}
+
 {% block content %}
 		
 		<script type="text/JavaScript">
@@ -21,7 +30,7 @@
 		{% if documents %}
 			<ul>
 			{% for document in documents %}
-				<li><a href="{{ document.url }}" target="_blank">{{ document.name }}</a></li>
+				<li style="list-style-type: none;"><img src="{{ MEDIA_URL}}images/education-edutainment-2.png"/><a href="{{ document.url }}" target="_blank">&nbsp;{{ document.name }}</a></li>
 				<dd>
 					<li>Course ID: {{ document.id }}</li>
 				</dd>
@@ -43,8 +52,8 @@
 				<input id="id_exefile" name="exefile" type="file" accept=".elp" >
 				
 			</p>
-			<!--<p><input type="submit" value="Upload" onclick="TestFileType(this.form.exefile.value, ['.elp'])"/></p>-->
-			<p><input type="submit" value="Upload" /></p>
+			<button id="submit" type="submit" name="submit" value="upload">Upload</button>
 		</form>
-		<i>Enter in the Course ID to download course in the Ustad Mobile Android/Blackberry/Apple iOS/Windows Phone Apps</i>
+		<p></p>
+		<i>Enter in the Course ID to download course in the Ustad Mobile Phone Apps</i>
 {% endblock %}
