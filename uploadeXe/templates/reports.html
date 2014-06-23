@@ -1,11 +1,20 @@
 {% extends "base.html" %}
-
+{% block scriptjs %}
+<script type="text/javascript">
+          $(function() { 
+                        $('#mcqreports').puibutton(); 
+			$('#statementsreports').puibutton(); 
+                }
+          ); 
+</script>
+{% endblock %}
 {% block content %}
 <h2>Ustad Mobile Reporting</h2> <img src="/media/images/user-home.png" align="right">
 <p><i>Click on the reports available to view</i></p> 
      <div id="toolbarbottom" class="toolbar" >
 	<ul>
-		<a href="/mcqreports/"><button id="default" type="button"style="width:200px;height:100px">MCQ Usage Report</button></a>
+		<a href="/mcqreports/"><button id="mcqreports" type="button"style="width:200px;height:100px">MCQ Usage Report</button></a>
+		<a href="/statementsreports/"><button id="statementsreports" type="button"style="width:200px;height:100px">Statements Report</button></a>
 	</ul>
     </div>
 

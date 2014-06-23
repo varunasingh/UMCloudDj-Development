@@ -26,6 +26,8 @@ urlpatterns = patterns('',
 	url(r'^reports/', 'UMCloudDj.views.reports_view'),
 
 	url(r'^getreportzambia/', 'UMCloudDj.views.get_report_zambia'),
+	url(r'getreportstatements/', 'UMCloudDj.views.get_report_statements'),
+        url(r'statementsreports/$', 'UMCloudDj.views.report_statements_view'),
 	url(r'^mcqreports/$', 'UMCloudDj.views.report_selection_view', name='mcqreports'),
 	url(r'^jsonurltest/$', 'UMCloudDj.views.readjsonfromlrs_view', name='jsonurltest'),
 	url(r'^jsontest/$', 'UMCloudDj.views.readjsonfromrequest_view', name='jsontest'),

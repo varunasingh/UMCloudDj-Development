@@ -228,6 +228,43 @@ def user_delete(request, pk, template_name='user/user_confirm_delete.html'):
 ####################################
 
 
+@login_required(login_url='/login/')
+def get_report_statements(request, onfail='/statementsreports'):
+	print("Getting variables..")
+        date_since = request.POST['since_1_alt']
+        date_until = request.POST['until_1_alt']
+        #activity = request.POST['activity']
+        print("Got variables. They are: ")
+        print(date_since)
+        print(date_until)
+        #Code for report making here.
+        umlrs = "http://svr2.ustadmobile.com:8001/xAPI/statements" #Should be part of 
+        #lrs_endpoint = umlrs + "?" + "&since=" + date_since + "&until=" + date_until + "&activity=" + activity
+        lrs_endpoint = umlrs + "?" + "&since=" + date_since + "&until=" + date_until
+        #BASIC AUTHENTICATION
+        username="testuser"
+        #username = request.POST['username']
+        password="testpassword"
+        #password = request.POST['password']
+        #Username and password to be in sync or already known by Django. For now using the only test account on the TinCan LRS.
+
+        req = urllib2.Request(lrs_endpoint)
+        base64string = base64.encodestring('%s:%s' % (username, password)).replace('\n', '')
+        req.add_header("Authorization", "Basic %s" % base64string)
+        req.add_header("X-Experience-API-Version", "1.0.1")
+        #GETTING JSON String from URL
+        jdata_string = urllib2.urlopen(req).read() #gets string..
+        jdata_string = jdata_string.replace('en-US', 'en_US')
+        jdata = json.dumps(jdata_string) #puts in a JSON string  #JSON encoding
+        data = json.loads(jdata_string) #puts in a JSON #JSON decoding # to a python dictionary
+        print(data['statements'])
+        print("Going one by one..")
+        statements_as_json = data['statements']
+
+        return render_to_response("report_statements.html", {'date_since':date_since , 'date_until':date_until , 'data':data , 'lrs_endpoint':lrs_endpoint ,'statements_as_json':statements_as_json }, context_instance=RequestContext(request))
+
+
+
 
 
 @login_required(login_url='/login/')
@@ -282,6 +319,11 @@ def report_selection_view(request):
         c.update(csrf(request))
         #return render_to_response('report_selection.html', c) #Somehow messes with the css and includes of scripts. This is not such sensitive data, so leaving.
 	return render(request, "report_selection.html")
+
+def report_statements_view(request):
+	c = {}
+	c.update(csrf(request))
+	return render(request, "report_statements_selection.html")
 
 def elptestresults_selection_view(request):
 	c= {}
