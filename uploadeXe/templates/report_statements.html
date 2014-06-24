@@ -21,24 +21,16 @@
                 rows:10 
             },
             columns: [
-                {field:'date_time', headerText: 'Time', sortable:true},
                 {field:'user_name', headerText: 'User', sortable:true},
 		{field:'activity_type', headerText: 'Activity Verb', sortable:true},
                 {field:'interaction_type', headerText: 'Activity Type', sortable:true},
+		{field:'date_time', headerText: 'Time', sortable:true},
 		//Time Varuna Answered Activity Choice Question
             ],
             datasource: [
                 {% if statements_as_json %}
                         {% for c in statements_as_json %}
-                        	{% with c.result.response as answerid %}
-                                	{% for d in c.object.definition.choices %}
-                                        	{% if answerid in d.id %}
-                                                	{% with d.description.en_US as answerdesc %}
-								{"date_time":"{{c.timestamp}}","user_name":"{{c.actor.name}}","activity_type":"{{c.verb.display.en_US.strip}}", "interaction_type":"{{c.object.objectType}}({{c.object.definition.interactionType}})"},
-                                                	{% endwith %}
-                                        	{% endif %}
-                                	{% endfor %}
-                        	{% endwith %}
+				{"date_time":"{{c.timestamp}}","user_name":"{{c.actor.name}}","activity_type":"{{c.verb.display.en_US.strip}}", "interaction_type":"{{c.object.objectType}}({{c.object.definition.name.en_US.strip}})"},
                         {% endfor %}
                 {% endif %}
                 ],
