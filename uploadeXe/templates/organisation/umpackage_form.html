@@ -1,10 +1,24 @@
 {% extends "base.html" %}
+{% block scriptjs %}
+<script type="text/javascript">
+          $(function() { 
+                        $('#id_package_name').puiinputtext();
+                        $('#id_package_desc').puiinputtext();
+                        $('#id_max_students').puiinputtext();
+                        $('#id_max_publishers').puiinputtext();
+                        $('#id_price_rate_permonth').puiinputtext();
+                        $('#submit').puibutton();
+                }
+          ); 
+</script>
+{% endblock %}
+
 {% block title %}Edit UMCloud Package Subscription{% endblock %}
 {% block content %}
 
 <form method="post">{% csrf_token %}
     {{ form.as_p }}
-    <input type="submit" value="Submit" />
+    <button id="submit" type="submit" name="submit" value="Create">Submit</button>
 </form>
 
 {% endblock %}

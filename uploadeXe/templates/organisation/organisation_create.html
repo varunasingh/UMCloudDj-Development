@@ -1,4 +1,15 @@
 {% extends "base.html" %}
+{% block scriptjs %}
+<script type="text/javascript">
+          $(function() { 
+                        $('#organisation_name').puiinputtext();
+                        $('#organisation_desc').puiinputtext();
+                        $('#umpackage').puidropdown();
+                        $('#submit').puibutton();
+                }
+          ); 
+</script>
+{% endblock %}
 {% block title %}Add an Organisation {% endblock %}
 {% block content %}
 
@@ -10,14 +21,13 @@
     <div data-role="fieldcontain">
         <label for="organisation_desc">Organisation Desc:  </label><input type="text" name="organisation_desc" id="organisation_desc" value="" />
     </div>
-   Billing Package: <select form="neworganisationform" name="umpackageid">
+   <label>Billing Package:</label> <select id="umpackage" form="neworganisationform" name="umpackageid">
         {% for umpackage in object_list %}
         <option value="{{ umpackage.id }}">{{ umpackage.package_name }}</option>
         {% endfor %}
    </select>
    <br></br>
-
-    <input type="submit" value="Submit" />
+    <button id="submit" type="submit" name="submit" value="Create">Submit</button>
 </form>
 
 

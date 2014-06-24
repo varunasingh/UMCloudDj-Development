@@ -1,38 +1,62 @@
 {% extends "base.html" %}
+{% block scriptjs %}
+<script type="text/javascript">
+          $(function() { 
+                        $('#username').puiinputtext();
+                        $('#email').puiinputtext();
+                        $('#password').puiinputtext();
+                        $('#first_name').puiinputtext();
+                        $('#last_name').puiinputtext();
+                        //$('#website').puiinputtext();
+                        //$('#job_title').puiinputtext();
+                        //$('#company_name').puiinputtext();      
+                        $('#submit').puibutton();
+                        $('#createuser').puipanel();
+			$('#role').puidropdown();
+			$('#organisation').puidropdown();
+                }
+          ); 
+</script>
+{% endblock %}
 {% block title %}UstadMobile App Unit Test Report {% endblock %}
 {% block content %}
 
 <form id="newuserform" method="post">{% csrf_token %}
     <!--{{ form.as_p }}-->
-    <h1>Create a New User</h1>
-    <div data-role="fieldcontain">
-        <label for="username">Username: &nbsp  </label><input type="text" name="username" id="username" value="" />
+    <div id="createuser" title="Create a New User">
+    <div data-role="fieldcontain" style="padding-bottom:5px">
+        <!--<label for="username">Username: &nbsp  </label>-->
+        <input type="text" name="username" id="username" placeholder="Username" style="height: 30px; width: 250px;" value="" />
     </div>
-    <div data-role="fieldcontain">
-        <label for="email">Email:  &nbsp&nbsp</label><input type="email" name="email" id="email" value="" />
+    <div data-role="fieldcontain" style="padding-bottom:5px">
+        <!--<label for="email">Email:  &nbsp&nbsp</label>-->
+        <input type="email" name="email" id="email" placeholder="Email" style="height: 30px; width: 250px;" value="" />
     </div>
-    <div data-role="fieldcontain">
-        <label for="password">Password:</label><input type="password" name="password" id="password" value="" />
+    <div data-role="fieldcontain" style="padding-bottom:5px">
+        <!--<label for="password">Password:</label>-->
+        <input type="password" name="password" id="password" placeholder="Password" style="height: 30px; width: 250px;" value="" />
     </div>
-    <div data-role="fieldcontain">
-        <label for="first_name">First Name:  </label><input type="text" name="first_name" id="first_name" value="" />
+    <div data-role="fieldcontain" style="padding-bottom:5px">
+        <!--<label for="first_name">First Name:  </label>-->
+        <input type="text" name="first_name" id="first_name" placeholder="First Name" style="height: 30px; width: 250px;" value="" />
     </div>
-    <div data-role="fieldcontain">
-        <label for="last_name">Last Name:  </label><input type="text" name="last_name" id="last_name" value="" />
+    <div data-role="fieldcontain" style="padding-bottom:5px">
+        <!--<label for="last_name">Last Name:  </label>-->
+        <input type="text" name="last_name" id="last_name" placeholder="Last Name" style="height: 30px; width: 250px;" value="" />
     </div>
-    Role: <select form="newuserform" name="role">
+    Role: <select id="role" form="newuserform" name="role">
         {% for role in object_list %}
         <option value="{{ role.id }}">{{ role.role_name }}</option>
         {% endfor %}
    </select>
-   Organisation: <select form="newuserform" name="organisation">
+   Organisation: <select id="organisation" form="newuserform" name="organisation">
         {% for organisation in organisation_list %}
         <option value="{{ organisation.id }}">{{ organisation.organisation_name }}</option>
         {% endfor %}
    </select>
    <br></br>
-
-    <input type="submit" value="Submit" />
+    <button id="submit" type="submit" name="submit" value="Create">Create my account</button>
+    </div>
 </form>
 
 

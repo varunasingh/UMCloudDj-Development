@@ -6,18 +6,31 @@
 	$(function() {  
             $('#id_username').puiinputtext();  
 	    $('#id_email').puiinputtext();
-  
+	    $('#id_password').puiinputtext();
+	    $('#id_first_name').puiinputtext();
+	    $('#id_last_name').puiinputtext();
+  	    $('#submit').puibutton();
+	    $('#deleteuser').puibutton();
             });  
 
 </script>
 
 <form method="post">{% csrf_token %}
-    {{ form.as_p }}
-    <input type="submit" value="Submit" />
-	<br></br>
+    <!--{{ form.as_p }}-->
 
-        <p><label for="id_username2">Test Username:</label>
-        {{ form.username }}</p>
+        <label>Username:</label>
+        {{ form.username }}<p></p>
+	<label>Password:</label>
+	{{form.password}}<p></p>
+	<label>Email address:</label>
+	{{form.email}}<p></p>
+	<label>First Name:</label>
+	{{form.first_name}}<p></p>
+	<label>Last Name:</label>
+	{{form.last_name}}<p></p>
+	<button id="submit" type="submit" name="submit" value="submit-value">Update</button>
+	<a href="/userdelete/{{form.id}}"><button id="deleteuser" type="button">Delete User</button></a>
+	
 </form>
     
 

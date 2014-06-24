@@ -3,6 +3,17 @@ from django.contrib.auth.models import User
 from django.contrib import auth
 import xmlrpclib as xmlrpc 	#Used for authenticating against wordpress using xmlrpc client
 
+#Testing..
+from uploadeXe.models import Role
+from uploadeXe.models import User_Roles
+from django.forms import ModelForm
+from organisation.models import Organisation
+from organisation.models import UMCloud_Package
+from organisation.models import User_Organisations
+from users.models import UserProfile
+from django import forms
+
+
 # Name my backend 'MyCustomBackend'
 class MyCustomBackend:
 
@@ -44,6 +55,18 @@ class MyCustomBackend:
     			user.set_password(password)
     			user.save()
 			print("User created!")
+
+			student_role = Role.objects.get(pk=6)
+    			new_role_mapping = User_Roles(name="customauth-wordpress", user_userid=user, role_roleid=student_role)
+    			new_role_mapping.save()
+			print("User role mapping created for new user from custom authentication backend: ustadmobile.com wordpress")
+	
+    			individual_organisation = Organisation.objects.get(pk=1)
+    			new_organisation_mapping = User_Organisations(user_userid=user, organisation_organisationid=individual_organisation)
+    			new_organisation_mapping.save()
+			print("User organisation mappting created for new user from custom authentication backend: ustadmobile.com wordpress")
+
+
         		#return auth_and_login(request)
 			return user;
     		else:

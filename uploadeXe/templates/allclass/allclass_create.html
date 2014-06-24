@@ -12,6 +12,13 @@
 			},
 		{% endfor %}];
           $(function() { 
+			$('#class_name').puiinputtext();
+        		$('#class_desc').puiinputtext();
+        		$('#class_location').puiinputtext();
+			$('#school').puidropdown();
+			$('#teacher').puidropdown();
+			$('#submit').puibutton();
+
 			$('#selectstudentsfornewallclass').puipicklist({  
     				effect: 'clip',  
     				showSourceControls: true,  
@@ -42,32 +49,18 @@
     <div data-role="fieldcontain">
         <label for="class_location">Class Location:  </label><input type="text" name="class_location" id="class_location" value="" />
     </div>
-   Associative School: <select form="newclassform" name="schoolid">
+   <label>Associative School:</label> <select id="school" form="newclassform" name="schoolid">
         {% for school in object_list %}
         <option value="{{ school.id }}">{{ school.school_name }}</option>
         {% endfor %}
    </select>
    <p></p>
-   Teacher in charge: <select form="newclassform" name="teacherid">
+   <label>Teacher in charge:</label> <select id="teacher" form="newclassform" name="teacherid">
         	{% for teacher in teacher_list %}
-        	<option value="{{ teacher.id }}">{{ teacher.first_name }} {{teacher.last_name}} ({{ teacher.email }})</option>
+        	<option value="{{ teacher.id }}">{{ teacher.first_name }} {{teacher.last_name}} </option>
         	{% endfor %}
    </select>
    <p></p>
-   <!--- Make this multi select and figure that thing out.. -->
-   <!--
-   Students: <select form="newclassform" name="studentid">
-        	{% for student in student_list %}
-        	<option value="{{ student.id }}">{{ student.first_name }} {{student.last_name}} ({{student.email}})</option>
-        	{% endfor %}
-   </select>
-   <p></p>
-   Select Students: <select multiple="multiple"  name="studentids" id="studentids" >
-    {% for student in student_list %}
-    	<option value="{{student.id}}">{{student.first_name}} {{student.last_name}} ({{student.email}})</option>
-    {% endfor %}
-   </select>
--->
    <h3>Select Students Picklist</h3>  
 <div id="selectstudentsfornewallclass" >  
     <select multiple="multiple" id="source" name="source">  
@@ -77,7 +70,7 @@
 </div>  
    <br></br>
 
-    <input type="submit" value="Submit" />
+    <button id="submit" type="submit" name="submit" value="Create">Submit</button>
 </form>
 
 

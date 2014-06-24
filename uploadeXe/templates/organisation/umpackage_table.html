@@ -1,4 +1,13 @@
 {% extends "base.html" %}
+{% block scriptjs %}
+<script type="text/javascript">
+          $(function() { 
+                        $('#newumpackage').puibutton();
+                }
+          ); 
+</script>
+{% endblock %}
+
 {% block title %}Manage UMCloud Packages {% endblock %}
 {% block content %}
 
