@@ -16,12 +16,13 @@
                 {field:'organisation_name', headerText: 'Organisation Name', sortable:true},
                 {field:'organisation_desc', headerText: 'Organisation Desc', sortable:true},
                 {field:'add_date', headerText: 'Date Added', sortable:true},
+		{field:'set_package', headerText: 'Subscription', sortable:true},
 
             ],
             datasource: [
                 {% if organisations_as_json %}
                         {% for c in organisations_as_json %}
-                        {"pk":"{{c.pk}}","model":"{{c.model}}","organisation_name":"{{c.fields.organisation_name}}", "organisation_desc":"{{c.fields.organisation_desc}}","add_date":"{{c.fields.add_date}}"}{% if not forloop.last %},{% endif %}
+                        {"pk":"{{c.pk}}","model":"{{c.model}}","organisation_name":"{{c.fields.organisation_name}}", "organisation_desc":"{{c.fields.organisation_desc}}","add_date":"{{c.fields.add_date}}","set_package":"{{c.fields.set_package}}"}{% if not forloop.last %},{% endif %}
                         {% endfor %}
                 {% endif %}
                 ],

@@ -14,7 +14,6 @@ from django.forms import ModelForm
 from organisation.models import Organisation
 from organisation.models import UMCloud_Package
 from organisation.models import User_Organisations
-from organisation.models import Organisation_Package
 
 from django.http import HttpResponse
 from django.shortcuts import render
@@ -38,27 +37,27 @@ class OrganisationForm(ModelForm):
 def organisation_list(request, template_name='organisation/organisation_list.html'):
     organisations = Organisation.objects.all()
     organisation_packages = []
-    for organisation in organisations:
-	umpackage = Organisation_Package.objects.get(organisation_organisationid=organisation).set_package
-	organisation_packages.append(umpackage)
+    #for organisation in organisations:
+	#umpackage = Organisation_Package.objects.get(organisation_organisationid=organisation).set_package
+	#organisation_packages.append(umpackage)
 
 
     data = {}
-    #data['object_list'] = organisations
-    data['object_list'] = zip(organisations,organisation_packages)
+    data['object_list'] = organisations
+    #data['object_list'] = zip(organisations,organisation_packages)
     data['umpackage_list'] = organisation_packages
     return render(request, template_name, data)
 
 def organisation_table(request, template_name='organisation/organisation_table.html'):
     organisations = Organisation.objects.all()
     organisation_packages = []
-    for organisation in organisations:
-        umpackage = Organisation_Package.objects.get(organisation_organisationid=organisation).set_package
-        organisation_packages.append(umpackage)
+    #for organisation in organisations:
+        #umpackage = Organisation_Package.objects.get(organisation_organisationid=organisation).set_package
+        #organisation_packages.append(umpackage)
 
     data = {}
-    #data['object_list'] = organisations
-    data['object_list'] = zip(organisations,organisation_packages)
+    data['object_list'] = organisations
+    #data['object_list'] = zip(organisations,organisation_packages)
     data['umpackage_list'] = organisation_packages
     organisations_as_json = serializers.serialize('json', organisations)
     organisations_as_json =json.loads(organisations_as_json)
@@ -73,13 +72,9 @@ def organisation_exists(name):
     return True
 
 def create_organisation(organisation_name, organisation_desc, umpackageid):
-    organisation = Organisation(organisation_name=organisation_name, organisation_desc=organisation_desc)
-    organisation.save()
     umpackage = UMCloud_Package.objects.get(pk=umpackageid)
-
-    #Create UMCloud Package - Organisation mapping
-    organisation_package = Organisation_Package(organisation_organisationid=organisation, set_package=umpackage)
-    organisation_package.save()
+    organisation = Organisation(organisation_name=organisation_name, organisation_desc=organisation_desc, set_package=umpackage)
+    organisation.save()
 
     print("Organisation Package mapping success.")
     return organisation
@@ -96,10 +91,11 @@ def organisation_create(request, template_name='organisation/organisation_create
         if not organisation_exists(post['organisation_name']):
                 print("Creating the organisation..")
 		organisation = create_organisation(organisation_name=post['organisation_name'], organisation_desc=post['organisation_desc'], umpackageid=post['umpackageid'])
-                return redirect('organisation_list')
+                return redirect('organisation_table')
+		#Set users
         else:
                 #Show message that the username/email address already exists in our database.
-                return redirect('organisation_list')
+                return redirect('organisation_table')
 
     return render(request, template_name, data)
 

@@ -1798,7 +1798,7 @@ if(this.options.showSourceControls){this.element.prepend(this._createListControl
 c<d.length;
 c++){var a=d[c];
 if(a.label){b.append('<option value="'+a.value+'">'+a.label+"</option>")
-}else{b.append('<option value="'+a+'">'+a+"</option>")
+}else{b.append('<option value="'+a.id+'">'+a+"</option>")
 }}},_createList:function(d,b,c,e){d.wrap('<div class="ui-helper-hidden"></div>');
 var a=$('<div class="pui-picklist-listwrapper '+b+'"></div>'),f=$('<ul class="ui-widget-content pui-picklist-list pui-inputtext"></ul>');
 if(this.options.filter){a.append('<div class="pui-picklist-filter-container"><input type="text" class="pui-picklist-filter" /><span class="ui-icon ui-icon-search"></span></div>');

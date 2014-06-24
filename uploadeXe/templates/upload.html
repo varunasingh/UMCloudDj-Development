@@ -3,7 +3,9 @@
 {% block scriptjs %}
 <script type="text/javascript">
           $(function() { 
+			$('#viewelp').puibutton();
                         $('#uploadelp').puibutton(); 
+			$('#manageelp').puibutton();
                 }
           ); 
 </script>
@@ -14,7 +16,9 @@
 <p><i></i></p> 
      <div id="toolbarbottom" class="toolbar" >
 	<ul>
-                <a href="/uploadeXe/"><button id="uploadelp" type="button"style="width:200px;height:100px"> Upload & View eXe elp courses</button></a>
+                <a href="/uploadeXe/"><button id="viewelp" type="button"style="width:200px;height:100px">View courses</button></a>
+		<a href="/uploadeXe/new"><button id="uploadelp" type="button"style="width:200px;height:100px">Upload a course</button></a>
+		<a href="/manageeXe/"><button id="manageelp" type="button"style="width:200px;height:100px">Manage Course</button></a>
 
 	</ul>
     </div>

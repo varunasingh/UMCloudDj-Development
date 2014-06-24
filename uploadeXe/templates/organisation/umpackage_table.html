@@ -22,7 +22,7 @@
             datasource: [
                 {% if umpackages_as_json %}
                         {% for c in umpackages_as_json %}
-                        {"pk":"{{c.pk}}","package_name":"{{c.package_name}}","package_desc":"{{c.fields.package_desc}}", "max_students":"{{c.fields.max_students}}","max_publishers":"{{c.fields.max_publishers}}", "price_rate_permonth":"{{c.fields.price_rate_permonth}}"}{% if not forloop.last %},{% endif %}
+                        {"pk":"{{c.pk}}","package_name":"{{c.fields.package_name}}","package_desc":"{{c.fields.package_desc}}", "max_students":"{{c.fields.max_students}}","max_publishers":"{{c.fields.max_publishers}}", "price_rate_permonth":"{{c.fields.price_rate_permonth}}"}{% if not forloop.last %},{% endif %}
                         {% endfor %}
                 {% endif %}
                 ],

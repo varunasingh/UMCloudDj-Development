@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block scriptjs %}
+<script type="text/javascript">
+          $(function() { 
+                        $('#submit').puibutton(); 
+			$('#id_success').puiinputtext();
+			$('#id_name').puiinputtext();
+			$('#id_url').puiinputtext();
+			$('#id_publisher').puidropdown();
+			$('#id_students').puiinputtext();
+                }
+          ); 
+</script>
+{% endblock %}
+
+{% block title %}Edit Course{% endblock %}
+{% block content %}
+
+<form method="post">{% csrf_token %}
+    <!--{{ form.as_p }}-->
+
+     <label>Name</label>
+     {{form.name}}
+     <label>URL</label>
+     {{form.url}}
+     <label>SUCCESS</label>
+     {{form.success}}
+     <label>PUBLISHER</label>
+     {{form.publisher}}
+     <label>Students</label>
+     {{form.students}}
+     <br></br>
+    <button id="submit" type="submit" name="submit" value="submit-value">Update</button>
+</form>
+
+
+{% endblock %}

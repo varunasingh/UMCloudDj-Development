@@ -5,7 +5,8 @@
 {% block scriptjs %} 
 <script type="text/javascript">
           $(function() { 
-                        $('#submit').puibutton(); 
+                        $('#newelp').puibutton(); 
+			$('#manageelp').puibutton();
                 }
           ); 
 </script>
@@ -40,20 +41,7 @@
 			<p>No documents.</p>
 		{% endif %}
 
-		<!-- Upload form. Note enctype attribute! -->
-		<form action="{% url "list" %}" method="post" enctype="multipart/form-data">
-			{% csrf_token %}
-			 <img src="/media/images/address-book-new-3-medium.png" align="right">
-			<p>{{ form.non_field_errors }}</p>
-			<p>{{ form.exefile.label_tag }} {{ form.exefile.help_text }}</p>
-			<p>
-				{{ form.exefile.errors }}
-				<!--{{ form.exefile }}-->
-				<input id="id_exefile" name="exefile" type="file" accept=".elp" >
-				
-			</p>
-			<button id="submit" type="submit" name="submit" value="upload">Upload</button>
-		</form>
 		<p></p>
-		<i>Enter in the Course ID to download course in the Ustad Mobile Phone Apps</i>
+		<a href="/uploadeXe/new"><button id="newelp" type="button">Upload New</button></a>
+		<a href="/manageeXe/"><button id="manageelp" type="button">Manage Above</button></a>
 {% endblock %}

@@ -1,15 +1,37 @@
 from django.shortcuts import render
 # -*- coding: utf-8 -*-
-from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
 
+from django.shortcuts import render_to_response, redirect, get_object_or_404 #Added 404
+
 import os 
 #UMCloudDj.uploadeXe
 from uploadeXe.models import Document
 from uploadeXe.forms import ExeUploadForm
+#Testing..
+from django.forms import ModelForm
+from organisation.models import Organisation
+from organisation.models import UMCloud_Package
+from organisation.models import User_Organisations
+from school.models import School
+from allclass.models import Allclass
+from uploadeXe.models import Role
+from uploadeXe.models import User_Roles
+from django.contrib.auth.models import User
+
+
+from django.http import HttpResponse
+from django.shortcuts import render
+from django.core import serializers
+import datetime
+import time
+import os
+import urllib
+import urllib2, base64, json
+
 
 def my_view(request):
 	current_user = request.user.username
@@ -20,14 +42,88 @@ def my_view(request):
         	context_instance=RequestContext(request)
 	)
 
+class DocumentForm(ModelForm):
+    class Meta:
+        model = Document
+	fields = ('name','url','success','publisher','students')
+	
+
+
 @login_required(login_url='/login/')
-def list(request):
+def manage(request, template_name='myapp/manage.html'):
+    documents = Document.objects.filter(publisher=request.user, success="YES")
+    current_user = request.user.username
+    courses_as_json = serializers.serialize('json', documents)
+    courses_as_json = json.loads(courses_as_json)
+
+    return render(request, template_name, {'courses_as_json':courses_as_json})
+
+@login_required(login_url='/login/')
+def edit(request, pk, template_name='myapp/update.html'):
+    print("HERE DUDE")
+    document = get_object_or_404(Document, pk=pk)
+    form = DocumentForm(request.POST or None, instance=document)
+    if form.is_valid():
+	form.save()
+	return redirect('list')
+    return render(request, template_name, {'form':form})
+
+@login_required(login_url='/login/')
+def new(request, template_name='myapp/new.html'):
     # Handle file upload
     print("Current User logged in is: " + request.user.email)
+
+    teacher_role = Role.objects.get(pk=5)
+    student_role = Role.objects.get(pk=6)
+
+    teachers = User.objects.filter(pk__in=User_Roles.objects.filter(role_roleid=teacher_role).values_list('user_userid', flat=True))
+
+    students = User.objects.filter(pk__in=User_Roles.objects.filter(role_roleid=student_role).values_list('user_userid', flat=True))
+    data = {}
+    data['teacher_list'] = teachers
+    data['student_list'] = students
+
+    current_user = request.user.username
+    # Render list page with the documents and the form
+    return render_to_response(
+        template_name,
+        {'student_list':data['student_list'],'current_user': current_user},
+        context_instance=RequestContext(request)
+    )
+
+
+@login_required(login_url='/login/')
+def list(request, template_name='myapp/list.html'):
+    # Handle file upload
+    print("Current User logged in is: " + request.user.email)
+
+    teacher_role = Role.objects.get(pk=5)
+    student_role = Role.objects.get(pk=6)
+
+    teachers = User.objects.filter(pk__in=User_Roles.objects.filter(role_roleid=teacher_role).values_list('user_userid', flat=True))
+
+    students = User.objects.filter(pk__in=User_Roles.objects.filter(role_roleid=student_role).values_list('user_userid', flat=True))
+    data = {}
+    data['teacher_list'] = teachers
+    data['student_list'] = students
+
     if request.method == 'POST':
+	post = request.POST;
         form = ExeUploadForm(request.POST, request.FILES)
         if form.is_valid():
             newdoc = Document(exefile = request.FILES['exefile'])
+            
+	    teacher_role = Role.objects.get(pk=5)
+    	    student_role = Role.objects.get(pk=6)
+    	    teachers = User.objects.filter(pk__in=User_Roles.objects.filter(role_roleid=teacher_role).values_list('user_userid', flat=True))
+    	    students = User.objects.filter(pk__in=User_Roles.objects.filter(role_roleid=student_role).values_list('user_userid', flat=True))
+    	    data = {}
+            data['teacher_list'] = teachers
+    	    data['student_list'] = students
+	    studentidspicklist=post.getlist('target')
+            print("students selected from picklist:")
+            print(studentidspicklist)
+
 	    uid = str(getattr(newdoc, 'exefile'))
 	    print("File name to upload:")
 	    print(uid)
@@ -35,7 +131,16 @@ def list(request):
             #Get the file and run eXe command 
   	    #Get url / path
 	    setattr (newdoc, 'url', 'bull')
+	    setattr (newdoc, 'publisher', request.user)
             newdoc.save()
+
+            for everystudentid in studentidspicklist:
+		print("Looping student:")
+                print(everystudentid)
+                currentstudent=User.objects.get(pk=everystudentid)
+                newdoc.students.add(currentstudent)
+                newdoc.save() 
+ 
 	    os.system("echo Current location:")
             os.system("pwd")
 	    uid = str(getattr(newdoc, 'exefile'))
@@ -60,7 +165,7 @@ def list(request):
 	    		courseURL = '/media/eXeExport' + '/' + unid + '/' + uidwe + '/' + 'deviceframe.html'
 	    		setattr(newdoc, 'url', courseURL)
  	    		setattr(newdoc, 'name', uidwe)
-	    		setattr(newdoc, 'userid', request.user.id)
+	    		setattr(newdoc, 'publisher', request.user)
 	    		newdoc.save()
 			print("Starting grunt process..")
 			os.system('mv ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/ustadmobile-settings.js ' +  appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/ustadmobile-settings.js.origi')
@@ -117,13 +222,13 @@ def list(request):
        form = ExeUploadForm() # A empty, unbound form
 
     # Load documents for the list page
-    documents = Document.objects.filter(userid=request.user.id, success="YES")
+    documents = Document.objects.filter(publisher=request.user, success="YES")
     current_user = request.user.username
 
     # Render list page with the documents and the form
     return render_to_response(
-        'myapp/list.html',
-        {'documents': documents, 'form': form, 'current_user': current_user},
+        template_name,
+        {'student_list':data['student_list'] ,'documents': documents, 'form': form, 'current_user': current_user},
         context_instance=RequestContext(request)
     )
 

@@ -13,9 +13,7 @@ from django.forms import ModelForm
 from organisation.models import Organisation
 from organisation.models import UMCloud_Package
 from organisation.models import User_Organisations
-from organisation.models import Organisation_Package
 from school.models import School
-from school.models import Organisation_Schools
 
 from django.http import HttpResponse
 from django.shortcuts import render
@@ -38,13 +36,13 @@ class SchoolForm(ModelForm):
 def school_list(request, template_name='school/school_list.html'):
     schools = School.objects.all()
     organisation_schools = []
-    for school in schools:
-	organisation = Organisation_Schools.objects.get(school_schoolid=school).organisation_organisationid
-	organisation_schools.append(organisation)
+    #for school in schools:
+	#organisation = Organisation_Schools.objects.get(school_schoolid=school).organisation_organisationid
+	#organisation_schools.append(organisation)
 
     data = {}
     data['object_list'] = schools
-    data['object_list'] = zip(schools, organisation_schools)
+    #data['object_list'] = zip(schools, organisation_schools)
     data['orgschools_list'] = organisation_schools
     return render(request, template_name, data)
 
@@ -52,13 +50,13 @@ def school_list(request, template_name='school/school_list.html'):
 def school_table(request, template_name='school/school_table.html'):
     schools = School.objects.all()
     organisation_schools = []
-    for school in schools:
-        organisation = Organisation_Schools.objects.get(school_schoolid=school).organisation_organisationid
-        organisation_schools.append(organisation)
+    #for school in schools:
+        #organisation = Organisation_Schools.objects.get(school_schoolid=school).organisation_organisationid
+        #organisation_schools.append(organisation)
 
     data = {}
     data['object_list'] = schools
-    data['object_list'] = zip(schools, organisation_schools)
+    #data['object_list'] = zip(schools, organisation_schools)
     data['orgschools_list'] = organisation_schools
     schools_as_json = serializers.serialize('json', schools)
     schools_as_json =json.loads(schools_as_json)
@@ -76,15 +74,11 @@ def school_exists(name):
 @login_required(login_url='/login/')
 def create_school(school_name, school_desc, organisationid):
     print("Creating school object")
-    school = School(school_name=school_name, school_desc=school_desc)
-    school.save()
-
     print("Creating organisation school mapping..")
     organisation = Organisation.objects.get(pk=organisationid)
 
-    #Create Organisation - School mapping
-    organisation_school = Organisation_Schools(school_schoolid=school, organisation_organisationid=organisation)
-    organisation_school.save()
+    school = School(school_name=school_name, school_desc=school_desc, organisation=organisation)
+    school.save()
 
     print("Organisation School mapping success.")
     return school
@@ -115,16 +109,12 @@ def school_create(request, template_name='school/school_create.html'):
 			school_name = post['school_name']
 			school_desc = post['school_desc']
 			organisationid = post['organisationid']
-    			school = School(school_name=school_name, school_desc=school_desc)
+			currentorganisation=Organisation.objects.get(pk=organisationid)
+    			school = School(school_name=school_name, school_desc=school_desc, organisation=currentorganisation)
     			school.save()
     
     			print("Creating organisation school mapping..")
-    			organisation = Organisation.objects.get(pk=organisationid)
     
-    			#Create Organisation - School mapping
-    			organisation_school = Organisation_Schools(school_schoolid=school, organisation_organisationid=organisation)
-    			organisation_school.save()
-
     			print("Organisation School mapping success.")
 
                 	#school = create_school(school_name=post['school_name'], school_desc=post['school_desc'], organisationid=post['organisationid'])

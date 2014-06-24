@@ -15,11 +15,8 @@ from django.forms import ModelForm
 from organisation.models import Organisation
 from organisation.models import UMCloud_Package
 from organisation.models import User_Organisations
-from organisation.models import Organisation_Package
 from school.models import School
-from school.models import Organisation_Schools
 from allclass.models import Allclass
-from allclass.models import School_Allclasses
 from uploadeXe.models import Role
 from uploadeXe.models import User_Roles
 
@@ -44,13 +41,13 @@ class AllclassForm(ModelForm):
 def allclass_list(request, template_name='allclass/allclass_list.html'):
     allclasses = Allclass.objects.all()
     school_allclasses = []
-    for allclass in allclasses:
-        school = School_Allclasses.objects.get(allclass_classid=allclass).school_schoolid
-        school_allclasses.append(school)
+    #for allclass in allclasses:
+        #school = School_Allclasses.objects.get(allclass_classid=allclass).school_schoolid
+        #school_allclasses.append(school)
 
     data = {}
     data['object_list'] = allclasses
-    data['object_list'] = zip(allclasses, school_allclasses)
+    #data['object_list'] = zip(allclasses, school_allclasses)
     data['school_list'] = school_allclasses
     return render(request, template_name, data)
 
@@ -60,8 +57,9 @@ def allclass_table(request, template_name='allclass/allclass_table.html'):
     allclasses = Allclass.objects.all()
     school_allclasses = []
     for allclass in allclasses:
-        school = School_Allclasses.objects.get(allclass_classid=allclass).school_schoolid
-        school_allclasses.append(school)
+	school_name=allclass.school.school_name
+        #school = School_Allclasses.objects.get(allclass_classid=allclass).school_schoolid
+        school_allclasses.append(school_name)
 
     data = {}
     data['object_list'] = allclasses
@@ -82,13 +80,8 @@ def allclass_create(request, template_name='allclass/allclass_create.html'):
     student_role = Role.objects.get(pk=6)
     
     teachers = User.objects.filter(pk__in=User_Roles.objects.filter(role_roleid=teacher_role).values_list('user_userid', flat=True))
-    print("TEACHERS")
-    print(teachers)
 
     students = User.objects.filter(pk__in=User_Roles.objects.filter(role_roleid=student_role).values_list('user_userid', flat=True))
-    print("STUDENTS")
-    print(students)
-
     data = {}
     data['object_list'] = schools
     data['teacher_list'] = teachers
@@ -106,18 +99,33 @@ def allclass_create(request, template_name='allclass/allclass_create.html'):
 		class_desc=post['class_desc']
 		class_location=post['class_location']
 		schoolid=post['schoolid']
-		studentids=post.getlist('studentids')
-		print("student ids: ")
-    		print(studentids)
-    		allclass = Allclass(allclass_name=class_name, allclass_desc=class_desc, allclass_location=class_location)
+		teacherid=post['teacherid']
+
+		studentidspicklist=post.getlist('target')
+		print("students selected from picklist:")
+		print(studentidspicklist)
+
+		currentschool = School.objects.get(pk=schoolid)
+		
+    		allclass = Allclass(allclass_name=class_name, allclass_desc=class_desc, allclass_location=class_location,school=currentschool)
     		allclass.save()
     		school = School.objects.get(pk=schoolid)
+		print("Class School mapping success.")
 
-    		#Create Class - School mapping
-    		school_allclass = School_Allclasses(allclass_classid=allclass, school_schoolid=school)
-    		school_allclass.save()
 
-    		print("Class School mapping success.")
+		print("Class Students mapping success.")
+
+		#Create Class - StudentS mapping
+		for everystudentid in studentidspicklist:
+			print("Looping student:")
+			print(everystudentid)
+			currentstudent=User.objects.get(pk=everystudentid)
+			allclass.students.add(currentstudent)
+			allclass.save()
+
+		currentteacher=User.objects.get(pk=teacherid)
+		allclass.teachers.add(currentteacher)
+		allclass.save()
 
                 #allclass = create_allclass(class_name=post['class_name'], class_desc=post['class_desc'], class_location=post['class_location'], schoolid=post['schoolid'], studentids=post.getlist('studentids'))
                 return redirect('allclass_list')
@@ -151,21 +159,5 @@ def allclass_exists(name):
     if allclass_count == 0:
         return False
     return True
-
-@login_required(login_url='/login/')
-def create_allclass(class_name, class_desc, class_location, schoolid, studentids):
-    print("student ids: ")
-    print(studentids)
-    allclass = Allclass(allclass_name=class_name, allclass_desc=class_desc, allclass_location=class_location)
-    allclass.save()
-    school = School.objects.get(pk=schoolid)
-
-    #Create Class - School mapping
-    school_allclass = School_Allclasses(allclass_classid=allclass, school_schoolid=school)
-    school_allclass.save()
-
-    print("Class School mapping success.")
-    return allclass
-
 
 # Create your views here.

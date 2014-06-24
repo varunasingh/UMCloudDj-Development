@@ -221,7 +221,7 @@ button.pui-button::-moz-focus-inner{border:0;padding:0;}.pui-chkbox{display:inli
 .pui-panel.pui-panel-collapsed-h .pui-panel-title{display:none;}.pui-password-panel{padding:4px 10px;width:150px;margin-top:2px;}
 .pui-password-panel .pui-password-meter{height:10px;background:transparent url("../../images/password-meter.png") no-repeat left top;padding:0;margin:0;}
 .pui-password-info{margin-top:4px;}
-.pui-password-panel-overlay{position:absolute;}.pui-picklist .pui-picklist-listwrapper{float:left;width:150px;}
+.pui-password-panel-overlay{position:absolute;}.pui-picklist .pui-picklist-listwrapper{float:left;width:300px;}
 .pui-picklist .pui-picklist-list{list-style-type:none;margin:0;padding:0;overflow:auto;height:200px;}
 .pui-picklist .pui-picklist-buttons{float:left;margin:48px 10px 0 10px;padding:0;}
 .pui-picklist .pui-picklist-list li{margin:1px;padding:2px;}

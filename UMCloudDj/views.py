@@ -522,6 +522,7 @@ def sendelpfile_view(request):
             		#Get the file and run eXe command
             		#Get url / path
             		setattr (newdoc, 'url', 'bull')
+			setattr (newdoc, 'publisher', request.user)
             		newdoc.save()
             		os.system("echo Current location:")
             		os.system("pwd")
@@ -550,7 +551,7 @@ def sendelpfile_view(request):
                         		courseURL = '/media/eXeExport' + '/' + unid + '/' + uidwe + '/' + 'deviceframe.html'
                         		setattr(newdoc, 'url', courseURL)
                         		setattr(newdoc, 'name', uidwe)
-                        		setattr(newdoc, 'userid', request.user.id)
+                        		setattr(newdoc, 'publisher', request.user)
                         		newdoc.save()
                         		print("Starting grunt process..")
 
@@ -823,10 +824,7 @@ def showelptestresults_view(request):
 def getcourse_view(request):
 	courseid = request.GET.get('id')
 	print("The course id requested is: " + courseid)
-	#return render_to_response(
-	#documents = Document.objects.filter(userid=request.user.id)
 	matchedCourse = Document.objects.filter(id=str(courseid)).get(id=str(courseid))
-	#Use get when you want to get a single object. Use filter when you want to get a list.
 	if matchedCourse:
 		print("Course exists!")
 		#print(matchedCourse.username)

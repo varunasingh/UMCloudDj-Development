@@ -14,12 +14,13 @@
                 //{field:'model', headerText: 'Django Model', sortable:true},
                 {field:'school_name', headerText: 'School Name', sortable:true},
                 {field:'school_desc', headerText: 'Desc', sortable:true},
+		{field:'organisation', headerText: 'Org', sortable:true},
 
             ],
             datasource: [
                 {% if schools_as_json %}
                         {% for c in schools_as_json %}
-                        {"pk":"{{c.pk}}", "school_name":"{{c.fields.school_name}}","school_desc":"{{c.fields.school_desc}}"}{% if not forloop.last %},{% endif %}
+                        {"pk":"{{c.pk}}", "school_name":"{{c.fields.school_name}}","school_desc":"{{c.fields.school_desc}}", "organisation":"{{c.fields.organisation}}"}{% if not forloop.last %},{% endif %}
                         {% endfor %}
                 {% endif %}
                 ],
