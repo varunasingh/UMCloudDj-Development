@@ -12,46 +12,6 @@
 <p></p>
 <p> The statements gotten from the above query is: </p>
 
-<!--<div id="mydiv"></div>-->
-
-<script>
-        $(function () {
-		var activity = "{{activity}}";
-                var json_dump = "{{response}}";
-                var statements_dump;
-                var st;
-
-                if (json_dump !=null && json_dump !=" "){
-                        console.log("Getting JSON by variable");
-                        st = JSON.parse(json_dump.replace(/u&#39;/g,"\"").replace(/&#39;/g, "\"").replace(/False/g, "false").replace(/True/g, "true"));
-                 }
-
-                 $("#mydiv").mrjsontable({
-                    pageSize: 9,
-                    columns: [
-                        new $.fn.mrjsontablecolumn({
-                            heading: "Date/Time",
-                            data: "timestamp"
-                        }),
-                        new $.fn.mrjsontablecolumn({
-                            heading: "User",
-                            data: "user",
-                        }),
-                        new $.fn.mrjsontablecolumn({
-                            heading: "Activity Verb",
-                            data: "verb",
-                        }),
-                        new $.fn.mrjsontablecolumn({
-                            heading: "Desc",
-                            data: "description",
-                        }),
-                    ],
-                    data: st
-
-               });
-           });
-
-</script>
 
 <script type="text/javascript">
   $(function() { 
@@ -77,7 +37,7 @@
                                 	{% for d in c.object.definition.choices %}
                                         	{% if answerid in d.id %}
                                                 	{% with d.description.en_US as answerdesc %}
-								{"date_time":"{{c.timestamp}}","user_name":"{{c.actor.name}}","activity_type":"{{c.verb.display.en_US.strip}}", "interaction_type":"{{c.object.objectType}}({{c.object.definition.interactionType}})","interaction_name":"{{c.object.definition.name.en_US.strip}}", "result_response":"{{answerdesc.strip}}", "result_success":"{{c.result.success}}"},
+									{"date_time":"{{c.timestamp}}","user_name":"{{c.actor.name}}","activity_type":"{{c.verb.display.en_US.strip}}", "interaction_type":"{{c.object.objectType}}({{c.object.definition.interactionType}})","interaction_name":"{{c.object.definition.name.en_US.strip}}", "result_response":"{{answerdesc.strip}}", "result_success":"{{c.result.success}}"},
                                                 	{% endwith %}
                                         	{% endif %}
                                 	{% endfor %}

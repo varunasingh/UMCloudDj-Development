@@ -299,20 +299,9 @@ def get_report_zambia(request, onfail='/mcqreports'):
 	print(data['statements'])
 	print("Going one by one..")
 	statements_as_json = data['statements']
-	response = []
-	for ja in data['statements']:
-		#if ja['object']['id'] == activity:
-		if ja['object']['id'] != None:
-			print("statement's timestamp")
-			print(ja['timestamp'])
-			#response.append({'timestamp':ja.timestamp, 'user': ja.actor.name, 'response': ja.result.response, 'success': ja.result.success, 'correctResponsePattern': ja.object.correctResponsesPattern})
-			response.append({'timestamp':ja['timestamp'], 'user':ja['actor']['name'], 'verb':ja['verb']['display']['en_US'], 'description':ja['object']['definition']['interactionType'] })
-	print("The response is:")
-	print(response)
-
 	##play with the data now.
 
-    	return render_to_response("report_zambia.html", {'date_since':date_since , 'date_until':date_until , 'data':data , 'lrs_endpoint':lrs_endpoint , 'response':response, 'statements_as_json':statements_as_json }, context_instance=RequestContext(request))
+    	return render_to_response("report_zambia.html", {'date_since':date_since , 'date_until':date_until , 'data':data , 'lrs_endpoint':lrs_endpoint ,'statements_as_json':statements_as_json }, context_instance=RequestContext(request))
 
 def report_selection_view(request):
 	c = {}
