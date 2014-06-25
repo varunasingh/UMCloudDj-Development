@@ -1,4 +1,16 @@
 {% extends "base.html" %}
+{% block scriptjs %}
+<script type="text/javascript">
+          $(function() { 
+                        $('#school_name').puiinputtext();
+                        $('#school_desc').puiinputtext();
+                        $('#organisation').puidropdown();
+                        $('#submit').puibutton();
+                }
+          ); 
+</script>
+{% endblock %}
+
 {% block title %}Add a School {% endblock %}
 {% block content %}
 
@@ -10,14 +22,14 @@
     <div data-role="fieldcontain">
         <label for="school_desc">School Desc:  </label><input type="text" name="school_desc" id="school_desc" value="" />
     </div>
-   Organisation: <select form="newschoolform" name="organisationid">
+   <label>Organisation:</label> <select id="organisation" form="newschoolform" name="organisationid">
         {% for organisation in object_list %}
         <option value="{{ organisation.id }}">{{ organisation.organisation_name }}</option>
         {% endfor %}
    </select>
    <br></br>
 
-    <input type="submit" value="Submit" />
+    <button id="submit" type="submit" name="submit" value="Create">Submit</button>
 </form>
 
 

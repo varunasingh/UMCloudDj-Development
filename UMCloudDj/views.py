@@ -90,7 +90,7 @@ def role_create(request, template_name='role/role_form.html'):
     form = RoleForm(request.POST or None)
     if form.is_valid():
         form.save()
-        return redirect('role_list')
+        return redirect('role_table')
     return render(request, template_name, {'form':form})
 
 @login_required(login_url='/login/')
@@ -99,7 +99,7 @@ def role_update(request, pk, template_name='role/role_form.html'):
     form = RoleForm(request.POST or None, instance=role)
     if form.is_valid():
         form.save()
-        return redirect('role_list')
+        return redirect('role_table')
     return render(request, template_name, {'form':form})
 
 @login_required(login_url='/login/')
@@ -107,7 +107,7 @@ def role_delete(request, pk, template_name='role/role_confirm_delete.html'):
     role = get_object_or_404(Role, pk=pk)    
     if request.method=='POST':
         role.delete()
-        return redirect('role_list')
+        return redirect('role_table')
     return render(request, template_name, {'object':role})
 
 #@login_required(login_url='/login/')
@@ -199,10 +199,10 @@ def user_create(request, template_name='user/user_create.html'):
 	if not user_exists(post['email']):
 		print("Creating the user..")
         	user = create_user_more(username=post['username'], email=post['email'], password=post['password'], first_name=post['first_name'], last_name=post['last_name'], roleid=post['role'], organisationid=post['organisation'])
-		return redirect('user_list')
+		return redirect('user_table')
     	else:
         	#Show message that the username/email address already exists in our database.
-        	return redirect('user_list')
+        	return redirect('user_table')
 
     return render(request, template_name, data)
 
@@ -211,9 +211,11 @@ def user_create(request, template_name='user/user_create.html'):
 def user_update(request, pk, template_name='user/user_update.html'):
     user = get_object_or_404(User, pk=pk)
     form = UserForm(request.POST or None, instance=user)
+    form.fields['username'].widget.attrs['readonly']=True
+
     if form.is_valid():
         form.save()
-        return redirect('user_list')
+        return redirect('user_table')
     return render(request, template_name, {'form':form})
 
 @login_required(login_url='/login/')
@@ -221,7 +223,7 @@ def user_delete(request, pk, template_name='user/user_confirm_delete.html'):
     user = get_object_or_404(User, pk=pk)
     if request.method=='POST':
         user.delete()
-        return redirect('user_list')
+        return redirect('user_table')
     return render(request, template_name, {'object':user})
 
 #@login_required(login_url='/login/')

@@ -128,11 +128,11 @@ def allclass_create(request, template_name='allclass/allclass_create.html'):
 		allclass.save()
 
                 #allclass = create_allclass(class_name=post['class_name'], class_desc=post['class_desc'], class_location=post['class_location'], schoolid=post['schoolid'], studentids=post.getlist('studentids'))
-                return redirect('allclass_list')
+                return redirect('allclass_table')
         else:
 		print("Class already exists")
                 #Show message that the class name already exists in our database. (For the current organisation)
-                return redirect('allclass_list')
+                return redirect('allclass_table')
 
     return render(request, template_name, data)
 
@@ -142,7 +142,7 @@ def allclass_update(request, pk, template_name='allclass/allclass_form.html'):
     form = AllclassForm(request.POST or None, instance=allclass)
     if form.is_valid():
         form.save()
-        return redirect('allclass_list')
+        return redirect('allclass_table')
     return render(request, template_name, {'form':form})
 
 @login_required(login_url='/login/')
@@ -150,7 +150,7 @@ def allclass_delete(request, pk, template_name='allclass/allclass_confirm_delete
     allclass = get_object_or_404(Allclass, pk=pk)
     if request.method=='POST':
         allclass.delete()
-        return redirect('allclass_list')
+        return redirect('allclass_table')
     return render(request, template_name, {'object':allclass})
 
 @login_required(login_url='/login/')

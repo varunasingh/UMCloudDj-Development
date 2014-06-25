@@ -1,10 +1,23 @@
 {% extends "base.html" %}
+{% block scriptjs %}
+<script type="text/javascript">
+          $(function() { 
+                        $('#id_allclass_name').puiinputtext();
+                        $('#id_allclass_desc').puiinputtext();
+                        $('#id_allclass_location').puiinputtext();
+		        $('#id_school').puidropdown();
+			
+                        $('#submit').puibutton();
+                }
+          ); 
+</script>
+{% endblock %}
 {% block title %}Edit Class{% endblock %}
 {% block content %}
 
 <form method="post">{% csrf_token %}
     {{ form.as_p }}
-    <input type="submit" value="Submit" />
+    <button id="submit" type="submit" name="submit" value="Create">Submit</button>
 </form>
 
 {% endblock %}

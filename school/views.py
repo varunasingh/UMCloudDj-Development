@@ -36,13 +36,8 @@ class SchoolForm(ModelForm):
 def school_list(request, template_name='school/school_list.html'):
     schools = School.objects.all()
     organisation_schools = []
-    #for school in schools:
-	#organisation = Organisation_Schools.objects.get(school_schoolid=school).organisation_organisationid
-	#organisation_schools.append(organisation)
-
     data = {}
     data['object_list'] = schools
-    #data['object_list'] = zip(schools, organisation_schools)
     data['orgschools_list'] = organisation_schools
     return render(request, template_name, data)
 
@@ -50,13 +45,8 @@ def school_list(request, template_name='school/school_list.html'):
 def school_table(request, template_name='school/school_table.html'):
     schools = School.objects.all()
     organisation_schools = []
-    #for school in schools:
-        #organisation = Organisation_Schools.objects.get(school_schoolid=school).organisation_organisationid
-        #organisation_schools.append(organisation)
-
     data = {}
     data['object_list'] = schools
-    #data['object_list'] = zip(schools, organisation_schools)
     data['orgschools_list'] = organisation_schools
     schools_as_json = serializers.serialize('json', schools)
     schools_as_json =json.loads(schools_as_json)
@@ -117,17 +107,14 @@ def school_create(request, template_name='school/school_create.html'):
     
     			print("Organisation School mapping success.")
 
-                	#school = create_school(school_name=post['school_name'], school_desc=post['school_desc'], organisationid=post['organisationid'])
-                	return redirect('school_list')
+                	return redirect('school_table')
         	else:
                 	#Show message that the school name already exists in our database.
-                	return redirect('school_list')
+                	return redirect('school_table')
 	#except:
 	else:
 		#pass
 		print('Something went wrong')
-	#return('school_list')
-	
 
     return render(request, template_name, data)
 
@@ -137,7 +124,7 @@ def school_update(request, pk, template_name='school/school_form.html'):
     form = SchoolForm(request.POST or None, instance=school)
     if form.is_valid():
         form.save()
-        return redirect('school_list')
+        return redirect('school_table')
     return render(request, template_name, {'form':form})
 
 @login_required(login_url='/login/')
@@ -145,7 +132,7 @@ def school_delete(request, pk, template_name='school/school_confirm_delete.html'
     school = get_object_or_404(School, pk=pk)
     if request.method=='POST':
         school.delete()
-        return redirect('school_list')
+        return redirect('school_table')
     return render(request, template_name, {'object':school})
 
 # Create your views here.

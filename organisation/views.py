@@ -100,29 +100,19 @@ def organisation_create(request, template_name='organisation/organisation_create
     return render(request, template_name, data)
 
 
-
-
-    """
-    form = OrganisationForm(request.POST or None)
-    if form.is_valid():
-        form.save()
-        return redirect('organisation_list')
-    return render(request, template_name, {'form':form})
-    """
-
 def organisation_update(request, pk, template_name='organisation/organisation_form.html'):
     organisation = get_object_or_404(Organisation, pk=pk)
     form = OrganisationForm(request.POST or None, instance=organisation)
     if form.is_valid():
         form.save()
-        return redirect('organisation_list')
+        return redirect('organisation_table')
     return render(request, template_name, {'form':form})
 
 def organisation_delete(request, pk, template_name='organisation/organisation_confirm_delete.html'):
     organisation = get_object_or_404(Organisation, pk=pk)
     if request.method=='POST':
         organisation.delete()
-        return redirect('organisation_list')
+        return redirect('organisation_table')
     return render(request, template_name, {'object':organisation})
 
 ####################################
@@ -154,7 +144,7 @@ def umpackage_create(request, template_name='organisation/umpackage_form.html'):
     form = UMCloud_PackageForm(request.POST or None)
     if form.is_valid():
         form.save()
-        return redirect('umpackage_list')
+        return redirect('umpackage_table')
     return render(request, template_name, {'form':form})
 
 def umpackage_update(request, pk, template_name='organisation/umpackage_form.html'):
@@ -162,14 +152,14 @@ def umpackage_update(request, pk, template_name='organisation/umpackage_form.htm
     form = UMCloud_PackageForm(request.POST or None, instance=umpackage)
     if form.is_valid():
         form.save()
-        return redirect('umpackage_list')
+        return redirect('umpackage_table')
     return render(request, template_name, {'form':form})
 
 def umpackage_delete(request, pk, template_name='organisation/umpackage_confirm_delete.html'):
     umpackage = get_object_or_404(UMCloud_Package, pk=pk)
     if request.method=='POST':
         umpackage.delete()
-        return redirect('umpackage_list')
+        return redirect('umpackage_table')
     return render(request, template_name, {'object':umpackage})
 
 ####################################
