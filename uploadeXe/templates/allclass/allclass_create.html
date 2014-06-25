@@ -8,7 +8,7 @@
 			{ "id" : "{{ student.id }}",
    			"name" : "{{ student.first_name }} {{ student.last_name}}",
    			"email" : "{{ student.email }}",
-			"display" : "{{student.id}}|{{student.first_name}} {{student.last_name}}"
+			"display" : "{{student.first_name}}({{student.username}})"
 			},
 		{% endfor %}];
           $(function() { 
@@ -28,7 +28,7 @@
     				filter: true,  
     				sourceData:students_map,  
     				content: function(option) {  
-        				return '<img src="/media/' + "user" + '.png" alt="" /><span style="">' + option.name.replace(/^\s+|\s+$/g, '') + '</span>';  
+        				return '<img src="/media/' + "user" + '.png" alt="" /><span style="">' + option.display.replace(/^\s+|\s+$/g, '') + '</span>';  
     				}  
 			});  
                 }
