@@ -493,6 +493,51 @@ def checklogin_view(request):
 			authresponse.write("User: " + username + " authentication failed.")
 			return authresponse
 
+@csrf_exempt
+def getassignedcourseids_view(request):
+        print("Checking log in details..")
+
+        if request.method == 'POST':
+                print 'POST request recieved.'
+                print 'Login request coming from outside (eXe)'
+                username = request.POST.get('username',False);
+                password = request.POST.get('password', False);
+                print "The username is"
+                print username
+
+                #Code for Authenticating the user
+
+                user = authenticate(username=request.POST['username'], password=request.POST['password'])
+                if user is not None:
+			#Check and get list of courses..
+			assigned_courses=Document.objects.filter(students=user)
+			assigned_course_ids=[]
+			if assigned_courses:
+				print("assigned_courses:")
+				print(assigned_courses)
+				for everycourse in assigned_courses:
+					assigned_course_ids.append(everycourse.id)
+				print("ASSIGNED COURSE IS:")
+				print(assigned_course_ids)
+                        	authresponse = HttpResponse(status=200)
+				authresponse.write("Courses found for user: " + username)
+				authresponse['assigned_course_ids']=assigned_course_ids
+                        	return authresponse
+			else:
+				authresponse = HttpResponse(status=404)
+				authresponse['assigned_course_ids']=assigned_course_ids
+				authresponse.write("No courses found for username: " + username)
+				return authresponse
+                else:
+                        authresponse = HttpResponse(status=403)
+                        authresponse.write("User: " + username + " authentication failed.")
+                        return authresponse
+	else:
+		authresponse = HttpResponse(status=500)
+		authresponse.write("Not a POST request. Assigned Course IDs retrival failed.")
+		return authresponse
+
+
 
 @csrf_exempt
 def sendelpfile_view(request):
