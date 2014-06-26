@@ -21,6 +21,7 @@ from allclass.models import Allclass
 from uploadeXe.models import Role
 from uploadeXe.models import User_Roles
 from django.contrib.auth.models import User
+from django import forms
 
 
 from django.http import HttpResponse
@@ -45,7 +46,7 @@ def my_view(request):
 class DocumentForm(ModelForm):
     class Meta:
         model = Document
-	fields = ('name','url','success','publisher','students')
+	fields = ('id','name','url','success','publisher','students')
 	
 
 
@@ -60,13 +61,29 @@ def manage(request, template_name='myapp/manage.html'):
 
 @login_required(login_url='/login/')
 def edit(request, pk, template_name='myapp/update.html'):
-    print("HERE DUDE")
     document = get_object_or_404(Document, pk=pk)
     form = DocumentForm(request.POST or None, instance=document)
+    student_role = Role.objects.get(pk=6)
+    allstudents=User.objects.filter(pk__in=User_Roles.objects.filter(role_roleid=student_role).values_list('user_userid', flat=True))
+    print("All students:")
+    print(allstudents)
+    assignedstudents=document.students.all();
+    print("Assigned Students:")
+    print(assignedstudents);
     if form.is_valid():
 	form.save()
-	return redirect('list')
-    return render(request, template_name, {'form':form})
+	print("Going to update the assigned students..")
+	studentidspicklist=request.POST.getlist('target')
+	document.students.clear()
+	assignedclear = document.students.all();
+        for everystudentid in studentidspicklist:
+                currentstudent=User.objects.get(pk=everystudentid)
+                document.students.add(currentstudent)
+                document.save()
+
+	return redirect('manage')
+
+    return render(request, template_name, {'form':form, 'all_students':allstudents,'assigned_students':assignedstudents})
 
 @login_required(login_url='/login/')
 def new(request, template_name='myapp/new.html'):

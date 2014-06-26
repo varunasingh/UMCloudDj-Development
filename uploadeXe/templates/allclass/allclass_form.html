@@ -2,6 +2,53 @@
 {% block scriptjs %}
 <script type="text/javascript">
           $(function() { 
+                var all_students = [{% for student in all_students %}
+                        { "value" : "{{ student.id }}",
+                        "label" : "{{student.first_name}}({{student.username}})"
+                        },
+                {% endfor %}];  
+                var assigned_students = [{% for student in assigned_students %}
+                        { "value" : "{{ student.id }}",
+                        "label" : "{{student.first_name}}({{student.username}})"
+                        },
+                {% endfor %}];
+		 var all_teachers = [{% for teacher in all_teachers %}
+                        { "value" : "{{ teacher.id }}",
+                        "label" : "{{teacher.first_name}}({{teacher.username}})"
+                        },
+                {% endfor %}];  
+                var assigned_teachers = [{% for teacher in assigned_teachers %}
+                        { "value" : "{{ teacher.id }}",
+                        "label" : "{{teacher.first_name}}({{teacher.username}})"
+                        },
+                {% endfor %}];
+
+			$('#assignedstudents').puipicklist({
+                                effect: 'clip',  
+                                showSourceControls: true,  
+                                showTargetControls: true,  
+                                sourceCaption: 'Available',  
+                                targetCaption: 'Selected',  
+                                filter: true,  
+                                sourceData:all_students,  
+                                targetData:assigned_students,
+                                content: function(option) {  
+                                        return '<img src="/media/' + "user" + '.png" alt="" /><span style="">' + option.label.replace(/^\s+|\s+$/g, '') + '</span>';  
+                                         }  
+                        }); 
+			$('#assignedteachers').puipicklist({
+                                effect: 'clip',  
+                                showSourceControls: true,  
+                                showTargetControls: true,  
+                                sourceCaption: 'Available',  
+                                targetCaption: 'Selected',  
+                                filter: true,  
+                                sourceData:all_teachers,  
+                                targetData:assigned_teachers,
+                                content: function(option) {  
+                                        return '<img src="/media/' + "user" + '.png" alt="" /><span style="">' + option.label.replace(/^\s+|\s+$/g, '') + '</span>';  
+                                         }  
+                        }); 
                         $('#id_allclass_name').puiinputtext();
                         $('#id_allclass_desc').puiinputtext();
                         $('#id_allclass_location').puiinputtext();
@@ -16,7 +63,32 @@
 {% block content %}
 
 <form method="post">{% csrf_token %}
-    {{ form.as_p }}
+    <!--{{ form.as_p }}-->
+
+    <label>Class Name</label>
+	{{form.allclass_name}}
+    <label>Class Desc</label>
+	{{form.allclass_desc}}
+    <label>Class Location</label>
+	{{form.allclass_location}}
+    <label>School</label>
+	{{form.school}}
+
+    <h3>Assigned Students</h3>
+        <div id="assignedstudents" >
+                <select multiple="multiple" id="source" name="source">
+                </select>
+                <select multiple="multiple" id="target" name="target">
+                </select>
+        </div>
+
+    <h3>Assigned Teachers</h3>
+        <div id="assignedteachers" >
+                <select multiple="multiple" id="source" name="source">
+                </select>
+                <select multiple="multiple" id="target2" name="target2">
+                </select>
+        </div>
     <button id="submit" type="submit" name="submit" value="Create">Submit</button>
 </form>
 
