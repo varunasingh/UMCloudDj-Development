@@ -122,21 +122,21 @@ class UserForm(ModelForm):
     password = forms.CharField(widget=forms.PasswordInput, required=False)
     class Meta:
         model = User
-	fields = ('username', 'email', 'password', 'first_name', 'last_name', 'is_active')
+	fields = ('username', 'email', 'first_name', 'last_name', 'is_active')
 	widgets = {
-        'password': forms.PasswordInput(),
+        #'password': forms.PasswordInput(),
     	}
 
     def save(self, commit=True):
     	user = super(UserForm, self).save(commit=False)
-	password = self.cleaned_data["password"]
-	if password:
+	newpassword = self.cleaned_data["password"]
+	if newpassword:
 		print("New password specified")
     		user.set_password(self.cleaned_data["password"])
 	else:
 		print("password not specified.")
-		user.set_password(user.password)
     	if commit:
+		print("commit.")
 		user.save()
     	return user
 
@@ -177,8 +177,6 @@ def user_table(request, template_name='user/user_table.html'):
     data['role_list'] = user_roles
     data['organisation_list'] = user_organisations
     users_as_json = serializers.serialize('json', users)
-    print("users_as_json: ")
-    print(users_as_json)
     #data['users_as_json'] = users_as_json
 
     users_as_json =json.loads(users_as_json)
