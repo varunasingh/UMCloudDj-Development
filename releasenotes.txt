@@ -1,0 +1,6 @@
+v0.3.3
+-Started this release notes
+-Updated and fixed some table bugs.
+-Added a simple User CRUD unittest test
+-Updated Fixtures to reflect new model
+
