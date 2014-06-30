@@ -354,10 +354,6 @@ def readjsonfromrequest_view(request):
 
 	
 def readjsonfromlrs_view(request):
-	lrsurl = "http://cloud.scorm.com/ScormEngineInterface/TCAPI/public/statements?limit=25&related_activities=false&related_agents=false"
-	lrsurl = "http://www.youtube.com/oembed?url=http://www.youtube.com/watch?v=HOEpcI6e_Zc&format=json"
-	lrsurl = "http://gdata.youtube.com/feeds/api/playlists/PLE-68G1RgFNzzgniTuuctub872JuwjJJw?v=2&alt=json"
-	lrsurl = "http://cloud.scorm.com/ScormEngineInterface/TCAPI/public/statements?limit=70&related_activities=false&related_agents=false"
 	lrsurl = "http://svr2.ustadmobile.com:8001/xAPI/statements?limit=7"
 	#Search and Filter like: http://svr2.ustadmobile.com:8001/xAPI/statements?limit=7&activity=http://www.ustadmobile.com/looking_at_things&activity=http://www.ustadmobile.com/looking_at_things&since=2014-02-02&until=2014-02-03
 
@@ -444,25 +440,6 @@ def sendtestlog_view(request):
 		print("The username and password is incorrect. Sorry bro..")
 		return render_to_response("invalid.html", {'invalid': invalid}, context_instance=RequestContext(request))
 	
-
-	
-
-	#context_instance=RequestContext(request)
-	#response = render_to_response("sendtestlog.html", {'appunittestoutput': unittestlogs}, context_instance=RequestContext(request))
-	#return response
-
-	#c = {}
-        #c.update(csrf(request))
-	#d = {'appunittestoutput': unittestlogs}
-	#context_instance = RequestContext(request, {'appunittestoutput': unittestlogs})
-	
-	#return render_to_response('sendtestlog.html', c, context_instance=RequestContext(request))
-	#return render_to_response('sendtestlog.html', c)
-	
-
-	#return redirect("/")
-	
-
 @csrf_exempt
 def checklogin_view(request):
         print("Checking log in details..")
@@ -864,34 +841,38 @@ def showelptestresults_view(request):
 
 def getcourse_view(request):
 	courseid = request.GET.get('id')
-	print("The course id requested is: " + courseid)
-	matchedCourse = Document.objects.filter(id=str(courseid)).get(id=str(courseid))
-	if matchedCourse:
-		print("Course exists!")
-		#print(matchedCourse.username)
-		print("The unique folder for course id: " + courseid + " is: " + matchedCourse.uid + "/" + matchedCourse.name)
-		coursefolder = matchedCourse.uid + "/" + matchedCourse.name
-		xmlDownload = coursefolder + "_ustadpkg_html5.xml"
-		#if request.method == 'POST':
-			#print("REQUEST IS POST!!")
-		data = { 
-			'folder' : coursefolder,
-			'xmlDownload' : xmlDownload
-		}
-		response = HttpResponse("folder:" + coursefolder)
-		response = HttpResponse("xmlDownload:" + xmlDownload)
-		response = render_to_response("getcourse.html", {'coursefolder': coursefolder, 'xmlDownload': xmlDownload}, context_instance=RequestContext(request))
-		response['folder'] = coursefolder
-		response['xmlDownload'] = xmlDownload
-		#response = HttpResponse("Text only, please.", content_type="text/plain")
-		#response.write("<p>Here is the text of the Web page.</p>")
-		#response.write("<p>Here is another paragrah.</p>")
-		return response
+	print("External request of public course..")
 
-	else:
-		print("Sorry, a course of that ID was not found globally")
-		response2 = HttpResponse("folder:na")
-		return response2
+	try:
+		matchedCourse = Document.objects.filter(id=str(courseid)).get(id=str(courseid))
+        	if matchedCourse:
+                	print("Course exists!")
+                	print("The unique folder for course id: " + courseid + " is: " + matchedCourse.uid + "/" + matchedCourse.name)
+                	coursefolder = matchedCourse.uid + "/" + matchedCourse.name
+                	xmlDownload = coursefolder + "_ustadpkg_html5.xml"
+                	data = {
+                        	'folder' : coursefolder,
+                        	'xmlDownload' : xmlDownload
+                	}
+                #response =  HttpResponse(status=200)
+                	response = HttpResponse("folder:" + coursefolder)
+                	response = HttpResponse("xmlDownload:" + xmlDownload)
+                	response = render_to_response("getcourse.html", {'coursefolder': coursefolder, 'xmlDownload': xmlDownload}, context_instance=RequestContext(request))
+                	response['folder'] = coursefolder
+                	response['xmlDownload'] = xmlDownload
+                	return response
+		else:
+                	response2 =  HttpResponse(status=403)
+                	print("Sorry, a course of that ID was not found globally")
+			response2.write("folder:na")
+                	return response2
+
+	except Document.DoesNotExist, e:
+                response2 =  HttpResponse(status=403)
+                print("Sorry, a course of that ID was not found globally")
+                response2 = HttpResponse(status=403)
+		response2.write("folder:na")
+                return response2
 	
 	return redirect("/")
 
@@ -926,12 +907,6 @@ def auth_and_login(request, onsuccess='/', onfail='/login'):
     else:
 	#Show a "incorrect credentials" message
         return redirect(onfail)  
-
-def create_user(username, email, password):
-    user = User(username=username, email=email)
-    user.set_password(password)
-    user.save()
-    return user
 
 def create_user_website(username, email, password, first_name, last_name, website, job_title, company_name):
     #Usage:
@@ -996,17 +971,6 @@ def user_exists(username):
     if user_count == 0:
         return False
     return True
-"""
-#Old sign up page logic
-def sign_up_in(request):
-    post = request.POST
-    if not user_exists(post['email']): 
-        user = create_user(username=post['email'], email=post['email'], password=post['password'])
-        return auth_and_login(request)
-    else:
- 	#Show message that the username/email address already exists in our database.
-        return redirect("/login/")
-"""
 
 def logout_view(request):
     logout(request)
@@ -1017,7 +981,6 @@ def sign_up_in(request):
     print("Creating new user from website..")
     post = request.POST
     if not user_exists(post['email']): 
-        #user = create_user(username=post['email'], email=post['email'], password=post['password'])
 	user = create_user_website(username=post['email'], email=post['email'], password=post['password'], first_name=post['first_name'], last_name=post['last_name'], website=post['website'], job_title=post['job_title'], company_name=post['company_name'])
         return auth_and_login(request)
     else:

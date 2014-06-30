@@ -1,6 +1,14 @@
+v0.3.4
+-Fixed auth backend to also authenticate locally for testing
+-Added a few tests for UMcloudDj.views
+-Modified getcourses to return apt return code in  try-catch bracket
+
+
 v0.3.3
 -Started this release notes
 -Updated and fixed some table bugs.
 -Added a simple User CRUD unittest test
 -Updated Fixtures to reflect new model
+-Tidyup the code (UMCloudDj.views)
+
 

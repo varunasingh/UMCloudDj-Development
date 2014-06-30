@@ -28,7 +28,8 @@ class MyCustomBackend:
 	    
 	    #Check username and password here..
             #  Check the password is the reverse of the username
-            if password == username[::-1]:
+            #if password == username[::-1]:
+	    if password == user.password:
                 # Yes? return the Django user object
 		print("Username and Password check success")
                 return user

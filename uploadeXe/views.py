@@ -32,6 +32,8 @@ import time
 import os
 import urllib
 import urllib2, base64, json
+import hashlib
+from django.conf import settings
 
 
 def my_view(request):
@@ -159,10 +161,15 @@ def list(request, template_name='myapp/list.html'):
                 newdoc.save() 
  
 	    os.system("echo Current location:")
-            os.system("pwd")
+            serverlocation=os.system("pwd")
+	    mainappstring = "/UMCloudDj/"
 	    uid = str(getattr(newdoc, 'exefile'))
 	    print("File saved as: ")
             print(uid)
+	    #elphash = hashlib.md5(open(serverlocation + mainappstring + settings.MEDIA_URL + uid).read()).hexdigest()
+	    #print("elp hash:")
+	    #print(elphash)
+	    print(settings.MEDIA_URL)
 	    unid = uid.split('.um.')[-2]
 	    unid = unid.split('/')[-1]  #Unique id here.
             print("Unique id:")
