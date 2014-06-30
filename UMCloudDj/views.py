@@ -154,7 +154,6 @@ def user_list(request, template_name='user/user_list.html'):
 	user_organisations.append(organisation)
 
     data = {}
-    #data['object_list'] = users
     data['object_list'] = zip(users,user_roles, user_organisations)
     data['role_list'] = user_roles
     data['organisation_list'] = user_organisations
@@ -166,7 +165,6 @@ def user_table(request, template_name='user/user_table.html'):
     users = User.objects.all()
     user_roles = []
     user_organisations = []
-    #users_as_json = []
     for user in users:
 	role = User_Roles.objects.get(user_userid=user).role_roleid
 	organisation = User_Organisations.objects.get(user_userid=user).organisation_organisationid
@@ -177,7 +175,6 @@ def user_table(request, template_name='user/user_table.html'):
     data['role_list'] = user_roles
     data['organisation_list'] = user_organisations
     users_as_json = serializers.serialize('json', users)
-    #data['users_as_json'] = users_as_json
 
     users_as_json =json.loads(users_as_json)
     return render(request, template_name, {'data':data, 'users_as_json':users_as_json})
@@ -224,7 +221,6 @@ def user_delete(request, pk, template_name='user/user_confirm_delete.html'):
         return redirect('user_table')
     return render(request, template_name, {'object':user})
 
-#@login_required(login_url='/login/')
 ####################################
 
 
