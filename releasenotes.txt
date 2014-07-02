@@ -1,3 +1,14 @@
+v0.3.5
+-Fixed id tag in /auth and login.html to suggest username as username and not email. 
+-Added and gitignored password file for ustadmobile.com wordpress and lrs 
+-UMLRS is now a global variable in UstadMobbile settings.py Views changed to reflect that
+-Fixed website create of users to take in username (unique)
+-Added alerts for wrong username / password combination
+-Added alerts for username already existing in register link (over umcloudjd website)
+-Added Allclass unit tests
+-Updated test logic for wp login check.
+-
+
 v0.3.4
 -Fixed auth backend to also authenticate locally for testing
 -Added a few tests for UMcloudDj.views

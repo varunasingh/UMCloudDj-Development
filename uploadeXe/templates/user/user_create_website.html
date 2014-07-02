@@ -22,7 +22,7 @@
           ); 
 </script>
 {% endblock %}
-
+<p cass="error" style="color:red;"><i>{{state}}</i></p>
 <form action="/signup/" id="newuserform" method="post">{% csrf_token %}
     <!--{{ form.as_p }}-->
 

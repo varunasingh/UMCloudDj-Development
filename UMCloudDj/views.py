@@ -33,6 +33,7 @@ import glob #For file ^VS 130420141454
 #from UMCloudDj.models import Ustadmobiletest
 from uploadeXe.models import Ustadmobiletest
 #from django.utils import simplejson
+from django.conf import settings
 
 #UMCloudDj.uploadeXe
 
@@ -234,7 +235,7 @@ def get_report_statements(request, onfail='/statementsreports'):
         print(date_since)
         print(date_until)
         #Code for report making here.
-        umlrs = "http://svr2.ustadmobile.com:8001/xAPI/statements" #Should be part of 
+	umlrs = settings.UMLRS
         #lrs_endpoint = umlrs + "?" + "&since=" + date_since + "&until=" + date_until + "&activity=" + activity
         lrs_endpoint = umlrs + "?" + "&since=" + date_since + "&until=" + date_until
         #BASIC AUTHENTICATION
@@ -273,7 +274,7 @@ def get_report_zambia(request, onfail='/mcqreports'):
     	print(date_since)
     	print(date_until)
 	#Code for report making here.
-	umlrs = "http://svr2.ustadmobile.com:8001/xAPI/statements" #Should be part of 
+	umlrs = settings.UMLRS
 	#lrs_endpoint = umlrs + "?" + "&since=" + date_since + "&until=" + date_until + "&activity=" + activity
 	lrs_endpoint = umlrs + "?" + "&since=" + date_since + "&until=" + date_until
 	#BASIC AUTHENTICATION
@@ -354,7 +355,7 @@ def readjsonfromrequest_view(request):
 
 	
 def readjsonfromlrs_view(request):
-	lrsurl = "http://svr2.ustadmobile.com:8001/xAPI/statements?limit=7"
+	lrsurl = settings.UMLRS + "?limit=7"
 	#Search and Filter like: http://svr2.ustadmobile.com:8001/xAPI/statements?limit=7&activity=http://www.ustadmobile.com/looking_at_things&activity=http://www.ustadmobile.com/looking_at_things&since=2014-02-02&until=2014-02-03
 
 	
@@ -406,7 +407,6 @@ def sendtestlog_view(request):
 
 	with open ("umpassword.txt", "r") as myfile:
     		umpassword=myfile.read().replace('\n', '')
-	#print("The umpasswod is : " + umpassword);
 
 	if ( username == "test" and password == umpassword ):
 		#process with inserting data into table.	
@@ -876,7 +876,7 @@ def getcourse_view(request):
 	
 	return redirect("/")
 
-def register_view(request):
+def register_view(request, ):
 	c = {}
 	c.update(csrf(request))
 	#return render_to_response('signup.html', c)
@@ -899,13 +899,15 @@ def loginview(request):
 #This is the def that will authenticate the user over the umcloud website
 def auth_and_login(request, onsuccess='/', onfail='/login'):
     #Returns user object if parameters match the database.
-    user = authenticate(username=request.POST['email'], password=request.POST['password'])
+    user = authenticate(username=request.POST['username'], password=request.POST['password'])
     if user is not None:
 	#We Sign the user..
         login(request, user)
         return redirect(onsuccess)
     else:
 	#Show a "incorrect credentials" message
+	state="Wrong username/password combination"
+	return render_to_response('login.html', {'state':state},context_instance=RequestContext(request))
         return redirect(onfail)  
 
 def create_user_website(username, email, password, first_name, last_name, website, job_title, company_name):
@@ -913,34 +915,31 @@ def create_user_website(username, email, password, first_name, last_name, websit
     #user = create_user_website(username=post['email'], email=post['email'], password=post['password'], 
     # first_name=post['first_name'], last_name=post['last_name'], website=post['website'], 
     # job_title=post['job_title'], company_name=post['company_name'])
-    user = User(username=username, email=email, first_name=first_name, last_name=last_name)
-    user.set_password(password)
-    user.save()
-    print("User object created..")
-    print("Creating profile..")
+    try:
+    	user = User(username=username, email=email, first_name=first_name, last_name=last_name)
+    	user.set_password(password)
+    	user.save()
+    	print("User object created..")
+    	print("Creating profile..")
     
-    """
-    user_profile = user.get_profile()
-    user_profile.website = website
-    user_profile.job_title = job_title
-    user_profile.company_name = company_name
-    user_profile.save()
-    """
-    user_profile = UserProfile(user=user, website=website, job_title=job_title, company_name=company_name)
-    user_profile.save()
-    print("User profile created..")
+    	user_profile = UserProfile(user=user, website=website, job_title=job_title, company_name=company_name)
+    	user_profile.save()
+    	print("User profile created..")
 
-    student_role = Role.objects.get(pk=6)
-    new_role_mapping = User_Roles(name="website", user_userid=user, role_roleid=student_role)
-    new_role_mapping.save()
+    	student_role = Role.objects.get(pk=6)
+    	new_role_mapping = User_Roles(name="website", user_userid=user, role_roleid=student_role)
+    	new_role_mapping.save()
 
-    individual_organisation = Organisation.objects.get(pk=1)
-    new_organisation_mapping = User_Organisations(user_userid=user, organisation_organisationid=individual_organisation)
-    new_organisation_mapping.save()
+    	individual_organisation = Organisation.objects.get(pk=1)
+    	new_organisation_mapping = User_Organisations(user_userid=user, organisation_organisationid=individual_organisation)
+    	new_organisation_mapping.save()
 
-    #Check if previous were a success.
-    print("User Role mapping (website) success.")
-    return user
+    	#Check if previous were a success.
+    	print("User Role mapping (website) success.")
+    	return user
+    except:
+	print("Username  exists")
+	return None
 
 
 def create_user_more(username, email, password, first_name, last_name, roleid, organisationid):
@@ -981,11 +980,16 @@ def sign_up_in(request):
     print("Creating new user from website..")
     post = request.POST
     if not user_exists(post['email']): 
-	user = create_user_website(username=post['email'], email=post['email'], password=post['password'], first_name=post['first_name'], last_name=post['last_name'], website=post['website'], job_title=post['job_title'], company_name=post['company_name'])
-        return auth_and_login(request)
+	user = create_user_website(username=post['username'], email=post['email'], password=post['password'], first_name=post['first_name'], last_name=post['last_name'], website=post['website'], job_title=post['job_title'], company_name=post['company_name'])
+	if user:
+        	return auth_and_login(request)
+	else:
+		state="The Username already exists.."
+		return render_to_response('user/user_create_website.html',{'state':state}, context_instance=RequestContext(request))
+		#return redirect("/register", {'state':state})
     else:
         #Show message that the username/email address already exists in our database.
-        return redirect("/login/")
+        return redirect("/register")
 
 def logout_view(request):
     logout(request)

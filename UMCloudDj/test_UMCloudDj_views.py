@@ -16,6 +16,8 @@ from organisation.models import User_Organisations
 from users.models import UserProfile
 from django import forms
 from uploadeXe.models import Document
+import os 
+from django.conf import settings
 
 class UMCloudDjViewTestCase(TestCase):
     fixtures = ['uploadeXe/fixtures/initial-model-data.json']
@@ -67,11 +69,72 @@ class UMCloudDjViewTestCase(TestCase):
 	testuser1 = User.objects.get(username="testuser1")
 	newDocument=Document(name="unittest", url="//this.is.the/linke/to/the/test",uid="123UGOFree", success="Yes", publisher=testuser1)
 	newDocument.save()
-	print("ALL ELPS:")
-	print(Document.objects.all())
 	self.c = Client()
 	response = self.c.get('/getcourse/',{'id':1})
 	self.assertEquals(response.status_code, 200)
+    
+    def test_auth_and_login(self):
+	view_url='/auth/'
+	"""
+	This will test authentication over the django setup from umclouddj web login.
+	On success it should redirect (302) to '/' and on fail it should redirect back to '/login'
+	UMCloudDj.views.auth_and_login(request, onsuccess="/", onfail="/login")
+	"""
+	post_data={'username':'testuser1','password':'12345'}
+	response = self.client.post(view_url, post_data)
+	self.assertEquals(response.status_code, 302)
+	self.assertRedirects(response, '/')
+
+	"""
+	Test incorrect login with redirect back to login page.
+	"""
+	post_data_incorrect={'username':'testuser1','password':'incorrectpassword'}
+	response = self.client.post(view_url,post_data_incorrect)
+	self.assertContains(response,'Wrong username/password combination' , 1, status_code=200)
+	
+
+    	"""
+	Test login details from ustadmobile.com wordpress server
+	"""
+	print("Project Root:")
+	data='willbereplaced'
+	"""
+	We get the password from an external file accesable to test
+	"""
+	try:
+		with open (os.path.join(settings.PROJECT_ROOT, 'wordpresscred.txt'), "r") as myfile:
+    			data=myfile.readlines()
+		print("GOT WP CRED FILE")
+		data=data[0].strip("\n")
+		post_data_wordpress={'username':'testuser','password':data}
+		response=self.client.post(view_url, post_data_wordpress)
+		self.assertEquals(response.status_code, 302)
+		self.assertRedirects(response, '/')
+	except:	
+		try:
+			with open('/opt/UMCloudDj/wordpresscred.txt',"r") as myfile:
+				data=myfile.readlines()
+			print("GOT WP CRED FILE in /opt/")
+			data=data[0].strip("\n")
+                	post_data_wordpress={'username':'testuser','password':data}
+                	response=self.client.post(view_url, post_data_wordpress)
+                	self.assertEquals(response.status_code, 302)
+                	self.assertRedirects(response, '/')
+		except:
+			print("WORDPRESS CRED NOT INCLUDED")
+
+    def test_sign_up_in(self):
+	"""
+	Test if User can be created by the view that creates a user from the website
+	UMCloudDj.views.sign_up_in()
+	"""
+	view_url="/signup/"
+	post_data={'username':'cowsaysmoo','email':'cow@moo.com','password':'iamacow','first_name':'Cow','last_name':'Moo','website':'www.cow.moo','job_title':'Cow','company_name':'Moo'}
+	response = self.client.post(view_url, post_data)
+	cow=User.objects.get(username="cowsaysmoo")
+	self.assertEqual(cow.last_name, 'Moo')
+	
+	
 
     def tearDown(self):
 	print("end of UMCloud Views test")

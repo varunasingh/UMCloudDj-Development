@@ -143,3 +143,6 @@ STATICFILES_DIRS = (
 #Added by Varuna Singh 13012014
 # URL of the login page
 LOGIN_URL = '/login/'
+
+#Added UstadMobile TinCan LRS 
+UMLRS = "http://svr2.ustadmobile.com:8001/xAPI/statements"

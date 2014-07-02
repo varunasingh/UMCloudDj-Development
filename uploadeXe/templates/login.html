@@ -4,7 +4,7 @@
 {% block scriptjs %}
 <script type="text/javascript">
           $(function() { 
-			$('#email').puiinputtext();
+			$('#username').puiinputtext();
 			$('#password').puiinputtext();
 			$('#loginpanel').puipanel(); 
 			$('#submit').puibutton();
@@ -20,11 +20,11 @@
 	{% if form.errors %}
     		<p class="error"> Sorry, that is not a valid username/password</p>
 	{% endif %}
-	
+	<p style="color:red;" class="error"><i>{{state}}<i></p>
 	<form action="/auth/" method="POST"> {% csrf_token %}
 		<div id="loginpanel" title="Log in to Ustad Mobile Cloud">  
 		<div data-role="fieldcontain">
-                <label for="email">Username: &nbsp;</label><input type="text" name="email" id="email" value="" />
+                <label for="username">Username: &nbsp;</label><input type="text" name="username" id="username" value="" />
                 </div>
                 <div data-role="fieldcontain">
                 <label for="password">Password:&nbsp;&nbsp;&nbsp;</label><input type="password" name="password" id="password" value="" />
