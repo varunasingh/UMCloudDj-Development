@@ -17,16 +17,6 @@ def update_filename(instance, filename):
    filename = instance.user + timestamp + ".um." + filename
    return os.path.join(path, filename)
 
-class Ustadmobiletest(models.Model):
-   name = models.CharField(max_length=300)
-   result = models.CharField(max_length=200)
-   runtime = models.CharField(max_length=100)
-   dategroup = models.CharField(max_length=100)
-   platform = models.CharField(max_length=100)
-   ustad_version = models.CharField(max_length=100)
-   pub_date = models.DateTimeField(auto_now_add=True)
-   upd_date = models.DateTimeField(auto_now=True)
-   
 class DateTimeModel(models.Model):
    start = models.DateTimeField()
 

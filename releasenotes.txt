@@ -1,3 +1,15 @@
+v0.4.6
+-Updated SERVER STEPS and ReadMe
+-USE_TZ set to False in main server
+-AllClasses unit tested.
+-School unit tested
+-Updated Subscription model and views to operate if logged in only.
+-Updated Subscription Unit tests
+-Updated Organisation CRUD Unit Tests
+-Removed un-necessary and depriciated JSON checks
+-coverage tested with unit tests
+-
+
 v0.3.5
 -Fixed id tag in /auth and login.html to suggest username as username and not email. 
 -Added and gitignored password file for ustadmobile.com wordpress and lrs 

@@ -24,6 +24,10 @@ DEBUG = True
 
 TEMPLATE_DEBUG = True
 
+ADMINS = (
+    ('Varuna Singh', 'varuna@ustadmobile.com'),
+)
+
 ALLOWED_HOSTS = []
 
 #Varuna Singh: Need to add admins.
@@ -123,7 +127,7 @@ USE_I18N = True
 USE_L10N = True
 
 # If you set this to False, Django will not use timezone-aware datetimes.
-USE_TZ = True
+USE_TZ = False
 
 # Absolute path to the directory static files should be collected to.
 # Don't put anything in this directory yourself; store your static files

@@ -31,7 +31,34 @@ class Document(models.Model):
    
    def __unicode__(self):
         return u'%s' % (self.name)
-   
+
+class Package(models.Model):
+   elpid = models.CharField(max_length=200)
+   exefile = models.FileField(upload_to=get_file_path) #saves as a unique id.
+   name = models.CharField(max_length=200)
+   pub_date = models.DateTimeField(auto_now_add=True) #added by Varuna Singh
+   upd_date = models.DateTimeField(auto_now=True)
+   url = models.CharField(max_length=200)
+   uid = models.CharField(max_length=200)
+   success = models.CharField(max_length=10)
+   publisher = models.ForeignKey(User, related_name='packagepublisher')
+   students = models.ManyToManyField(User, related_name='packagestudents')
+
+   def __unicode__(self):
+        return u'%s' % (self.name)
+
+class Course(models.Model):
+   name=models.CharField(max_length=200)   
+   packages = models.ManyToManyField(Package, related_name='coursepackages')
+   add_date=models.DateTimeField(auto_now_add=True)
+   upd_date=models.DateTimeField(auto_now=True)
+   category=models.CharField(max_length=200)
+   price=models.FloatField()
+   active=models.BooleanField(default = True)
+   public=models.BooleanField(default = True)
+   #Add Organisation?
+
+
 class Ustadmobiletest(models.Model):
    name = models.CharField(max_length=300)
    result = models.CharField(max_length=200)

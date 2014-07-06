@@ -67,21 +67,15 @@ class AllclassViewTestCase(TestCase):
 	"""
 	url_name="allclass_new"
 
-
 	"""
 	Classes cannot be created without logging in
+	allclass.views.allclass_create
 	"""
 	student_list_ids=[3,4]
         post_data={'class_name':'TestClass','class_desc':'Class created by unit testing','class_location':'Testville','schoolid':1,'teacherid':2,'target': student_list_ids}
-        print(post_data)
         
-        print(User.objects.all())
-        print(School.objects.all())
-        print(User_Roles.objects.all())
-
         requesturl = reverse(url_name)
         response = self.client.post(requesturl, post_data)
-        print(response)
         #test_create_user = Allclass.objects.get(allclass_name="TestClass")
         #self.assertEqual("TestClass", Allclass.objects.get(allclass_name="TestClass").allclass_name)
 	self.assertEqual(response.status_code, 302)
@@ -89,15 +83,11 @@ class AllclassViewTestCase(TestCase):
 
 	"""
 	Classes can be created with logging in
+	allclass.views.allclass_create
 	"""
 	student_list_ids=[3,4]
 	post_data={'class_name':'TestClass','class_desc':'Class created by unit testing','class_location':'Testville','schoolid':1,'teacherid':2,'target': student_list_ids}
-	print(post_data)
 	
-	print(User.objects.all())
-	print(School.objects.all())
-	print(User_Roles.objects.all())
-
 	self.c = Client();
         self.user = User.objects.get(username="testuser1")
         self.user.set_password('hello')
@@ -114,15 +104,12 @@ class AllclassViewTestCase(TestCase):
     def test_allclass_create_failure(self):
 	"""
 	Incorrectly done model fails for logged in user
-	UMCloudDj.allclass.allclass_create
+	allclass.views.allclass_create
 	"""
+	url_name="allclass_new"
 	student_list_ids=[3,4]
         post_data_incorrect={'class_name':'TestClass','class_desc':'Class created by unit testing','class_location':'Testville','schoolid':1,'teacherid':2,'target': student_list_ids}
-        print(post_data)
 
-        print(User.objects.all())
-        print(School.objects.all())
-        print(User_Roles.objects.all())
 
         self.c = Client();
         self.user = User.objects.get(username="testuser1")
@@ -136,13 +123,144 @@ class AllclassViewTestCase(TestCase):
         test_create_user = Allclass.objects.get(allclass_name="TestClass")
         self.assertEqual("TestClass", Allclass.objects.get(allclass_name="TestClass").allclass_name)
 
-    """
+
     def test_update(self):
-	
+
+	"""
+        Classes can be created with logging in
+        allclass.views.allclass_create
+        """
+        student_list_ids=[3,4]
+        post_data={'class_name':'TestClass','class_desc':'Class created by unit testing','class_location':'Testville','schoolid':1,'teacherid':2,'target': student_list_ids}
+
+        self.c = Client();
+        self.user = User.objects.get(username="testuser1")
+        self.user.set_password('hello')
+        self.user.save()
+        self.user = authenticate(username='testuser1', password='hello')
+        login = self.c.login(username='testuser1', password='hello')
+
+        requesturl = reverse('allclass_new')
+        response = self.c.post(requesturl, post_data)
+        test_create_user = Allclass.objects.get(allclass_name="TestClass")
+	print("Test Dat for test_update:")
+	print(Allclass.objects.all())
+
+
+	url_name='allclass_edit'
+	student_list_ids_changed=[3]
+	post_data_changes={'class_name':'TestClass','class_desc':'Changed Class created by unit testing','class_location':'ChangedTestville','schoolid':1,'target2':2,'target': student_list_ids_changed}
+
+
+        """
+        Login required
+        allclass.views.allclass_update
+        """
+	testallclass = Allclass.objects.get(allclass_name='TestClass')
+	testallclassid = testallclass.id
+	requesturl = reverse(url_name, kwargs={'pk':testallclassid})
+	response = self.client.post(requesturl)
+	self.assertEqual(response.status_code, 302)
+
+        #ToDo should return /login/?blah Check that
+
+        """
+        Logged in user unable to update id that doesnt exist, shoulw raise 404
+	allclass.views.allclass_update
+        """
+        self.c = Client();
+        self.user = User.objects.get(username="testuser1")
+        self.user.set_password('hello')
+        self.user.save()
+        self.user = authenticate(username='testuser1', password='hello')
+        login = self.c.login(username='testuser1', password='hello')
+        requesturl = reverse(url_name, kwargs={'pk':42})
+        response = self.c.post(requesturl)
+        self.assertEqual(response.status_code, 404)
+
+        """
+        Logged in usere should be able to update a valid user's details and return usertable
+        allclass.views..allclass_update
+        """
+        self.c = Client();
+        self.user = User.objects.get(username="testuser1")
+        self.user.set_password('hello')
+        self.user.save()
+        self.user = authenticate(username='testuser1', password='hello')
+        login = self.c.login(username='testuser1', password='hello')
+
+	testallclass = Allclass.objects.get(allclass_name='TestClass')
+	testallclassid = testallclass.id
+
+        self.c.get(url_name,kwargs={'pk':testallclassid})
+        requesturl = reverse(url_name, kwargs={'pk':testallclassid})
+        response = self.c.post(requesturl, post_data_changes)
+	print("RESPONSE FOR CHANGE:")
+	changedvalue=Allclass.objects.get(allclass_name="TestClass").allclass_location
+	print(Allclass.objects.get(allclass_name="TestClass").allclass_desc);
+        #self.assertEqual('ChangedTestville', changedvalue)
+        #self.assertRedirects(response, '/allclassestable/')
 
     def test_delete(self):
+	student_list_ids=[3,4]
+        post_data={'class_name':'TestClass','class_desc':'Class created by unit testing','class_location':'Testville','schoolid':1,'teacherid':2,'target': student_list_ids}
 
-    """
+        self.c = Client();
+        self.user = User.objects.get(username="testuser1")
+        self.user.set_password('hello')
+        self.user.save()
+        self.user = authenticate(username='testuser1', password='hello')
+        login = self.c.login(username='testuser1', password='hello')
+
+        requesturl = reverse('allclass_new')
+        response = self.c.post(requesturl, post_data)
+        test_create_user = Allclass.objects.get(allclass_name="TestClass")
+        print("Test Dat for test_delete:")
+        print(Allclass.objects.all())
+
+	view_name="allclass_delete"
+	"""
+	User logged in should be able to delete user
+	allclass.views.user_delete
+	"""
+	self.c = Client();
+	self.user = User.objects.get(username="testuser1")
+        self.user.set_password('hello')
+        self.user.save()
+        self.user = authenticate(username='testuser1', password='hello')
+        login = self.c.login(username='testuser1', password='hello')
+
+	testallclass = Allclass.objects.get(allclass_name='TestClass')
+	testallclassid = testallclass.id
+
+	print("ALLCLASSES BEFORE")
+	print(Allclass.objects.all())
+
+	requesturl = reverse(view_name, kwargs={'pk':testallclassid})	
+	response = self.c.get(requesturl)
+	self.assertEquals(response.status_code, 200)
+	print("ALLCLASSES AFTER")
+	print(Allclass.objects.all())
+	
+	
+	"""
+	Logged in user deleting unknown allclass: 404
+	allclass.views.allclass_delete
+	"""
+	
+	self.c = Client();
+        self.user = User.objects.get(username="testuser1")
+        self.user.set_password('hello')
+        self.user.save()
+        self.user = authenticate(username='testuser1', password='hello')
+        login = self.c.login(username='testuser1', password='hello')
+
+	requesturl = reverse(view_name, kwargs={'pk':42})
+        response = self.c.get(requesturl)
+        self.assertEqual(response.status_code, 404)
+
+	
+	
     
     def tearDown(self):
 	print("end of AllClass tests")
