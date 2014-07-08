@@ -3,17 +3,24 @@
 {% block title %}Upload eXe course {% endblock %}
 
 {% block scriptjs %} 
-<style>
-#ajaxSpinnerContainer {height:51px;}
-#ajaxSpinnerImage {display:none;}
-</style>
 <script type="text/javascript">
+
 	
 	$(document).ready(function(){
+    		$("#spinner").bind("ajaxSend", function() {
+        		$(this).show();
+    		}).bind("ajaxStop", function() {
+        		$(this).hide();
+    		}).bind("ajaxError", function() {
+        		$(this).hide();
+    		});
+     	});
+	$(document).ready(function(){
     		$('#submit').click(function() {
-        		$('#ajaxSpinnerImage').show();
+        		$('#spinner').show();
     		});
 	});
+
 
           $(function() { 
 			var students_map = [{% for student in student_list %}
@@ -38,20 +45,15 @@
                 		}
           	); 
                         $('#submit').puibutton(); 
-			$('#ajaxSpinnerImage').puipanel();
                 }
           ); 
 </script>
 {% endblock %}
 
 {% block content %}
-
-		<div id="ajaxSpinnerContainer" class="spinner">
-		<div id="ajaxSpinnerImage" title="Uploading your Package">  
-			<img src="{{MEDIA_URL}}/spinner.gif" title="working...">
-                </div>  
+		<div id="spinner" class="spinner">
+    			<img id="img-spinner" src="{{MEDIA_URL}}/spinner.gif" alt="Loading" style="display:none;"/>
 		</div>
-
 		<script type="text/JavaScript">
 		function TestFileType( fileName, fileTypes ) {
 			if (!fileName) return;

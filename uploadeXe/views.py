@@ -9,8 +9,11 @@ from django.shortcuts import render_to_response, redirect, get_object_or_404 #Ad
 
 import os 
 #UMCloudDj.uploadeXe
-from uploadeXe.models import Document
+#from uploadeXe.models import Document
+from uploadeXe.models import Package as Document
 from uploadeXe.forms import ExeUploadForm
+from uploadeXe.models import Course
+
 #Testing..
 from django.forms import ModelForm
 from organisation.models import Organisation
@@ -34,7 +37,8 @@ import urllib
 import urllib2, base64, json
 import hashlib
 from django.conf import settings
-
+import zipfile
+from xml.dom import minidom
 
 def my_view(request):
 	current_user = request.user.username
@@ -45,12 +49,16 @@ def my_view(request):
         	context_instance=RequestContext(request)
 	)
 
+
+
+######################################################################
+#Package CRUD
+
 class DocumentForm(ModelForm):
     class Meta:
         model = Document
 	fields = ('id','name','url','success','publisher','students')
 	
-
 
 @login_required(login_url='/login/')
 def manage(request, template_name='myapp/manage.html'):
@@ -112,6 +120,32 @@ def new(request, template_name='myapp/new.html'):
 
 
 @login_required(login_url='/login/')
+def elpparse(request, template_name='myapp/elpparse.html'):
+    # Handle file upload
+    print("YOU AREIN ELPPARSE")
+    current_user = request.user.username
+    if request.method == 'POST':
+        post = request.POST;
+        form = ExeUploadForm(request.POST, request.FILES)
+        if form.is_valid():
+	    elpfile = request.FILES['exefile']
+	    print("ELP FILE:")
+	    print(elpfile)
+	    return redirect('elpparse')
+    else:
+        #Form isn't POST. 
+        form = ExeUploadForm() # A empty, unbound form
+	return render_to_response(
+        template_name,
+        {'form': form, 'current_user': current_user},
+        context_instance=RequestContext(request)
+    	)
+
+    return redirect('elpparse')
+
+
+
+@login_required(login_url='/login/')
 def list(request, template_name='myapp/list.html'):
     # Handle file upload
     print("Current User logged in is: " + request.user.email)
@@ -131,7 +165,7 @@ def list(request, template_name='myapp/list.html'):
         form = ExeUploadForm(request.POST, request.FILES)
         if form.is_valid():
             newdoc = Document(exefile = request.FILES['exefile'])
-            
+            print("NEWDOC")
 	    teacher_role = Role.objects.get(pk=5)
     	    student_role = Role.objects.get(pk=6)
     	    teachers = User.objects.filter(pk__in=User_Roles.objects.filter(role_roleid=teacher_role).values_list('user_userid', flat=True))
@@ -178,6 +212,25 @@ def list(request, template_name='myapp/list.html'):
 	    #os.system('tree')
 	    print("Possible command: ")
 	    print('exe_do -s ustadMobileTestMode=True -x ustadmobile ' + appLocation + '/../UMCloudDj/media/' + uid + ' ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid )
+
+  	    elpfile=appLocation + '/../UMCloudDj/media/' + uid
+
+	    elpfilehandle = open(elpfile, 'rb')
+	    elpzipfile = zipfile.ZipFile(elpfilehandle)
+	    for name in elpzipfile.namelist():
+		if name.find('contentv3.xml') != -1:
+		    elpxmlfile=elpzipfile.open(name)
+		    elpxmlfilecontents=elpxmlfile.read()
+		    elpxml=minidom.parseString(elpxmlfilecontents)
+		    dictionarylist=elpxml.getElementsByTagName('dictionary')
+		    stringlist=elpxml.getElementsByTagName('string')
+		    print("/////////////////////////////////////////////////////////////")
+		    elpid="replacemewithxmldata"
+		    setattr(newdoc, 'elpid', elpid)
+		    #print(dictionarylist[0].attributes['string'].value)
+	    
+
+
 	    if os.system('exe_do -s ustadMobileTestMode=True -x ustadmobile ' + appLocation + '/../UMCloudDj/media/' + uid + ' ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid ) == 0: # If command ran successfully,
 	    	uidwe = uid.split('.um.')[-1]
 	    	uidwe = uidwe.split('.elp')[-2]
@@ -255,5 +308,166 @@ def list(request, template_name='myapp/list.html'):
         {'student_list':data['student_list'] ,'documents': documents, 'form': form, 'current_user': current_user},
         context_instance=RequestContext(request)
     )
+
+
+###################################################################################
+
+##################################################################################
+#Courses CRUD
+
+#class Course(models.Model):
+   #name=models.CharField(max_length=200)
+   #packages = models.ManyToManyField(Package, related_name='coursepackages')
+   #add_date=models.DateTimeField(auto_now_add=True)
+   #upd_date=models.DateTimeField(auto_now=True)
+   #category=models.CharField(max_length=200)
+   #price=models.FloatField()
+   #active=models.BooleanField(default = True)
+   #public=models.BooleanField(default = True)
+   #publisher = models.ForeignKey(User, related_name='coursepublisher')
+   #organisation = models.ForeignKey(User, related_name='courseorganisation')
+   #success = models.CharField(max_length=10)
+
+
+
+class CourseForm(ModelForm):
+    class Meta:
+        model = Course
+        fields = ('name', 'category','price','description')
+
+
+@login_required(login_url='/login/')
+def course_list(request, template_name='myapp/course_list.html'):
+    courses = Course.objects.all()
+    packages_courses=[]
+
+    #for allclass in allclasses:
+        #school = School_Allclasses.objects.get(allclass_classid=allclass).school_schoolid
+        #school_allclasses.append(school)
+
+    data = {}
+    data['object_list'] = courses
+    #data['object_list'] = zip(allclasses, school_allclasses)
+    data['package_list'] = packages_courses
+    return render(request, template_name, data)
+
+
+@login_required(login_url='/login/')
+def course_table(request, template_name='myapp/course_table.html'):
+    courses = Course.objects.all()
+    publisher_details=[]
+    for course in courses:
+	pub_details=course.publisher.username + "(" + course.organisation.organisation_name + ")"
+	publisher_details.append(pub_details)
+	
+    data = {}
+    data['object_list'] = courses
+    data['object_list'] = zip(courses,publisher_details)
+
+    courses_as_json = serializers.serialize('json',courses)
+    courses_as_json = json.loads(courses_as_json)
+    courses_as_json = zip(courses_as_json, publisher_details)
+
+    return render(request, template_name, {'data':data, 'courses_as_json':courses_as_json})
+    #return render(request, template_name, data)
+
+@login_required(login_url='/login/')
+def course_delete(request, pk, template_name='myapp/course_confirm_delete.html'):
+    course = get_object_or_404(Course, pk=pk)
+    if request.method=='POST':
+        course.delete()
+        return redirect('managecourses')
+    return render(request, template_name, {'object':course})
+
+@login_required(login_url="/login/")
+def course_create(request, template_name='myapp/course_create.html'):
+    form = CourseForm(request.POST or None)
+    #packages = Document.objects.all()
+    packages = Document.objects.filter(publisher=request.user, success="YES")
+
+    teacher_role = Role.objects.get(pk=5)
+    student_role = Role.objects.get(pk=6)
+
+    data = {}
+    data['package_list'] = packages
+    if request.method == 'POST':
+        post = request.POST;
+        print("checking..")
+        course_name = post['course_name']
+    	course_count = Course.objects.filter(name=course_name).count()
+        if course_count == 0:
+        #if not allclass_exists(post['class_name']):
+                print("Creating the Course..")
+                course_name=post['course_name']
+                course_desc=post['course_desc']
+		course_category=post['course_category']
+		course_price=post['course_price']
+		#publisher
+		#organisation
+		#success
+                packageidspicklist=post.getlist('target')
+                print("packages selected from picklist:")
+                print(packageidspicklist)
+		course_publisher = request.user
+		course_organisation = User_Organisations.objects.get(user_userid=course_publisher).organisation_organisationid
+		course = Course(name=course_name, category=course_category, price=course_price, description=course_desc, publisher=course_publisher, organisation=course_organisation)
+		course.save()
+
+                print("Mapping packages with course..")
+
+		for everypackageid in packageidspicklist:
+			print("Looping over packages..")
+			print(everypackageid)
+			currentpackage = Document.objects.get(pk=everypackageid)
+			course.packages.add(currentpackage)
+			course.save()
+
+		setattr(course, 'success','YES')
+		course.save()
+		print("All done for course creation.")
+
+
+                return redirect('managecourses')
+        else:
+                print("Course already exists")
+                #Show message that the class name already exists in our database. (For the current organisation)
+                return redirect('managecourses')
+
+    return render(request, template_name, data)
+
+@login_required(login_url='/login/')
+def course_update(request, pk, template_name='myapp/course_form.html'):
+    course = get_object_or_404(Course, pk=pk)
+    form = CourseForm(request.POST or None, instance=course)
+
+    #Assigned Packages mapping
+    allpackages = Document.objects.all();
+    assignedpackages = course.packages.all();
+
+    print(allpackages)
+    print(assignedpackages)
+
+    if form.is_valid():
+        form.save()
+        print(request.POST.get('assignedpackages'))
+
+        print("Going to update the assigned packages..")
+        packagesidspicklist=request.POST.getlist('target')
+        print(packagesidspicklist)
+        if packagesidspicklist:
+		course.packages.clear()
+	assignedclear = course.packages.all();
+	for everypackageid in packagesidspicklist:
+		currentpackage = Document.objects.get(pk=everypackageid)
+		course.packages.add(currentpackage)
+		course.save()
+
+
+        return redirect('managecourses')
+    return render(request, template_name, {'form':form, 'all_packages':allpackages,'assigned_packages':assignedpackages})
+
+
+
+
 
 # Create your views here.

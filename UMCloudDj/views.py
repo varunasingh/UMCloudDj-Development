@@ -7,7 +7,8 @@ from django.contrib.auth.models import User
 from django.shortcuts import redirect
 from django.contrib import auth
 from django.template import RequestContext
-from uploadeXe.models import Document
+#from uploadeXe.models import Document
+from uploadeXe.models import Package as Document
 from uploadeXe.models import Ustadmobiletest
 
 #Testing..
@@ -488,6 +489,24 @@ def sendelpfile_view(request):
 			#os.system('tree')
             		print("Possible command: ")
             		print('exe_do -s ustadMobileTestMode=True -x ustadmobile ' + appLocation + '/../UMCloudDj/media/' + uid + ' ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid )
+
+			elpfile=appLocation + '/../UMCloudDj/media/' + uid
+			elpfilehandle = open(elpfile, 'rb')
+            		elpzipfile = zipfile.ZipFile(elpfilehandle)
+            		for name in elpzipfile.namelist():
+                		if name.find('contentv3.xml') != -1:
+                    			elpxmlfile=elpzipfile.open(name)
+                    			elpxmlfilecontents=elpxmlfile.read()
+                    			elpxml=minidom.parseString(elpxmlfilecontents)
+                    			dictionarylist=elpxml.getElementsByTagName('dictionary')
+                    			stringlist=elpxml.getElementsByTagName('string')
+                    			print("/////////////////////////////////////////////////")
+                    			elpid="replacemewithxmldata"
+                    			setattr(newdoc, 'elpid', elpid)
+                    			#print(dictionarylist[0].attributes['string'].value)
+
+
+
             		if os.system('exe_do -s ustadMobileTestMode=True -x ustadmobile ' + appLocation + '/../UMCloudDj/media/' + uid + ' ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid ) == 0: # If command ran successfully,
                 		uidwe = uid.split('.um.')[-1]
                 		uidwe = uidwe.split('.elp')[-2]
@@ -629,6 +648,21 @@ def testelpfiles_view(request):
 		print("[testelpfiles] unid: " + unid)
 		
 		#if os.system('exe_do -x ustadmobile ' + appLocation + '/../UMCloudDj/media/eXeTestElp/' + testelp + ' ' + appLocation + '/../UMCloudDj/media/eXeTestExport/' + unid ) == 0: # If command ran successfully,
+		elpfile=appLocation + '/../UMCloudDj/media/eXeTestExport/' + unid
+		elpfilehandle = open(elpfile, 'rb')
+            	elpzipfile = zipfile.ZipFile(elpfilehandle)
+            	for name in elpzipfile.namelist():
+                	if name.find('contentv3.xml') != -1:
+                    		elpxmlfile=elpzipfile.open(name)
+                    		elpxmlfilecontents=elpxmlfile.read()
+                    		elpxml=minidom.parseString(elpxmlfilecontents)
+                    		dictionarylist=elpxml.getElementsByTagName('dictionary')
+                    		stringlist=elpxml.getElementsByTagName('string')
+                    		print("/////////////////////////////////////////////////////////////")
+                    		elpid="replacemewithxmldata"
+                    		setattr(newdoc, 'elpid', elpid)
+                    		#print(dictionarylist[0].attributes['string'].value)
+
 		if os.system('exe_do -x ustadmobile ' + testelp + ' ' + appLocation + '/../UMCloudDj/media/eXeTestExport/' + unid ) == 0: # If command ran successfully,
 			print("[testelpfiles] Exe Exported successfully..")
 			uidwe = testelp.split('.um.')[-1]

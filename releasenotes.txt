@@ -1,3 +1,11 @@
+v0.4.7
+-Added loading screen in Package upload
+-Changed courses to packages.
+-Added Course model.
+-Added CRUD for course model
+-
+
+
 v0.4.6
 -Updated SERVER STEPS and ReadMe
 -USE_TZ set to False in main server
@@ -8,7 +16,7 @@ v0.4.6
 -Updated Organisation CRUD Unit Tests
 -Removed un-necessary and depriciated JSON checks
 -coverage tested with unit tests
--
+
 
 v0.3.5
 -Fixed id tag in /auth and login.html to suggest username as username and not email. 

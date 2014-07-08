@@ -2,6 +2,7 @@
 from django.db import models
 from django.contrib.auth.models import User #Added user.
 from django.core.urlresolvers import reverse #Added reverse..
+from organisation.models import Organisation
 import os
 import uuid
 import time
@@ -17,20 +18,6 @@ def update_filename(instance, filename):
    timestamp = str(time.time())
    filename = instance.user + timestamp + ".um." + filename
    return os.path.join(path, filename)
-
-class Document(models.Model):
-   exefile = models.FileField(upload_to=get_file_path) #saves as a unique id.
-   name = models.CharField(max_length=200)
-   pub_date = models.DateTimeField(auto_now_add=True) #added by Varuna Singh
-   upd_date = models.DateTimeField(auto_now=True)
-   url = models.CharField(max_length=200)
-   uid = models.CharField(max_length=200)
-   success = models.CharField(max_length=10)
-   publisher = models.ForeignKey(User, related_name='publisher')
-   students = models.ManyToManyField(User, related_name='coursestudents')
-   
-   def __unicode__(self):
-        return u'%s' % (self.name)
 
 class Package(models.Model):
    elpid = models.CharField(max_length=200)
@@ -49,6 +36,7 @@ class Package(models.Model):
 
 class Course(models.Model):
    name=models.CharField(max_length=200)   
+   description=models.CharField(max_length=800)
    packages = models.ManyToManyField(Package, related_name='coursepackages')
    add_date=models.DateTimeField(auto_now_add=True)
    upd_date=models.DateTimeField(auto_now=True)
@@ -56,7 +44,9 @@ class Course(models.Model):
    price=models.FloatField()
    active=models.BooleanField(default = True)
    public=models.BooleanField(default = True)
-   #Add Organisation?
+   publisher = models.ForeignKey(User, related_name='coursepublisher')
+   organisation = models.ForeignKey(Organisation, related_name='courseorganisation')
+   success = models.CharField(max_length=10)
 
 
 class Ustadmobiletest(models.Model):

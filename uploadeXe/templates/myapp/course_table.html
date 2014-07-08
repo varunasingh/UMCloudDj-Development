@@ -1,33 +1,33 @@
 {% extends "base.html" %}
-{% block title %}Manage Packages{% endblock %}
+{% block title %}Manage Courses{% endblock %}
 {% block content %}
 
 <script type="text/javascript">
   $(function() { 
-    $('#newelp').puibutton();
-    $('#tblelps').puidatatable({
-            caption: 'Packages',
+    $('#newcourse').puibutton();
+    $('#tblcourses').puidatatable({
+            caption: 'Courses',
             paginator: {
                 rows: 10
             },
             columns: [
                 {field:'name', headerText: 'Name', sortable:true},
-		{field:'pub_date', headerText: 'Published', sortable:true},
-		{field:'url', headerText: 'URL', sortable:true},
+		{field:'category', headerText: 'Category', sortable:true},
+		{field:'publisher', headerText: 'Publisher', sortable:true},
 
 
             ],
             datasource: [
                 {% if courses_as_json %}
-                        {% for c in courses_as_json %}
-                        {"pk":"{{c.pk}}", "exefile":"{{c.fields.exefile}}","name":"{{c.pk}}:{{c.fields.name}}", "pub_date":"{{c.fields.pub_date}}","url":"{{c.fields.url}}","publisher":"{{c.fields.publisher}}","success":"{{c.fields.success}}"}{% if not forloop.last %},{% endif %}
+                        {% for c,publisher_detail in courses_as_json %}
+                        {"pk":"{{c.pk}}", "name":"{{c.pk}}: {{c.fields.name}}","category":"{{c.fields.category}}","publisher":"{{publisher_detail}}","success":"{{c.fields.success}}"}{% if not forloop.last %},{% endif %}
                         {% endfor %}
                 {% endif %}
                 ],
             selectionMode: 'single',
             rowSelect: function(event, data) {
                 $('#messages').puigrowl('show', [{severity:'info', summary: 'Row Selected', detail: (data.school_name + ' ' + data.pk)}]);
-                var edit="/uploadeXe/edit/"+data.pk;
+                var edit="/uploadeXe/courseedit/"+data.pk;
                 window.open(edit, "_self");
             },
             rowUnselect: function(event, data) {
@@ -39,9 +39,9 @@
 
 
 </script>
-<i>Click an entry to edit the package</i>
-<div id="tblelps"> </div>
+<i>Click an entry to edit the course</i>
+<div id="tblcourses"> </div>
 <p></p>
-<a href="/uploadeXe/new"><button id="newelp" type="button">Upload New</button></a>  
+<a href="/uploadeXe/coursenew"><button id="newcourse" type="button">New Course</button></a>  
                                                                              
 {% endblock %}
