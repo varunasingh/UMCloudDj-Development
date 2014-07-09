@@ -31,6 +31,30 @@
 			});  
                 }
           ); 
+	var course_map = [	
+			{% for course in course_list %}
+				{
+				"value":"{{course.id}}",
+				"label":"{{course.id}}:  {{course.name}}"
+				},
+			{% endfor %}
+			];
+	$(function() { 
+                        $('#selectcoursesfornewallclass').puipicklist({  
+                                effect: 'clip',  
+                                showSourceControls: true,  
+                                showTargetControls: true,  
+                                sourceCaption: 'Available',  
+                                targetCaption: 'Selected',  
+                                filter: true,  
+                                sourceData:course_map,  
+                                content: function(option) {  
+                                        return '<img src="/media/' + "course" + '.png" alt="" /><span style="">' + option.label.replace(/^\s+|\s+$/g, '') + '</span>';  
+                                }  
+                        });  
+                }
+          ); 
+
 </script>
 {% endblock %}
 
@@ -59,13 +83,22 @@
         	{% endfor %}
    </select>
    <p></p>
-   <h3>Select Students Picklist</h3>  
+   <h3>Assign Students</h3>  
 <div id="selectstudentsfornewallclass" >  
     <select multiple="multiple" id="source" name="source">  
     </select>  
     <select multiple="multiple" id="target" name="target">  
     </select>  
 </div>  
+   <p></p>
+   <h3>Assign Courses to this class</h3>         
+<div id="selectcoursesfornewallclass" >
+    <select multiple="multiple" id="source" name="source">
+    </select>
+    <select multiple="multiple" id="target2" name="target2">
+    </select>
+</div>
+
    <br></br>
 
     <button id="submit" type="submit" name="submit" value="Create">Submit</button>

@@ -57,8 +57,17 @@ def my_view(request):
 class DocumentForm(ModelForm):
     class Meta:
         model = Document
-	fields = ('id','name','url','success','publisher','students')
+	fields = ('name','url','publisher')
 	
+
+@login_required(login_url='/login/')
+def delete(request, pk, template_name='myapp/package_confirm_delete.html'):
+    document = get_object_or_404(Document, pk=pk)
+    if request.method=='POST':
+        document.delete()
+        return redirect('manage')
+    return render(request, template_name, {'object':document})
+
 
 @login_required(login_url='/login/')
 def manage(request, template_name='myapp/manage.html'):
@@ -71,17 +80,22 @@ def manage(request, template_name='myapp/manage.html'):
 
 @login_required(login_url='/login/')
 def edit(request, pk, template_name='myapp/update.html'):
+    organisation = User_Organisations.objects.get(user_userid=request.user).organisation_organisationid;
     document = get_object_or_404(Document, pk=pk)
     form = DocumentForm(request.POST or None, instance=document)
     student_role = Role.objects.get(pk=6)
     allstudents=User.objects.filter(pk__in=User_Roles.objects.filter(role_roleid=student_role).values_list('user_userid', flat=True))
-    print("All students:")
-    print(allstudents)
+
+    alluserorg=User.objects.filter(pk__in=User_Organisations.objects.filter(organisation_organisationid=organisation).values_list('user_userid', flat=True))   
     assignedstudents=document.students.all();
-    print("Assigned Students:")
-    print(assignedstudents);
+
+    allcourses = Course.objects.filter(success="YES", organisation=organisation)
+
+    assignedcourses=Course.objects.filter(packages=document)
+
     if form.is_valid():
 	form.save()
+
 	print("Going to update the assigned students..")
 	studentidspicklist=request.POST.getlist('target')
 	document.students.clear()
@@ -91,9 +105,17 @@ def edit(request, pk, template_name='myapp/update.html'):
                 document.students.add(currentstudent)
                 document.save()
 
+  	print("Going to update course where the package should be present..")
+	courseidspicklist=request.POST.getlist('target2')
+	for everycourseid in courseidspicklist:
+		everycourse = Course.objects.get(pk=everycourseid)
+		everycourse.packages.add(document)
+		everycourse.save()
+	
+
 	return redirect('manage')
 
-    return render(request, template_name, {'form':form, 'all_students':allstudents,'assigned_students':assignedstudents})
+    return render(request, template_name, {'form':form, 'all_courses':allcourses, 'assigned_courses':assignedcourses,'all_students':allstudents,'assigned_students':assignedstudents})
 
 @login_required(login_url='/login/')
 def new(request, template_name='myapp/new.html'):
@@ -106,15 +128,19 @@ def new(request, template_name='myapp/new.html'):
     teachers = User.objects.filter(pk__in=User_Roles.objects.filter(role_roleid=teacher_role).values_list('user_userid', flat=True))
 
     students = User.objects.filter(pk__in=User_Roles.objects.filter(role_roleid=student_role).values_list('user_userid', flat=True))
+    organisation = User_Organisations.objects.get(user_userid=request.user).organisation_organisationid;
+    allcourses = Course.objects.filter(success="YES", organisation=organisation)
+
     data = {}
     data['teacher_list'] = teachers
     data['student_list'] = students
+    data['all_courses'] = allcourses
 
     current_user = request.user.username
     # Render list page with the documents and the form
     return render_to_response(
         template_name,
-        {'student_list':data['student_list'],'current_user': current_user},
+        {'all_courses':data['all_courses'],'student_list':data['student_list'],'current_user': current_user},
         context_instance=RequestContext(request)
     )
 
@@ -156,6 +182,7 @@ def list(request, template_name='myapp/list.html'):
     teachers = User.objects.filter(pk__in=User_Roles.objects.filter(role_roleid=teacher_role).values_list('user_userid', flat=True))
 
     students = User.objects.filter(pk__in=User_Roles.objects.filter(role_roleid=student_role).values_list('user_userid', flat=True))
+
     data = {}
     data['teacher_list'] = teachers
     data['student_list'] = students
@@ -193,7 +220,7 @@ def list(request, template_name='myapp/list.html'):
                 currentstudent=User.objects.get(pk=everystudentid)
                 newdoc.students.add(currentstudent)
                 newdoc.save() 
- 
+
 	    os.system("echo Current location:")
             serverlocation=os.system("pwd")
 	    mainappstring = "/UMCloudDj/"
@@ -261,6 +288,21 @@ def list(request, template_name='myapp/list.html'):
 			if os.system('grunt --base ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/ --gruntfile ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/Gruntfile.js'):
 			    os.system('mv ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/ustadmobile-settings.js.origi ' +  appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/ustadmobile-settings.js')
 			    print("Grunt ran successfully. ")
+				
+
+			    """
+			    Adding package to course
+		  	    """
+			    print("Going to assign the package to the selected book")
+        		    courseidspicklist=request.POST.getlist('target2')
+        		    for everycourseid in courseidspicklist:
+                	        currentcourse = Course.objects.get(pk=everycourseid)
+                     	        currentcourse.packages.add(newdoc)
+  			    """
+			    end
+			    """
+
+
 			else:
 			    #Grunt run failed. 
 			    print("Unable to run grunt. Test failed. ")
@@ -315,20 +357,6 @@ def list(request, template_name='myapp/list.html'):
 ##################################################################################
 #Courses CRUD
 
-#class Course(models.Model):
-   #name=models.CharField(max_length=200)
-   #packages = models.ManyToManyField(Package, related_name='coursepackages')
-   #add_date=models.DateTimeField(auto_now_add=True)
-   #upd_date=models.DateTimeField(auto_now=True)
-   #category=models.CharField(max_length=200)
-   #price=models.FloatField()
-   #active=models.BooleanField(default = True)
-   #public=models.BooleanField(default = True)
-   #publisher = models.ForeignKey(User, related_name='coursepublisher')
-   #organisation = models.ForeignKey(User, related_name='courseorganisation')
-   #success = models.CharField(max_length=10)
-
-
 
 class CourseForm(ModelForm):
     class Meta:
@@ -340,21 +368,17 @@ class CourseForm(ModelForm):
 def course_list(request, template_name='myapp/course_list.html'):
     courses = Course.objects.all()
     packages_courses=[]
-
-    #for allclass in allclasses:
-        #school = School_Allclasses.objects.get(allclass_classid=allclass).school_schoolid
-        #school_allclasses.append(school)
-
     data = {}
     data['object_list'] = courses
-    #data['object_list'] = zip(allclasses, school_allclasses)
     data['package_list'] = packages_courses
     return render(request, template_name, data)
 
 
 @login_required(login_url='/login/')
 def course_table(request, template_name='myapp/course_table.html'):
-    courses = Course.objects.all()
+    organisation = User_Organisations.objects.get(user_userid=request.user).organisation_organisationid;
+    courses = Course.objects.filter(success="YES", organisation=organisation)
+    #courses = Course.objects.all()
     publisher_details=[]
     for course in courses:
 	pub_details=course.publisher.username + "(" + course.organisation.organisation_name + ")"
@@ -369,7 +393,6 @@ def course_table(request, template_name='myapp/course_table.html'):
     courses_as_json = zip(courses_as_json, publisher_details)
 
     return render(request, template_name, {'data':data, 'courses_as_json':courses_as_json})
-    #return render(request, template_name, data)
 
 @login_required(login_url='/login/')
 def course_delete(request, pk, template_name='myapp/course_confirm_delete.html'):
@@ -388,8 +411,11 @@ def course_create(request, template_name='myapp/course_create.html'):
     teacher_role = Role.objects.get(pk=5)
     student_role = Role.objects.get(pk=6)
 
+    students = User.objects.filter(pk__in=User_Roles.objects.filter(role_roleid=student_role).values_list('user_userid', flat=True))
+
     data = {}
     data['package_list'] = packages
+    data['student_list'] = students
     if request.method == 'POST':
         post = request.POST;
         print("checking..")
@@ -408,6 +434,10 @@ def course_create(request, template_name='myapp/course_create.html'):
                 packageidspicklist=post.getlist('target')
                 print("packages selected from picklist:")
                 print(packageidspicklist)
+		studentidspicklist=post.getlist('target2')
+		print("students selected from picklist:")
+		print(studentidspicklist)
+		
 		course_publisher = request.user
 		course_organisation = User_Organisations.objects.get(user_userid=course_publisher).organisation_organisationid
 		course = Course(name=course_name, category=course_category, price=course_price, description=course_desc, publisher=course_publisher, organisation=course_organisation)
@@ -420,6 +450,14 @@ def course_create(request, template_name='myapp/course_create.html'):
 			print(everypackageid)
 			currentpackage = Document.objects.get(pk=everypackageid)
 			course.packages.add(currentpackage)
+			course.save()
+
+		print("Mapping students with course..")
+		for everystudentid in studentidspicklist:
+			print("Looping over students..")
+			print(everystudentid)
+			currentstudent=User.objects.get(pk=everystudentid)
+			course.students.add(currentstudent)
 			course.save()
 
 		setattr(course, 'success','YES')
@@ -447,6 +485,12 @@ def course_update(request, pk, template_name='myapp/course_form.html'):
     print(allpackages)
     print(assignedpackages)
 
+    student_role = Role.objects.get(pk=6)
+
+    allstudents = User.objects.filter(pk__in=User_Roles.objects.filter(role_roleid=student_role).values_list('user_userid', flat=True))
+    assignedstudents = course.students.all()
+
+
     if form.is_valid():
         form.save()
         print(request.POST.get('assignedpackages'))
@@ -461,10 +505,18 @@ def course_update(request, pk, template_name='myapp/course_form.html'):
 		currentpackage = Document.objects.get(pk=everypackageid)
 		course.packages.add(currentpackage)
 		course.save()
-
+	print("Going to update the assigned courses..")
+	studentidspicklist=request.POST.getlist('target2')
+	print(studentidspicklist)
+	if studentidspicklist:
+		course.students.clear()
+	for everystudentid in studentidspicklist:
+		currentstudent = User.objects.get(pk=everystudentid)
+		course.students.add(currentstudent)
+		course.save()
 
         return redirect('managecourses')
-    return render(request, template_name, {'form':form, 'all_packages':allpackages,'assigned_packages':assignedpackages})
+    return render(request, template_name, {'form':form, 'all_students':allstudents, 'assigned_students':assignedstudents,'all_packages':allpackages,'assigned_packages':assignedpackages})
 
 
 

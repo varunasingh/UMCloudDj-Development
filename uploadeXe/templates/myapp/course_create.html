@@ -3,6 +3,13 @@
 
 {% block scriptjs %}
 <script type="text/javascript">
+ 	var student_map = [{% for student in student_list %}
+                        { "value" : "{{ student.id }}",
+                        "label":"{{student.id}}: {{student.first_name}}({{student.username}})"
+                        //"label" : "{{package.name}}({{package.url}})"
+                        },
+                {% endfor %}];
+
 	var package_map = [{% for package in package_list %}
 			{ "value" : "{{ package.id }}",
 			"label":"<a href=\"{{package.url}}\" target=\"_blank\">{{package.id}}:  {{package.name}}</a>"
@@ -11,6 +18,7 @@
 		{% endfor %}];
           $(function() { 
 			$('#course_name').puiinputtext();
+			$('#newpackage').puibutton();
         		$('#course_desc').puiinputtext();
         		$('#course_category').puiinputtext();
 			$('#course_price').puiinputtext();
@@ -28,6 +36,19 @@
         				return '<img src="/media/' + "package" + '.png" alt="" /><span style="">' + option.label.replace(/^\s+|\s+$/g, '') + '</span>';  
     				}  
 			});  
+
+			$('#selectstudentsfornewcourse').puipicklist({  
+                                effect: 'clip',  
+                                showSourceControls: true,  
+                                showTargetControls: true,  
+                                sourceCaption: 'Available',  
+                                targetCaption: 'Selected',  
+                                filter: true,  
+                                sourceData:student_map,  
+                                content: function(option) {  
+                                        return '<img src="/media/' + "user" + '.png" alt="" /><span style="">' + option.label.replace(/^\s+|\s+$/g, '') + '</span>';  
+                                }  
+                        });
                 }
           ); 
 </script>
@@ -50,13 +71,22 @@
         <label for="course_price">Course Price:  </label><input type="number" step="0.01" min="0" name="course_price" id="course_price" value="" />
     </div>
 
-   <h3>Select Packages Picklist</h3>  
+   <h3>Assign Packages <a href="/uploadeXe/new"><i>(Upload New)</i></a></h3> 
 <div id="selectpackagesfornewcourse" >  
     <select multiple="multiple" id="source" name="source">  
     </select>  
     <select multiple="multiple" id="target" name="target">  
     </select>  
 </div>  
+<h3>Assign Students to this course</h3>
+<div id="selectstudentsfornewcourse" >
+    <select multiple="multiple" id="source" name="source">
+    </select>
+    <select multiple="multiple" id="target2" name="target2">
+    </select>
+</div>
+   <br></br>
+
    <br></br>
 
     <button id="submit" type="submit" name="submit" value="Create">Submit</button>

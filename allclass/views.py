@@ -19,6 +19,7 @@ from school.models import School
 from allclass.models import Allclass
 from uploadeXe.models import Role
 from uploadeXe.models import User_Roles
+from uploadeXe.models import Course
 
 from django.http import HttpResponse
 from django.shortcuts import render
@@ -43,13 +44,8 @@ class AllclassForm(ModelForm):
 def allclass_list(request, template_name='allclass/allclass_list.html'):
     allclasses = Allclass.objects.all()
     school_allclasses = []
-    #for allclass in allclasses:
-        #school = School_Allclasses.objects.get(allclass_classid=allclass).school_schoolid
-        #school_allclasses.append(school)
-
     data = {}
     data['object_list'] = allclasses
-    #data['object_list'] = zip(allclasses, school_allclasses)
     data['school_list'] = school_allclasses
     return render(request, template_name, data)
 
@@ -57,6 +53,10 @@ def allclass_list(request, template_name='allclass/allclass_list.html'):
 @login_required(login_url='/login/')
 def allclass_table(request, template_name='allclass/allclass_table.html'):
     allclasses = Allclass.objects.all()
+
+    organisation = User_Organisations.objects.get(user_userid=request.user).organisation_organisationid;
+    allclasses = Allclass.objects.filter(school__in=School.objects.filter(organisation=organisation));
+
     school_allclasses = []
     for allclass in allclasses:
 	school_name=allclass.school.school_name
@@ -78,16 +78,23 @@ def allclass_table(request, template_name='allclass/allclass_table.html'):
 def allclass_create(request, template_name='allclass/allclass_create.html'):
     form = AllclassForm(request.POST or None)
     schools = School.objects.all()
+    
+    organisation = User_Organisations.objects.get(user_userid=request.user).organisation_organisationid;
+    schools = School.objects.filter(organisation=organisation)
+
     teacher_role = Role.objects.get(pk=5)
     student_role = Role.objects.get(pk=6)
     
     teachers = User.objects.filter(pk__in=User_Roles.objects.filter(role_roleid=teacher_role).values_list('user_userid', flat=True))
 
     students = User.objects.filter(pk__in=User_Roles.objects.filter(role_roleid=student_role).values_list('user_userid', flat=True))
+    organisation = User_Organisations.objects.get(user_userid=request.user).organisation_organisationid;
+    courses = Course.objects.filter(success="YES",organisation=organisation)
     data = {}
     data['object_list'] = schools
     data['teacher_list'] = teachers
     data['student_list'] = students
+    data['course_list'] = courses
 
     if request.method == 'POST':
         post = request.POST;
@@ -107,6 +114,12 @@ def allclass_create(request, template_name='allclass/allclass_create.html'):
 		print("students selected from picklist:")
 		print(studentidspicklist)
 
+		courseidspicklist=post.getlist('target2')
+		print("courses selected from picklist")
+		print(courseidspicklist)
+		
+		
+
 		currentschool = School.objects.get(pk=schoolid)
 		
     		allclass = Allclass(allclass_name=class_name, allclass_desc=class_desc, allclass_location=class_location,school=currentschool)
@@ -124,6 +137,19 @@ def allclass_create(request, template_name='allclass/allclass_create.html'):
 			currentstudent=User.objects.get(pk=everystudentid)
 			allclass.students.add(currentstudent)
 			allclass.save()
+
+		for everycourseid in courseidspicklist:
+			print("Looping course:")
+			print(everycourseid)
+			currentcourse = Course.objects.get(pk=everycourseid)
+			for everystudentid in studentidspicklist:
+				currentstudent=User.objects.get(pk=everystudentid)
+				currentcourse.students.add(currentstudent)
+		
+			#course.allclass.add(currentcourse)
+		print("Mapping of courses and students done for all students in the class")
+			
+			
 
 		currentteacher=User.objects.get(pk=teacherid)
 		allclass.teachers.add(currentteacher)
@@ -187,6 +213,7 @@ def allclass_update(request, pk, template_name='allclass/allclass_form.html'):
 def allclass_delete(request, pk, template_name='allclass/allclass_confirm_delete.html'):
     allclass = get_object_or_404(Allclass, pk=pk)
     if request.method=='POST':
+	#check if request.user is in the orgn and is not a student.
         allclass.delete()
         return redirect('allclass_table')
     return render(request, template_name, {'object':allclass})

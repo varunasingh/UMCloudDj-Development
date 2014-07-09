@@ -47,6 +47,7 @@ class Course(models.Model):
    publisher = models.ForeignKey(User, related_name='coursepublisher')
    organisation = models.ForeignKey(Organisation, related_name='courseorganisation')
    success = models.CharField(max_length=10)
+   students = models.ManyToManyField(User, related_name='coursestudents')
 
 
 class Ustadmobiletest(models.Model):
@@ -71,6 +72,7 @@ class Role(models.Model):
 class User_Roles(models.Model):
    name = models.CharField(max_length=200)
    user_userid = models.ForeignKey(User)
+   #user_userid = models.OneToOneField(User)
    role_roleid = models.ForeignKey(Role)
    #role_roleid = models.ManyToManyField(Role)
    add_date = models.DateTimeField(auto_now_add=True)

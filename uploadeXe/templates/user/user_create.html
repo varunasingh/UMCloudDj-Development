@@ -47,7 +47,7 @@
     Role: <select id="role" form="newuserform" name="role">
         {% for role in object_list %}
 		{% if role.role_name == "Student" %}
-			<option value selected="Selected" value="{{ role.id }}">{{ role.role_name }}</option>
+			<option selected="Selected" value="{{ role.id }}">{{ role.role_name }}</option>
 		{% else %}
         		<option value="{{ role.id }}">{{ role.role_name }}</option>
 		{% endif%}

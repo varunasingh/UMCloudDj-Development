@@ -31,6 +31,7 @@ import glob #For file ^VS 130420141454
 class SchoolForm(ModelForm):
     class Meta:
         model = School
+        fields = ('school_name', 'school_desc')
 
 @login_required(login_url='/login/')
 def school_list(request, template_name='school/school_list.html'):
@@ -43,7 +44,9 @@ def school_list(request, template_name='school/school_list.html'):
 
 @login_required(login_url='/login/')
 def school_table(request, template_name='school/school_table.html'):
-    schools = School.objects.all()
+    organisation = User_Organisations.objects.get(user_userid=request.user).organisation_organisationid;
+    schools=School.objects.filter(organisation=organisation)
+    #schools = School.objects.all()
     organisation_schools = []
     data = {}
     data['object_list'] = schools
@@ -79,7 +82,11 @@ def create_school(school_name, school_desc, organisationid):
 @login_required(login_url='/login/')
 def school_create(request, template_name='school/school_create.html'):
     form = SchoolForm(request.POST or None)
-    organisations = Organisation.objects.all()
+    #organisations = Organisation.objects.all()
+    organisations=[]
+    organisation = User_Organisations.objects.get(user_userid=request.user).organisation_organisationid;
+    organisations.append(organisation)
+
     data = {}
     data['object_list'] = organisations
 
@@ -124,6 +131,7 @@ def school_update(request, pk, template_name='school/school_form.html'):
     form = SchoolForm(request.POST or None, instance=school)
     if form.is_valid():
         form.save()
+	
         return redirect('school_table')
     return render(request, template_name, {'form':form})
 
@@ -131,6 +139,7 @@ def school_update(request, pk, template_name='school/school_form.html'):
 def school_delete(request, pk, template_name='school/school_confirm_delete.html'):
     school = get_object_or_404(School, pk=pk)
     if request.method=='POST':
+	#Check if school is in request.user's organisation and if request.user is not a Student..
         school.delete()
         return redirect('school_table')
     return render(request, template_name, {'object':school})

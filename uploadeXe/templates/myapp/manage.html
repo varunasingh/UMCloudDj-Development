@@ -5,6 +5,7 @@
 <script type="text/javascript">
   $(function() { 
     $('#newelp').puibutton();
+    $('#viewelp').puibutton();
     $('#tblelps').puidatatable({
             caption: 'Packages',
             paginator: {
@@ -20,7 +21,7 @@
             datasource: [
                 {% if courses_as_json %}
                         {% for c in courses_as_json %}
-                        {"pk":"{{c.pk}}", "exefile":"{{c.fields.exefile}}","name":"{{c.pk}}:{{c.fields.name}}", "pub_date":"{{c.fields.pub_date}}","url":"{{c.fields.url}}","publisher":"{{c.fields.publisher}}","success":"{{c.fields.success}}"}{% if not forloop.last %},{% endif %}
+                        {"pk":"{{c.pk}}", "exefile":"{{c.fields.exefile}}","name":"{{c.pk}}: {{c.fields.name}}", "pub_date":"{{c.fields.pub_date}}","url":"{{c.fields.url}}","publisher":"{{c.fields.publisher}}","success":"{{c.fields.success}}"}{% if not forloop.last %},{% endif %}
                         {% endfor %}
                 {% endif %}
                 ],
@@ -43,5 +44,6 @@
 <div id="tblelps"> </div>
 <p></p>
 <a href="/uploadeXe/new"><button id="newelp" type="button">Upload New</button></a>  
+<a href='/uploadeXe/'><button id="viewelp" type="button">View Packages</button></a>
                                                                              
 {% endblock %}

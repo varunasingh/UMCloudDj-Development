@@ -1,9 +1,18 @@
+v0.4.8
+-Shuffled and reduced steps to get to Courses and Packages and make the Course form cleaner.
+-Added course add option when creating new class
+-Added course option on uploading packages
+-Fixed bug in Packages and Courses where it wasnt being updated.
+-Fixed bug in New user create and Students roles.
+-Added ability to delete package.
+-Added basic org specific table views.
+-
+
 v0.4.7
 -Added loading screen in Package upload
 -Changed courses to packages.
 -Added Course model.
 -Added CRUD for course model
--
 
 
 v0.4.6
