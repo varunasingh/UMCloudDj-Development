@@ -15,7 +15,7 @@ from organisation.models import UMCloud_Package
 from organisation.models import User_Organisations
 from users.models import UserProfile
 from django import forms
-from uploadeXe.models import Document
+from uploadeXe.models import Package as Document
 import os 
 from django.conf import settings
 

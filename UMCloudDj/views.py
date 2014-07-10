@@ -164,7 +164,10 @@ def user_list(request, template_name='user/user_list.html'):
 
 @login_required(login_url='/login/')
 def user_table(request, template_name='user/user_table.html'):
+    organisation = User_Organisations.objects.get(user_userid=request.user).organisation_organisationid;
     users = User.objects.all()
+    users= User.objects.filter(pk__in=User_Organisations.objects.filter(organisation_organisationid=organisation).values_list('user_userid', flat=True))
+
     user_roles = []
     user_organisations = []
     for user in users:
@@ -177,16 +180,19 @@ def user_table(request, template_name='user/user_table.html'):
     data['role_list'] = user_roles
     data['organisation_list'] = user_organisations
     users_as_json = serializers.serialize('json', users)
-
     users_as_json =json.loads(users_as_json)
-    return render(request, template_name, {'data':data, 'users_as_json':users_as_json})
+    user_list=zip(users_as_json, user_roles, user_organisations)
+    return render(request, template_name, {'data':data, 'user_list':user_list,'users_as_json':users_as_json})
 
 
 @login_required(login_url='/login/')
 def user_create(request, template_name='user/user_create.html'):
+    organisation = User_Organisations.objects.get(user_userid=request.user).organisation_organisationid;
     form = UserForm(request.POST or None)
     roles = Role.objects.all()
     organisations = Organisation.objects.all()
+    organisations=[]
+    organisations.append(organisation)
     data = {}
     data['object_list'] = roles
     data['organisation_list'] = organisations

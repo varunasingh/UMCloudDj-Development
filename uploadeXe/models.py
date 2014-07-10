@@ -3,6 +3,7 @@ from django.db import models
 from django.contrib.auth.models import User #Added user.
 from django.core.urlresolvers import reverse #Added reverse..
 from organisation.models import Organisation
+from allclass.models import Allclass
 import os
 import uuid
 import time
@@ -48,7 +49,10 @@ class Course(models.Model):
    organisation = models.ForeignKey(Organisation, related_name='courseorganisation')
    success = models.CharField(max_length=10)
    students = models.ManyToManyField(User, related_name='coursestudents')
+   allclasses = models.ManyToManyField(Allclass, related_name='coursesallclasses')
 
+   def __unicode__(self):
+        return u'%s' % (self.name)
 
 class Ustadmobiletest(models.Model):
    name = models.CharField(max_length=300)

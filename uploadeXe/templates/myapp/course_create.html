@@ -16,6 +16,13 @@
 			//"label" : "{{package.name}}({{package.url}})"
 			},
 		{% endfor %}];
+	var allclass_map = [{% for allclass in allclass_list %}
+                        { "value" : "{{ allclass.id }}",
+                        "label": "{{allclass.id}}: {{allclass.allclass_name}}"
+                        //"label" : "{{package.name}}({{package.url}})"
+                        },
+                {% endfor %}];
+
           $(function() { 
 			$('#course_name').puiinputtext();
 			$('#newpackage').puibutton();
@@ -36,6 +43,19 @@
         				return '<img src="/media/' + "package" + '.png" alt="" /><span style="">' + option.label.replace(/^\s+|\s+$/g, '') + '</span>';  
     				}  
 			});  
+   			$('#selectallclassesfornewcourse').puipicklist({  
+                                effect: 'clip',  
+                                showSourceControls: true,  
+                                showTargetControls: true,  
+                                sourceCaption: 'Available',  
+                                targetCaption: 'Selected',  
+                                filter: true,  
+                                sourceData:allclass_map,  
+                                content: function(option) {  
+                                        return '<img src="/media/' + "allclass" + '.png" alt="" /><span style="">' + option.label.replace(/^\s+|\s+$/g, '') + '</span>';  
+                                }  
+                        });
+
 
 			$('#selectstudentsfornewcourse').puipicklist({  
                                 effect: 'clip',  
@@ -78,7 +98,14 @@
     <select multiple="multiple" id="target" name="target">  
     </select>  
 </div>  
-<h3>Assign Students to this course</h3>
+<h3>Assign Classes to this course</h3>
+<div id="selectallclassesfornewcourse" >
+    <select multiple="multiple" id="source" name="source">
+    </select>
+    <select multiple="multiple" id="target3" name="target3">
+    </select>
+</div>
+<h3>Assign Individual Students to this course</h3>
 <div id="selectstudentsfornewcourse" >
     <select multiple="multiple" id="source" name="source">
     </select>

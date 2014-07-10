@@ -86,10 +86,13 @@ def allclass_create(request, template_name='allclass/allclass_create.html'):
     student_role = Role.objects.get(pk=6)
     
     teachers = User.objects.filter(pk__in=User_Roles.objects.filter(role_roleid=teacher_role).values_list('user_userid', flat=True))
+    teachers = User.objects.filter(pk__in=User_Organisations.objects.filter(organisation_organisationid=organisation).values_list('user_userid', flat=True)).filter(pk__in=User_Roles.objects.filter(role_roleid=teacher_role).values_list('user_userid', flat=True))
 
     students = User.objects.filter(pk__in=User_Roles.objects.filter(role_roleid=student_role).values_list('user_userid', flat=True))
-    organisation = User_Organisations.objects.get(user_userid=request.user).organisation_organisationid;
+    students = User.objects.filter(pk__in=User_Organisations.objects.filter(organisation_organisationid=organisation).values_list('user_userid', flat=True)).filter(pk__in=User_Roles.objects.filter(role_roleid=student_role).values_list('user_userid', flat=True))
+
     courses = Course.objects.filter(success="YES",organisation=organisation)
+    
     data = {}
     data['object_list'] = schools
     data['teacher_list'] = teachers
@@ -166,18 +169,25 @@ def allclass_create(request, template_name='allclass/allclass_create.html'):
 
 @login_required(login_url='/login/')
 def allclass_update(request, pk, template_name='allclass/allclass_form.html'):
+    organisation = User_Organisations.objects.get(user_userid=request.user).organisation_organisationid;
     allclass = get_object_or_404(Allclass, pk=pk)
     form = AllclassForm(request.POST or None, instance=allclass)
 
     #Assigned Student mapping
     student_role = Role.objects.get(pk=6)
     allstudents=User.objects.filter(pk__in=User_Roles.objects.filter(role_roleid=student_role).values_list('user_userid', flat=True))
+    allstudents = User.objects.filter(pk__in=User_Organisations.objects.filter(organisation_organisationid=organisation).values_list('user_userid', flat=True)).filter(pk__in=User_Roles.objects.filter(role_roleid=student_role).values_list('user_userid', flat=True))
+
     assignedstudents=allclass.students.all();
 
     #Assigned Teachers mapping
     teacher_role = Role.objects.get(pk=5)
     allteachers = User.objects.filter(pk__in=User_Roles.objects.filter(role_roleid=teacher_role).values_list('user_userid', flat=True))
+    allteachers = User.objects.filter(pk__in=User_Organisations.objects.filter(organisation_organisationid=organisation).values_list('user_userid', flat=True)).filter(pk__in=User_Roles.objects.filter(role_roleid=teacher_role).values_list('user_userid', flat=True))
     assignedteachers=allclass.teachers.all();
+
+    allcourses=Course.objects.filter(organisation=organisation)
+    assignedcourses=Course.objects.filter(allclasses__in =[allclass])
 
 
     if form.is_valid():
@@ -205,9 +215,22 @@ def allclass_update(request, pk, template_name='allclass/allclass_form.html'):
                 currentteacher=User.objects.get(pk=everyteacherid)
                 allclass.teachers.add(currentteacher)
                 allclass.save()
+
+	print("Going to update the assigned course")
+	courseidspicklist=request.POST.getlist('target3')
+	print(courseidspicklist)
+	for everycourseid in courseidspicklist:
+		print("everycourseid:")
+		print(everycourseid)
+		everycourse = Course.objects.get(pk=everycourseid)
+		everycourse.allclasses.add(allclass)
+		everycourse.save()
+		print("added.")
+		print("Course's classes:")
+		print(everycourse.allclasses.all())
 	
         return redirect('allclass_table')
-    return render(request, template_name, {'form':form, 'all_students':allstudents,'assigned_students':assignedstudents, 'all_teachers':allteachers,'assigned_teachers':assignedteachers})
+    return render(request, template_name, {'form':form, 'all_courses':allcourses, 'assigned_courses':assignedcourses, 'all_students':allstudents,'assigned_students':assignedstudents, 'all_teachers':allteachers,'assigned_teachers':assignedteachers})
 
 @login_required(login_url='/login/')
 def allclass_delete(request, pk, template_name='allclass/allclass_confirm_delete.html'):

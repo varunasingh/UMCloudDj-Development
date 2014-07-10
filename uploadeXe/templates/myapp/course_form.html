@@ -23,6 +23,33 @@
                         "label":"{{student.id}}: {{student.first_name}}({{student.username}})"
                         },
                 {% endfor %}];
+		
+		 var all_allclasses = [{% for allclass in all_allclasses %}
+                        { "value" : "{{ allclass.id }}",
+                        "label" : "{{allclass.id}}: {{allclass.allclass_name}}"
+                        },
+                {% endfor %}];  
+                var assigned_allclasses = [{% for allclass in assigned_allclasses %}
+                        { "value" : "{{ allclass.id }}",
+                        "label" : "{{allclass.id}}: {{allclass.allclass_name}}"
+                        },
+                {% endfor %}];
+
+
+                        $('#assignedallclasses').puipicklist({
+                                effect: 'clip',  
+                                showSourceControls: true,  
+                                showTargetControls: true,  
+                                sourceCaption: 'Available',  
+                                targetCaption: 'Selected',  
+                                filter: true,  
+                                sourceData:all_allclasses,  
+                                targetData:assigned_allclasses,
+                                content: function(option) {  
+                                        return '<img src="/media/' + "allclass" + '.png" alt="" /><span style="">' + option.label.replace(/^\s+|\s+$/g, '') + '</span>';  
+                                         }  
+                        }); 
+
 
 
 			$('#assignedpackages').puipicklist({
@@ -83,14 +110,22 @@
 	<p></p>
     <p></p>
 
-    <h3>Assigned Package</h3>
+    <h3>Assigned Packages <a href="/uploadeXe/new"><i>(Upload New)</i></a></h3>
         <div id="assignedpackages" >
                 <select multiple="multiple" id="source" name="source">
                 </select>
                 <select multiple="multiple" id="target" name="target">
                 </select>
         </div>
-    <h3>Assigned Students</h3>
+
+    <h3>Assigned Classes</h3>
+        <div id="assignedallclasses" >
+                <select multiple="multiple" id="source" name="source">
+                </select>
+                <select multiple="multiple" id="target3" name="target3">
+                </select>
+        </div>
+    <h3>Assigned Individual Students</h3>
         <div id="assignedstudents" >
                 <select multiple="multiple" id="source" name="source">
                 </select>

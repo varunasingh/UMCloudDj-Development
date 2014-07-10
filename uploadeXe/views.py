@@ -57,7 +57,7 @@ def my_view(request):
 class DocumentForm(ModelForm):
     class Meta:
         model = Document
-	fields = ('name','url','publisher')
+	fields = ('name','publisher')
 	
 
 @login_required(login_url='/login/')
@@ -92,6 +92,7 @@ def edit(request, pk, template_name='myapp/update.html'):
     allcourses = Course.objects.filter(success="YES", organisation=organisation)
 
     assignedcourses=Course.objects.filter(packages=document)
+    url=document.url;
 
     if form.is_valid():
 	form.save()
@@ -115,7 +116,7 @@ def edit(request, pk, template_name='myapp/update.html'):
 
 	return redirect('manage')
 
-    return render(request, template_name, {'form':form, 'all_courses':allcourses, 'assigned_courses':assignedcourses,'all_students':allstudents,'assigned_students':assignedstudents})
+    return render(request, template_name, {'form':form, 'url':url,'all_courses':allcourses, 'assigned_courses':assignedcourses,'all_students':allstudents,'assigned_students':assignedstudents})
 
 @login_required(login_url='/login/')
 def new(request, template_name='myapp/new.html'):
@@ -238,7 +239,7 @@ def list(request, template_name='myapp/list.html'):
 	    setattr(newdoc, 'uid', unid)
 	    #os.system('tree')
 	    print("Possible command: ")
-	    print('exe_do -s ustadMobileTestMode=True -x ustadmobile ' + appLocation + '/../UMCloudDj/media/' + uid + ' ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid )
+	    print('exe_do -s ustadMobileTestMode=True -x ustadmobile ' + "\"" +appLocation + '/../UMCloudDj/media/' + uid + "\"" + ' ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid )
 
   	    elpfile=appLocation + '/../UMCloudDj/media/' + uid
 
@@ -404,18 +405,27 @@ def course_delete(request, pk, template_name='myapp/course_confirm_delete.html')
 
 @login_required(login_url="/login/")
 def course_create(request, template_name='myapp/course_create.html'):
+    organisation = User_Organisations.objects.get(user_userid=request.user).organisation_organisationid;
     form = CourseForm(request.POST or None)
     #packages = Document.objects.all()
     packages = Document.objects.filter(publisher=request.user, success="YES")
+    packages = Document.objects.filter(success="YES", publisher__in=User.objects.filter(pk__in=User_Organisations.objects.filter(organisation_organisationid=organisation).values_list('user_userid', flat=True)))
+
 
     teacher_role = Role.objects.get(pk=5)
     student_role = Role.objects.get(pk=6)
 
     students = User.objects.filter(pk__in=User_Roles.objects.filter(role_roleid=student_role).values_list('user_userid', flat=True))
 
+    students = User.objects.filter(pk__in=User_Organisations.objects.filter(organisation_organisationid=organisation).values_list('user_userid', flat=True)).filter(pk__in=User_Roles.objects.filter(role_roleid=student_role).values_list('user_userid', flat=True))
+
+    #allclasses=Allclass.objects.all()
+    allclasses = Allclass.objects.filter(school__in=School.objects.filter(organisation=organisation));
+
     data = {}
     data['package_list'] = packages
     data['student_list'] = students
+    data['allclass_list'] = allclasses
     if request.method == 'POST':
         post = request.POST;
         print("checking..")
@@ -437,6 +447,8 @@ def course_create(request, template_name='myapp/course_create.html'):
 		studentidspicklist=post.getlist('target2')
 		print("students selected from picklist:")
 		print(studentidspicklist)
+		allclassidspicklist=post.getlist('target3')
+		print(allclassidspicklist)
 		
 		course_publisher = request.user
 		course_organisation = User_Organisations.objects.get(user_userid=course_publisher).organisation_organisationid
@@ -459,6 +471,15 @@ def course_create(request, template_name='myapp/course_create.html'):
 			currentstudent=User.objects.get(pk=everystudentid)
 			course.students.add(currentstudent)
 			course.save()
+ 
+   		print("Mapping allclasses with course..")
+		for everyallclassid in allclassidspicklist:
+			print("Looping over allclasses..")
+			print(everyallclassid)
+			currentallclass = Allclass.objects.get(pk=everyallclassid)
+			course.allclasses.add(currentallclass)
+			course.save()
+			
 
 		setattr(course, 'success','YES')
 		course.save()
@@ -475,29 +496,33 @@ def course_create(request, template_name='myapp/course_create.html'):
 
 @login_required(login_url='/login/')
 def course_update(request, pk, template_name='myapp/course_form.html'):
+    organisation = User_Organisations.objects.get(user_userid=request.user).organisation_organisationid;
     course = get_object_or_404(Course, pk=pk)
     form = CourseForm(request.POST or None, instance=course)
 
     #Assigned Packages mapping
     allpackages = Document.objects.all();
+    allpackages = Document.objects.filter(publisher=request.user, success="YES")
+    allpackages = Document.objects.filter(success="YES", publisher__in=User.objects.filter(pk__in=User_Organisations.objects.filter(organisation_organisationid=organisation).values_list('user_userid', flat=True)))
     assignedpackages = course.packages.all();
 
-    print(allpackages)
-    print(assignedpackages)
-
     student_role = Role.objects.get(pk=6)
-
     allstudents = User.objects.filter(pk__in=User_Roles.objects.filter(role_roleid=student_role).values_list('user_userid', flat=True))
+    allstudents = User.objects.filter(pk__in=User_Organisations.objects.filter(organisation_organisationid=organisation).values_list('user_userid', flat=True)).filter(pk__in=User_Roles.objects.filter(role_roleid=student_role).values_list('user_userid', flat=True))
     assignedstudents = course.students.all()
+
+    assignedallclasses = course.allclasses.all()
+    allallclasses = Allclass.objects.filter(school__in=School.objects.filter(organisation=organisation));
 
 
     if form.is_valid():
         form.save()
         print(request.POST.get('assignedpackages'))
-
+        print("hi")
         print("Going to update the assigned packages..")
         packagesidspicklist=request.POST.getlist('target')
         print(packagesidspicklist)
+	course.packages.clear()
         if packagesidspicklist:
 		course.packages.clear()
 	assignedclear = course.packages.all();
@@ -508,6 +533,7 @@ def course_update(request, pk, template_name='myapp/course_form.html'):
 	print("Going to update the assigned courses..")
 	studentidspicklist=request.POST.getlist('target2')
 	print(studentidspicklist)
+	course.students.clear()
 	if studentidspicklist:
 		course.students.clear()
 	for everystudentid in studentidspicklist:
@@ -515,8 +541,19 @@ def course_update(request, pk, template_name='myapp/course_form.html'):
 		course.students.add(currentstudent)
 		course.save()
 
+  	print("Going to update the assigned allclasses..")
+	allclassidspicklist=request.POST.getlist('target3')
+	print(allclassidspicklist)
+	course.allclasses.clear()
+	if allclassidspicklist:
+		course.allclasses.clear()
+	for everyallclassid in allclassidspicklist:
+		currentallclass = Allclass.objects.get(pk=everyallclassid)
+		course.allclasses.add(currentallclass)
+		course.save()
+
         return redirect('managecourses')
-    return render(request, template_name, {'form':form, 'all_students':allstudents, 'assigned_students':assignedstudents,'all_packages':allpackages,'assigned_packages':assignedpackages})
+    return render(request, template_name, {'form':form, 'all_students':allstudents, 'assigned_students':assignedstudents,'all_packages':allpackages,'assigned_packages':assignedpackages, 'all_allclasses':allallclasses, 'assigned_allclasses':assignedallclasses})
 
 
 

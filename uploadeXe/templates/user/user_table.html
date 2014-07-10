@@ -3,6 +3,7 @@
 {% block content %}
 
 <script type="text/javascript">
+  //data['user_list']=zip(users_as_json, user_roles, user_organisations)
   $(function() { 
     $('#tblusers').puidatatable({
             caption: 'Users',
@@ -10,18 +11,18 @@
                 rows: 10
             },
             columns: [
-                {field:'pk', headerText: 'ID', sortable:true},
                 //{field:'model', headerText: 'Django Model', sortable:true},
 		{field:'username', headerText: 'Username', sortable:true},
 		{field:'first_name', headerText: 'First Name', sortable:true},
 		{field:'last_name', headerText: 'Last Name', sortable:true},
-		{field:'is_active', headerText: 'Is Active', sortable:true},
+		//{field:'is_active', headerText: 'Is Active', sortable:true},
+		{field:'role',headerText:'Role', sortable:true},
 
             ],
             datasource: [
 		{% if users_as_json %}
-    			{% for c in users_as_json %}
-			{"pk":"{{c.pk}}","model":"{{c.model}}","username":"{{c.fields.username}}", "first_name":"{{c.fields.first_name}}","last_name":"{{c.fields.last_name}}", "is_active":"{{c.fields.is_active}}"}{% if not forloop.last %},{% endif %}
+    			{% for c, role, org in user_list %}
+			{"pk":"{{c.pk}}","model":"{{c.model}}","username":"{{c.pk}}: {{c.fields.username}}", "first_name":"{{c.fields.first_name}}","last_name":"{{c.fields.last_name}}", "is_active":"{{c.fields.is_active}}","role":"{{role.role_name}}"}{% if not forloop.last %},{% endif %}
     			{% endfor %}
 		{% endif %}
 		],

@@ -1,3 +1,17 @@
+v0.5.0
+-Updated courses to have allclass fields as well.
+-Updated course creation to have org filters.
+-Updated class creation to have org filters.
+-Updated new User add to show only current user's organisation.
+-Updated user tabble to show roles and only users from the logged in user's organisation
+-Fixed unit test to consider Package model. Will finish test previously for CRUD successfully.
+-Got rid of Role and Subscription management in the Management view. We do not want people directly fiddling with it.
+-Updated school table to show org filters.
+-Added package viewer link to package edit.
+-Modified package table viewer to show Publisher associated.
+-Modified allclasses to show courses assigned to it.
+-Modified allclasses edit to show courses assigned working.
+
 v0.4.8
 -Shuffled and reduced steps to get to Courses and Packages and make the Course form cleaner.
 -Added course add option when creating new class
@@ -6,7 +20,6 @@ v0.4.8
 -Fixed bug in New user create and Students roles.
 -Added ability to delete package.
 -Added basic org specific table views.
--
 
 v0.4.7
 -Added loading screen in Package upload
