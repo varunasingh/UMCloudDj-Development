@@ -1,3 +1,19 @@
+v0.5.3
+-Added coverage of unit tests in jenkins build script.
+-Updates server steps to install coverage
+-Added coverage to umclouddj-server-tar-deployment.sh
+-Changed logged in message to show user's organisation and role at the top.
+-Added icons to Management. 
+-Moved Courses to Managemwent
+-Added icons and fixed alignment issue on drop down lists.
+-School updated to ignore organnisation (as default creates to logged in users' organisation
+-Re ordered picklist to be able to filter better.
+-Git ignoring *.pyc
+-Price hidden (feature not implemented yet)
+-Added class list to add a new user page and ability to assign new user to multiple classes.
+-Updated ALLOWED_HOSTS to include umcloud1.ustadmobile.com
+
+
 v0.5.0
 -Updated courses to have allclass fields as well.
 -Updated course creation to have org filters.

@@ -105,8 +105,9 @@ def school_create(request, template_name='school/school_create.html'):
 			print("Creating school object")
 			school_name = post['school_name']
 			school_desc = post['school_desc']
-			organisationid = post['organisationid']
-			currentorganisation=Organisation.objects.get(pk=organisationid)
+			#organisationid = post['organisationid']
+			#currentorganisation=Organisation.objects.get(pk=organisationid)
+ 			currentorganisation=organisation
     			school = School(school_name=school_name, school_desc=school_desc, organisation=currentorganisation)
     			school.save()
     

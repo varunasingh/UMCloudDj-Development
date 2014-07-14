@@ -1,7 +1,23 @@
 {% extends "base.html" %}
 {% block title %}User DataTable List{% endblock %}
 {% block content %}
+<style>
+#newuser {
+    background-image: url(/media/images/user-new.png);
+    background-repeat: no-repeat;
+    width: 120px;
+    background-position: center left;
+    text-align: right;
+}
+#adduser {
+    background-image: url(/media/images/plus.png);
+    background-repeat: no-repeat;
+    width: 110px;
+    background-position: center left;
+    text-align: right;
+}
 
+</style>
 <script type="text/javascript">
   //data['user_list']=zip(users_as_json, user_roles, user_organisations)
   $(function() { 
@@ -38,14 +54,18 @@
             }
    });
    $('#newuser').puibutton();  
+   $('#adduser').puibutton();
   }
   ); 
 
 
 </script>
+<a href="/usernew/"><button id="newuser" type="button">New User</button></a>
+<p></p>
 <i>Click a row to edit User</i>
 <div id="tblusers"> </div>
-<a href="/usernew/"><button id="newuser" type="button">New User</button></a>  
+<p></p>
+<a href="/usernew/"><button id="adduser" type="button">Add User</button></a>  
 <!--
 <h1>Users</h1>
 Format:

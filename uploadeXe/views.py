@@ -57,7 +57,7 @@ def my_view(request):
 class DocumentForm(ModelForm):
     class Meta:
         model = Document
-	fields = ('name','publisher')
+	fields = ('name',)
 	
 
 @login_required(login_url='/login/')
@@ -362,7 +362,7 @@ def list(request, template_name='myapp/list.html'):
 class CourseForm(ModelForm):
     class Meta:
         model = Course
-        fields = ('name', 'category','price','description')
+        fields = ('name', 'category','description')
 
 
 @login_required(login_url='/login/')

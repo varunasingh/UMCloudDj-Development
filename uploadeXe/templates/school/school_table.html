@@ -1,10 +1,20 @@
 {% extends "base.html" %}
 {% block title %}Manage Schools{% endblock %}
 {% block content %}
+<style>
+#newschool, #newschool1 {
+    background-image: url(/media/images/plus.png);
+    background-repeat: no-repeat;
+    background-position: center left;
+    text-align: right;
+    padding-left: 10px;
+}
 
+</style>
 <script type="text/javascript">
   $(function() { 
     $('#newschool').puibutton();
+    $('#newschool1').puibutton();
     $('#tblschools').puidatatable({
             caption: 'Schools',
             paginator: {
@@ -41,9 +51,12 @@
 
 
 </script>
+<p></p>
+<a href="/schoolnew/"><button id="newschool1" type="button">New School</button></a>
+<p></p>
 <i>Click a row to edit School</i>
 <div id="tblschools"> </div>
-<a href="/schoolnew/"><button id="newschool" type="button">New School</button></a>  
+<a href="/schoolnew/"><button id="newschool" type="button">Add New</button></a>  
                                                                              
 
 

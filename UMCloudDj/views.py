@@ -19,6 +19,8 @@ from organisation.models import Organisation
 from organisation.models import UMCloud_Package
 from organisation.models import User_Organisations
 from users.models import UserProfile
+from allclass.models import Allclass
+from school.models import School
 from django import forms
 
 from django.http import HttpResponse
@@ -193,16 +195,36 @@ def user_create(request, template_name='user/user_create.html'):
     organisations = Organisation.objects.all()
     organisations=[]
     organisations.append(organisation)
+    allclasses=Allclass.objects.filter(school__in=School.objects.filter(organisation=organisation));
     data = {}
     data['object_list'] = roles
     data['organisation_list'] = organisations
+    data['allclass_list'] = allclasses
 
     if request.method == 'POST':
 	post = request.POST;
 	if not user_exists(post['email']):
 		print("Creating the user..")
-        	user = create_user_more(username=post['username'], email=post['email'], password=post['password'], first_name=post['first_name'], last_name=post['last_name'], roleid=post['role'], organisationid=post['organisation'])
-		return redirect('user_table')
+		
+        	user = create_user_more(username=post['username'], email=post['email'], password=post['password'], first_name=post['first_name'], last_name=post['last_name'], roleid=post['role'], organisationid=organisation.id)
+		if user:
+		    current_user_role = User_Roles.objects.get(user_userid=user.id).role_roleid;
+		    student_role = Role.objects.get(pk=6)
+		    
+		    if current_user_role == student_role:
+		        for everyallclassid in post['target']:
+			    everyallclass = Allclass.objects.get(pk=everyallclassid)
+			    everyallclass.students.add(user)
+			    everyallclass.save()
+
+		    return redirect('user_table')
+        	else:
+                    state="The Username already exists.."
+		    data['state']=state
+		    return render(request, template_name, data)
+                    return render_to_response('user/user_create.html',{'state':state}, context_instance=RequestContext(request))
+                #return redirect("/register", {'state':state})
+
     	else:
         	#Show message that the username/email address already exists in our database.
         	return redirect('user_table')
@@ -913,26 +935,30 @@ def create_user_website(username, email, password, first_name, last_name, websit
 
 
 def create_user_more(username, email, password, first_name, last_name, roleid, organisationid):
-    user = User(username=username, email=email, first_name=first_name, last_name=last_name)
-    user.set_password(password)
-    user.save()
-    role=Role.objects.get(pk=roleid)
-    organisation = Organisation.objects.get(pk=organisationid)
+    try:
+    	user = User(username=username, email=email, first_name=first_name, last_name=last_name)
+    	user.set_password(password)
+    	user.save()
+    	role=Role.objects.get(pk=roleid)
+    	organisation = Organisation.objects.get(pk=organisationid)
 
-    #Create role mapping. 
-    user_role = User_Roles(name="blah", user_userid=user, role_roleid=role)
-    #user_role = User_Roles(user_userid=user)
-    user_role.save()
+    	#Create role mapping. 
+    	user_role = User_Roles(name="blah", user_userid=user, role_roleid=role)
+    	#user_role = User_Roles(user_userid=user)
+    	user_role.save()
 
-    #Create organisation mapping.
-    user_organisation = User_Organisations(user_userid=user, organisation_organisationid=organisation)
-    user_organisation.save()
+    	#Create organisation mapping.
+    	user_organisation = User_Organisations(user_userid=user, organisation_organisationid=organisation)
+    	user_organisation.save()
 
-    #Create same user in UM-TinCan LRS
+    	#Create same user in UM-TinCan LRS
 
     
-    print("User Role mapping success.")
-    return user
+    	print("User Role mapping success.")
+    	return user
+    except:
+	print("Username exists")
+	return None
 
 
 def user_exists(username):
@@ -969,7 +995,10 @@ def logout_view(request):
 
 @login_required(login_url='/login/')
 def secured(request):
-    current_user = request.user.username
+    organisation = User_Organisations.objects.get(user_userid=request.user).organisation_organisationid
+    current_user = request.user.username + " (" + organisation.organisation_name + ")"
+    current_user_role = User_Roles.objects.get(user_userid=request.user.id).role_roleid.role_name;
+    current_user = "Hi, " + request.user.first_name + ". You are a " + current_user_role + " in " + organisation.organisation_name + " organisation."
     print("secured: logged in username: " + current_user)
     return render_to_response("secure.html", 
 	{'current_user': current_user},
@@ -985,6 +1014,12 @@ def upload_view(request):
 @login_required(login_url='/login/')
 def management_view(request):
     current_user = request.user.username
+    organisation = User_Organisations.objects.get(user_userid=request.user).organisation_organisationid
+    current_user_role = User_Roles.objects.get(user_userid=request.user.id).role_roleid.role_name;
+    current_user = "Hi, " + request.user.first_name + ". You are a " + current_user_role + " in " + organisation.organisation_name + " organisation."
+
+    current_user = "Hi, " + request.user.first_name + ". You are a " + current_user_role + " in " + organisation.organisation_name + " organisation."
+
     return render_to_response("manage.html", {'current_user': current_user},
         context_instance=RequestContext(request))
 

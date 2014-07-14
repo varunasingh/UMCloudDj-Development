@@ -1,10 +1,20 @@
 {% extends "base.html" %}
 {% block title %}Manage Courses{% endblock %}
 {% block content %}
+<style>
+#newcourse, #addnew {
+    background-image: url(/media/images/plus.png);
+    background-repeat: no-repeat;
+    background-position: center left;
+    text-align: right;
+    padding-left: 10px;
+}
 
+</style>
 <script type="text/javascript">
   $(function() { 
     $('#newcourse').puibutton();
+    $('#addnew').puibutton();
     $('#tblcourses').puidatatable({
             caption: 'Courses',
             paginator: {
@@ -39,9 +49,10 @@
 
 
 </script>
+<a href="/uploadeXe/coursenew"><button id="newcourse" type="button">New Course</button></a>
+<p></p>
 <i>Click an entry to edit the course</i>
 <div id="tblcourses"> </div>
-<p></p>
-<a href="/uploadeXe/coursenew"><button id="newcourse" type="button">New Course</button></a>  
+<a href="/uploadeXe/coursenew"><button id="addnew" type="button">Add New</button></a>  
                                                                              
 {% endblock %}

@@ -22,14 +22,13 @@ SECRET_KEY = 'k4q+vcc%h(glf^&ku%*%s0j+%hj&%^w7p1_@o2z*x(e$rmnqy-'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-TEMPLATE_DEBUG = True
+TEMPLATE_DEBUG = False
 
 ADMINS = (
     ('Varuna Singh', 'varuna@ustadmobile.com'),
 )
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'umcloud1.ustadmobile.com', '54.72.83.134']
 #Varuna Singh: Need to add admins.
 
 

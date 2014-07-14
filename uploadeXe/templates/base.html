@@ -26,7 +26,7 @@
   		color: #333333;
   		background-color: #ffffff;
 	  }
-	  label { display: inline-block; width: 140px; text-align: right; }
+	  label { display: inline-block; width: 140px; text-align: left; }
 
 	  body{
 		text-align: left;
@@ -114,9 +114,9 @@
 <body>
 	<div id="header">
 		<p></p>
-		<a href="/"><img src="/media/images/logoUMlong.png" alt="Ustad_Mobile_UMCloud_logo" align=""/></a><i>    (UMCloudDj v0.5.0)</i>
+		<a href="/"><img src="/media/images/logoUMlong.png" alt="Ustad_Mobile_UMCloud_logo" align=""/></a><i>    (v0.5.3)</i>
 		{% if current_user %}
-			<i>Logged in as: {{current_user}}</i>
+			{{current_user}}
 		{% endif %}
 	</div>
 	<p></p>

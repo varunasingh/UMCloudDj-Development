@@ -1,6 +1,35 @@
 {% extends "base.html" %}
 
 {% block scriptjs %}
+<style>
+#courses {
+    background-image: url(/media/images/course.png);
+    background-repeat: no-repeat;
+    background-position: center left;
+    text-align: right;
+}
+
+#usertable {
+    background-image:url(/media/images/users.png);
+    background-repeat: no-repeat;
+    background-position: center left; 
+    text-align: right;
+}
+#allclasstable {
+    background-image:url(/media/images/class.png);
+    background-repeat: no-repeat;
+    background-position: center left;
+    text-align: right;
+}
+#schooltable {
+    background-image:url(/media/images/school.png);
+    background-repeat: no-repeat;
+    background-position: center left;
+    text-align: right;
+}
+
+
+</style>
 <script type="text/javascript">
           $(function() { 
                         $('#roletable').puibutton(); 
@@ -10,18 +39,20 @@
 			$('#schooltable').puibutton(); 
 			$('#allclasstable').puibutton(); 
 			$('#dynatableroles').puibutton();
+			$('#courses').puibutton();
                 }
           ); 
 </script>
 {% endblock %}
 
 {% block content %}
-<h2>Management</h2> <img src="/media/images/user-home.png" align="right">
+<h2>Management</h2> <!--<img src="/media/images/user-home.png" align="right">-->
      <div id="toolbarbottom" class="toolbar" >
 	<ul>
+		<a href="/upload/"><button id="courses" type="button"style="width:200px;height:100px">Courses</button></a>
 		<!--<a href="/rolestable/"><button id="roletable" type="button"style="width:200px;height:100px;margin-top:10px;margin-right:10px;" >Manage Roles</button></a>-->
 		<a href="/userstable/"><button id="usertable" type="button" style="width:200px;height:100px;margin-top:10px;margin-right:10px;">Manage Users</button></a>
-		<a href="/organisationstable/"><button id="orgtable" type="button"style="width:200px;height:100px;margin-top:10px;margin-right:10px;">Manage Org</button></a>
+		<!--<a href="/organisationstable/"><button id="orgtable" type="button"style="width:200px;height:100px;margin-top:10px;margin-right:10px;">Manage Org</button></a>-->
 		<!--<a href="/umpackagestable/"><button id="umpackagetable" type="button"style="width:200px;height:100px;margin-top:10px;margin-right:10px;">Manage Subscription</button></a>-->
 		<a href="/schoolstable/"><button id="schooltable" type="button"style="width:200px;height:100px;margin-top:10px;margin-right:10px;">Manage Schools</button></a>
 		<a href="/allclassestable/"><button id="allclasstable" type="button"style="width:200px;height:100px;margin-top:10px;margin-right:10px;">Manage Classes</button></a>

@@ -16,12 +16,12 @@
 
 		var all_courses = [{% for course in all_courses %}
                         { "value" : "{{ course.id }}",
-			"label":"{{course.id}}:  {{course.name}}"
+			"label":"{{course.name}} (ID: {{course.id}})"
                         },
                 {% endfor %}];  
                 var assigned_courses = [{% for course in assigned_courses %}
                         { "value" : "{{ course.id }}",
-			"label":"{{course.id}}:  {{course.name}}"
+			  "label":"{{course.name}} (ID: {{course.id}})"
                         },
                 {% endfor %}];
 
@@ -75,8 +75,8 @@
      <label>Name</label>
      {{form.name}}
      <p></p>
-     <label>PUBLISHER</label>
-     {{form.publisher}}
+     <!--<label>PUBLISHER</label>
+     {{form.publisher}}-->
      <p></p>
      <!--<h3>Assigned Students</h3>
 	<div id="assignedstudents" >

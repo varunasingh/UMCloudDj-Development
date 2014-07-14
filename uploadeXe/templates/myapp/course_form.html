@@ -4,34 +4,34 @@
           $(function() { 
                 var all_packages = [{% for package in all_packages %}
                         { "value" : "{{ package.id }}",
-			"label":"<a href=\"{{package.url}}\" target=\"_blank\">{{package.id}}:  {{package.name}}</a>"
+			"label":"<a href=\"{{package.url}}\" target=\"_blank\">{{package.name}} (ID: {{package.id}})</a>"
                         },
                 {% endfor %}];  
                 var assigned_packages = [{% for package in assigned_packages %}
                         { "value" : "{{package.id }}",
-			"label":"<a href=\"{{package.url}}\" target=\"_blank\">{{package.id}}:  {{package.name}}</a>"
+			"label":"<a href=\"{{package.url}}\" target=\"_blank\">{{package.name}}(ID: {{package.id}})</a>"
                         },
                 {% endfor %}];
 
 		var all_students = [{% for student in all_students %}
                         { "value" : "{{ student.id }}",
-                        "label":"{{student.id}}: {{student.first_name}}({{student.username}})"
+			"label":"{{student.first_name}} (ID: {{student.id}}, {{student.username}})"
                         },
                 {% endfor %}];  
                 var assigned_students = [{% for student in assigned_students %}
                         { "value" : "{{student.id }}",
-                        "label":"{{student.id}}: {{student.first_name}}({{student.username}})"
+                        "label":"{{student.first_name}} (ID: {{student.id}}, {{student.username}})"
                         },
                 {% endfor %}];
 		
 		 var all_allclasses = [{% for allclass in all_allclasses %}
                         { "value" : "{{ allclass.id }}",
-                        "label" : "{{allclass.id}}: {{allclass.allclass_name}}"
+                        "label" : "{{allclass.allclass_name}}(ID: {{allclass.id}})"
                         },
                 {% endfor %}];  
                 var assigned_allclasses = [{% for allclass in assigned_allclasses %}
                         { "value" : "{{ allclass.id }}",
-                        "label" : "{{allclass.id}}: {{allclass.allclass_name}}"
+                        "label" : "{{allclass.allclass_name}} (ID: {{allclass.id}})"
                         },
                 {% endfor %}];
 
@@ -105,9 +105,9 @@
     <label>Course Category</label>
 	{{form.category}}
 	<p></p>
-    <label>Course Price</label>
+    <!--<label>Course Price</label>
 	{{form.price}}
-	<p></p>
+	<p></p>-->
     <p></p>
 
     <h3>Assigned Packages <a href="/uploadeXe/new"><i>(Upload New)</i></a></h3>

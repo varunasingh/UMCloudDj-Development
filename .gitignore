@@ -8,4 +8,4 @@ UMCloudDj/media/eXeTestElp
 UMCloudDj/media/eXeTestExport
 UMCloudDj/settings.py
 UMCloudDj/wordpresscred.txt
-
+*.pyc

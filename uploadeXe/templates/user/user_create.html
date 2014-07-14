@@ -1,7 +1,15 @@
 {% extends "base.html" %}
 {% block scriptjs %}
 <script type="text/javascript">
+ 	  var allclass_map = [{% for allclass in allclass_list %}
+                        { "value" : "{{ allclass.id }}",
+                        "label": "{{allclass.allclass_name}} (ID: {{allclass.id}})"
+                        //"label" : "{{package.name}}({{package.url}})"
+                        },
+                {% endfor %}];
+
           $(function() { 
+			$('#allclasspicklist').puipicklist();
                         $('#username').puiinputtext();
                         $('#email').puiinputtext();
                         $('#password').puiinputtext();
@@ -14,13 +22,27 @@
                         $('#createuser').puipanel();
 			$('#role').puidropdown();
 			$('#organisation').puidropdown();
+			$('#selectallclassesfornewcourse').puipicklist({  
+                                effect: 'clip',  
+                                showSourceControls: false,  
+                                showTargetControls: false,  
+                                sourceCaption: 'Available',  
+                                targetCaption: 'Selected',  
+                                filter: true,  
+                                sourceData:allclass_map,  
+                                content: function(option) {  
+                                        return '<img src="/media/' + "allclass" + '.png" alt="" /><span style="">' + option.label.replace(/^\s+|\s+$/g, '') + '</span>';  
+                                }  
+                        });
+
+
                 }
           ); 
 </script>
 {% endblock %}
 {% block title %}UstadMobile App Unit Test Report {% endblock %}
 {% block content %}
-
+<p cass="error" style="color:red;"><i>{{state}}</i></p>
 <form id="newuserform" method="post">{% csrf_token %}
     <!--{{ form.as_p }}-->
     <div id="createuser" title="Create a New User">
@@ -53,13 +75,21 @@
 		{% endif%}
         {% endfor %}
    </select>
-   Organisation: <select id="organisation" form="newuserform" name="organisation">
+<p></p>
+<h3> Add user to Class:</h3>
+<div id="selectallclassesfornewcourse" >
+    <select multiple="multiple" id="source" name="source">
+    </select>
+    <select multiple="multiple" id="target" name="target">
+    </select>
+</div>
+<!--   Organisation: <select id="organisation" form="newuserform" name="organisation">
         {% for organisation in organisation_list %}
         <option value="{{ organisation.id }}">{{ organisation.organisation_name }}</option>
         {% endfor %}
-   </select>
+   </select>-->
    <br></br>
-    <button id="submit" type="submit" name="submit" value="Create">Create my account</button>
+    <button id="submit" type="submit" name="submit" value="Create">Create User</button>
     </div>
 </form>
 

@@ -23,7 +23,7 @@
                 {% endfor %}];
 			var all_courses = [{% for course in all_courses %}
                         {"value": "{{course.id}}",
-                        "label": "<a href=\"/uploadeXe/courseedit/{{course.id}} \" target=\"_blank\">{{course.id}}: {{course.name}}</a>"
+                        "label": "<a href=\"/uploadeXe/courseedit/{{course.id}} \" target=\"_blank\">{{course.name}} (ID: {{course.id}})</a>"
                         },
                         {% endfor %}
                         ];
