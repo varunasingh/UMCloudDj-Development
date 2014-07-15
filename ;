@@ -61,9 +61,9 @@
                                 filter: true,  
                                 sourceData:all_packages,  
 				transfer: function(event, ui) {  
-					console.log("0");
+					console.log("o");
 					console.log(ui.from);
-
+            				//ui.items: Transferred items.   
             				//ui.from: Old list.  
             				//ui.to: New list.  
             				//ui.type: Type of transfer e.g. "dragdrop","button" and "command"  

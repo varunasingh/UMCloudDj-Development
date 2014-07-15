@@ -37,7 +37,7 @@ import glob #For file ^VS 130420141454
 class AllclassForm(ModelForm):
     class Meta:
         model = Allclass
-	fields = ('allclass_name','allclass_desc','allclass_location','school')
+	fields = ('allclass_name','allclass_desc','allclass_location')
 
 
 @login_required(login_url='/login/')
@@ -190,10 +190,18 @@ def allclass_update(request, pk, template_name='allclass/allclass_form.html'):
     assignedcourses=Course.objects.filter(allclasses__in =[allclass])
 
 
+    allschools=School.objects.filter(organisation=organisation)
+    assignedschool=allclass.school
+
     if form.is_valid():
         form.save()
 	print(request.POST.get('assignedteachers'))
 	
+	print("Going to update the assigned school..")
+	schooliddropdown=request.POST.get('school')
+	schooldropdown = School.objects.get(pk=schooliddropdown)
+	allclass.school=schooldropdown
+
         print("Going to update the assigned students..")
         studentidspicklist=request.POST.getlist('target')
 	print(studentidspicklist)
@@ -230,7 +238,7 @@ def allclass_update(request, pk, template_name='allclass/allclass_form.html'):
 		print(everycourse.allclasses.all())
 	
         return redirect('allclass_table')
-    return render(request, template_name, {'form':form, 'all_courses':allcourses, 'assigned_courses':assignedcourses, 'all_students':allstudents,'assigned_students':assignedstudents, 'all_teachers':allteachers,'assigned_teachers':assignedteachers})
+    return render(request, template_name, {'form':form,'all_schools':allschools, 'assignedschool':assignedschool, 'all_courses':allcourses, 'assigned_courses':assignedcourses, 'all_students':allstudents,'assigned_students':assignedstudents, 'all_teachers':allteachers,'assigned_teachers':assignedteachers})
 
 @login_required(login_url='/login/')
 def allclass_delete(request, pk, template_name='allclass/allclass_confirm_delete.html'):

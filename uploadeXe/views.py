@@ -171,7 +171,6 @@ def elpparse(request, template_name='myapp/elpparse.html'):
     return redirect('elpparse')
 
 
-
 @login_required(login_url='/login/')
 def list(request, template_name='myapp/list.html'):
     # Handle file upload
@@ -189,168 +188,184 @@ def list(request, template_name='myapp/list.html'):
     data['student_list'] = students
 
     if request.method == 'POST':
-	post = request.POST;
+        post = request.POST;
         form = ExeUploadForm(request.POST, request.FILES)
         if form.is_valid():
             newdoc = Document(exefile = request.FILES['exefile'])
             print("NEWDOC")
-	    teacher_role = Role.objects.get(pk=5)
-    	    student_role = Role.objects.get(pk=6)
-    	    teachers = User.objects.filter(pk__in=User_Roles.objects.filter(role_roleid=teacher_role).values_list('user_userid', flat=True))
-    	    students = User.objects.filter(pk__in=User_Roles.objects.filter(role_roleid=student_role).values_list('user_userid', flat=True))
-    	    data = {}
+            teacher_role = Role.objects.get(pk=5)
+            student_role = Role.objects.get(pk=6)
+            teachers = User.objects.filter(pk__in=User_Roles.objects.filter(role_roleid=teacher_role).values_list('user_userid', flat=True))
+            students = User.objects.filter(pk__in=User_Roles.objects.filter(role_roleid=student_role).values_list('user_userid', flat=True))
+            data = {}
             data['teacher_list'] = teachers
-    	    data['student_list'] = students
-	    studentidspicklist=post.getlist('target')
+            data['student_list'] = students
+            studentidspicklist=post.getlist('target')
             print("students selected from picklist:")
             print(studentidspicklist)
 
-	    uid = str(getattr(newdoc, 'exefile'))
-	    print("File name to upload:")
-	    print(uid)
-	    appLocation = (os.path.dirname(os.path.realpath(__file__)))
+            uid = str(getattr(newdoc, 'exefile'))
+            print("File name to upload:")
+            print(uid)
+            appLocation = (os.path.dirname(os.path.realpath(__file__)))
             #Get the file and run eXe command 
-  	    #Get url / path
-	    setattr (newdoc, 'url', 'bull')
-	    setattr (newdoc, 'publisher', request.user)
+            #Get url / path
+            setattr (newdoc, 'url', 'bull')
+            setattr (newdoc, 'publisher', request.user)
             newdoc.save()
 
             for everystudentid in studentidspicklist:
-		print("Looping student:")
+                print("Looping student:")
                 print(everystudentid)
                 currentstudent=User.objects.get(pk=everystudentid)
                 newdoc.students.add(currentstudent)
-                newdoc.save() 
+                newdoc.save()
 
-	    os.system("echo Current location:")
+            os.system("echo Current location:")
             serverlocation=os.system("pwd")
-	    mainappstring = "/UMCloudDj/"
-	    uid = str(getattr(newdoc, 'exefile'))
-	    print("File saved as: ")
+            mainappstring = "/UMCloudDj/"
+            uid = str(getattr(newdoc, 'exefile'))
+            print("File saved as: ")
             print(uid)
-	    #elphash = hashlib.md5(open(serverlocation + mainappstring + settings.MEDIA_URL + uid).read()).hexdigest()
-	    #print("elp hash:")
-	    #print(elphash)
-	    print(settings.MEDIA_URL)
-	    unid = uid.split('.um.')[-2]
-	    unid = unid.split('/')[-1]  #Unique id here.
+            #elphash = hashlib.md5(open(serverlocation + mainappstring + settings.MEDIA_URL + uid).read()).hexdigest()
+            #print("elp hash:")
+            #print(elphash)
+
+            print(settings.MEDIA_URL)
+            unid = uid.split('.um.')[-2]
+            unid = unid.split('/')[-1]  #Unique id here.
             print("Unique id:")
             print (unid)
-	    setattr(newdoc, 'uid', unid)
-	    #os.system('tree')
-	    print("Possible command: ")
-	    print('exe_do -s ustadMobileTestMode=True -x ustadmobile ' + "\"" +appLocation + '/../UMCloudDj/media/' + uid + "\"" + ' ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid )
+            setattr(newdoc, 'uid', unid)
+            
+            elpfile=appLocation + '/../UMCloudDj/media/' + uid
+            elpfilehandle = open(elpfile, 'rb')
+            elpzipfile = zipfile.ZipFile(elpfilehandle)
+            for name in elpzipfile.namelist():
+                if name.find('contentv3.xml') != -1:
+                    elpxmlfile=elpzipfile.open(name)
+                    elpxmlfilecontents=elpxmlfile.read()
+                    elpxml=minidom.parseString(elpxmlfilecontents)
+                    dictionarylist=elpxml.getElementsByTagName('dictionary')
+                    stringlist=elpxml.getElementsByTagName('string')
+                    print("/////////////////////////////////////////////////////////////")
+                    elpid="replacemewithxmldata"
+                    setattr(newdoc, 'elpid', elpid)
+                    #print(dictionarylist[0].attributes['string'].value)
+                    
+                    
+            uidwe = uid.split('.um.')[-1]
+            uidwe = uidwe.split('.elp')[-2]
+            uidwe=uidwe.replace(" ", "_")
+            
+            rete=ustadmobile_export(uid, unid, uidwe)
+            if rete:
+                courseURL = '/media/eXeExport' + '/' + unid + '/' + uidwe + '/' + 'deviceframe.html'
+                setattr(newdoc, 'url', "cow")
+                newdoc.save()
+                setattr(newdoc, 'success', "YES")
+                setattr(newdoc, 'url', courseURL)
+                setattr(newdoc, 'name', uidwe)
+                setattr(newdoc, 'publisher', request.user)
+                newdoc.save()
+                
+                """
+                Adding package to course
+                """
+                print("Going to assign the package to the selected book")
+                courseidspicklist=request.POST.getlist('target2')
+                for everycourseid in courseidspicklist:
+                    currentcourse = Course.objects.get(pk=everycourseid)
+                    currentcourse.packages.add(newdoc)
+                """
+                end
+                """
+                
+                retg = grunt_course(unid, uidwe)
+                
+                if not retg:
+                    setattr(newdoc, 'success', 'NO')
+                    newdoc.save()
 
-  	    elpfile=appLocation + '/../UMCloudDj/media/' + uid
-
-	    elpfilehandle = open(elpfile, 'rb')
-	    elpzipfile = zipfile.ZipFile(elpfilehandle)
-	    for name in elpzipfile.namelist():
-		if name.find('contentv3.xml') != -1:
-		    elpxmlfile=elpzipfile.open(name)
-		    elpxmlfilecontents=elpxmlfile.read()
-		    elpxml=minidom.parseString(elpxmlfilecontents)
-		    dictionarylist=elpxml.getElementsByTagName('dictionary')
-		    stringlist=elpxml.getElementsByTagName('string')
-		    print("/////////////////////////////////////////////////////////////")
-		    elpid="replacemewithxmldata"
-		    setattr(newdoc, 'elpid', elpid)
-		    #print(dictionarylist[0].attributes['string'].value)
-	    
-
-
-	    if os.system('exe_do -s ustadMobileTestMode=True -x ustadmobile ' + appLocation + '/../UMCloudDj/media/' + uid + ' ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid ) == 0: # If command ran successfully,
-	    	uidwe = uid.split('.um.')[-1]
-	    	uidwe = uidwe.split('.elp')[-2]
-	    	print("Folder name: " + uidwe)
-	    	if os.system('cp ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/ustadpkg_html5.xml ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '_ustadpkg_html5.xml' ) == 0: #ie if command got executed in success
-            		setattr(newdoc, 'url', "cow")
-	    		newdoc.save()
-            		setattr(newdoc, 'success', "YES")
-	    		courseURL = '/media/eXeExport' + '/' + unid + '/' + uidwe + '/' + 'deviceframe.html'
-	    		setattr(newdoc, 'url', courseURL)
- 	    		setattr(newdoc, 'name', uidwe)
-	    		setattr(newdoc, 'publisher', request.user)
-	    		newdoc.save()
-			print("Starting grunt process..")
-			os.system('mv ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/ustadmobile-settings.js ' +  appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/ustadmobile-settings.js.origi')
-
-			os.system('cp ' + appLocation + '/../UMCloudDj/media/gruntConfig/Gruntfile.js ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/')
-			os.system('cp ' + appLocation + '/../UMCloudDj/media/gruntConfig/package.json ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/')
-			os.system('cp ' + appLocation + '/../UMCloudDj/media/gruntConfig/ustadmobile-settings.js ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/ustadmobile-settings.js' )
-			os.system('cp ' + appLocation + '/../UMCloudDj/media/gruntConfig/umpassword.html ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/umpassword.html')
-			os.system('cd ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/')
-			print ('Trying this: ' + 'npm install grunt-contrib-qunit --save-dev -g --prefix ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/')
-			os.system('npm install grunt-contrib-qunit --save-dev -g --prefix ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/')
-			os.system('mv ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/lib/node_modules/ '+ appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/')
-			print('Trying this: ' + 'grunt --base ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/ --gruntfile ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/Gruntfile.js')
-			
-			#Not running grunt until eXe changes are made - VarunaSingh 180220141732
-			if os.system('grunt --base ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/ --gruntfile ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/Gruntfile.js'):
-			    os.system('mv ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/ustadmobile-settings.js.origi ' +  appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/ustadmobile-settings.js')
-			    print("Grunt ran successfully. ")
-				
-
-			    """
-			    Adding package to course
-		  	    """
-			    print("Going to assign the package to the selected book")
-        		    courseidspicklist=request.POST.getlist('target2')
-        		    for everycourseid in courseidspicklist:
-                	        currentcourse = Course.objects.get(pk=everycourseid)
-                     	        currentcourse.packages.add(newdoc)
-  			    """
-			    end
-			    """
-
-
-			else:
-			    #Grunt run failed. 
-			    print("Unable to run grunt. Test failed. ")
-			    os.system('mv ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/ustadmobile-settings.js.origi ' +  appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/ustadmobile-settings.js')
-			    setattr(newdoc, 'success', "NO")
-
-
-			#When testing is disabled ( Running until eXe changes are made - VarunaSingh 180220141732 - edit on 250220141323)
-			#os.system('mv ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/ustadmobile-settings.js.origi ' +  appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/ustadmobile-settings.js') #Comment this when you have eXe changes, etc.
-
-			#If you ever do an if condition for installing grunt on the local course..
-			#else:
-			#    print("Unable to install grunt for this course.. Fail.")
-			#    os.system('mv ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/ustadmobile-settings.js.origi ' +  appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/ustadmobile-settings.js')
-		    
-					
-	    	else:
-			#Couldn't copy html file xml to main directoy. Something went wrong in the exe export
-			setattr(newdoc, 'success', "NO")
-	    		newdoc.save()
-	        	# Redirect to the document list after POST
-                	#return HttpResponseRedirect(reverse('uploadeXe.views.list'))
-	    else:
-		    #Exe didn't run. exe_do : something went wrong in eXe.
-		    setattr(newdoc, 'success', "NO")
-
-	    #Saving to database.
-            newdoc.save()
-	
-	#form is valid (upload file form)
-	# Redirect to the document list after POST
-        return HttpResponseRedirect(reverse('uploadeXe.views.list'))
-
-    else:
-       #Form isn't POST. 
-       form = ExeUploadForm() # A empty, unbound form
-
-    # Load documents for the list page
+                newdoc.save()
+                #form is valid (upload file form)
+                # Redirect to the document list after POST
+                return HttpResponseRedirect(reverse('uploadeXe.views.list'))
+                    
+            else:
+                setattr(newdoc, 'success', "NO")
+                newdoc.save()
+                # Redirect to the document list after POST
+                return HttpResponseRedirect(reverse('uploadeXe.views.list'))
+                
+    else: 
+	#Form isn't POST. 
+        print("!!POST FORM IS INVALID!!")
+        form = ExeUploadForm() # A empty, unbound form
+        # Load documents for the list page
     documents = Document.objects.filter(publisher=request.user, success="YES")
     current_user = request.user.username
-
     # Render list page with the documents and the form
     return render_to_response(
         template_name,
         {'student_list':data['student_list'] ,'documents': documents, 'form': form, 'current_user': current_user},
         context_instance=RequestContext(request)
     )
+
+def ustadmobile_export(uid, unid, uidwe):
+    appLocation = (os.path.dirname(os.path.realpath(__file__)))
+    #os.system('tree')
+    print("Possible command: ")
+    print('exe_do -s ustadMobileTestMode=True -x ustadmobile ' + "\"" +appLocation + '/../UMCloudDj/media/' + uid + "\"" + ' ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid )
+    if os.system('exe_do -s ustadMobileTestMode=True -x ustadmobile ' +  "\"" + appLocation + '/../UMCloudDj/media/' + uid + "\"" + ' ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid ) == 0: # If command ran successfully,
+        print("1. Exported success")
+        print("Folder name: " + uidwe)
+        if os.system('cp ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/ustadpkg_html5.xml ' + "\"" + appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '_ustadpkg_html5.xml' + "\"" ) == 0: #ie if command got executed in success
+            print("2. UstadMobile course exported successfully.")
+            return True
+        else:
+            #Couldn't copy html file xml to main directoy. Something went wrong in the exe export
+            print("!!Couldn't copy html file xml to main directoy. Something went wrong in the exe export!!")
+            return False
+        
+    else:
+        #Exe didn't run. exe_do : something went wrong in eXe.
+        print("!!Exe didn't run. exe_do : something went wrong in eXe!!")
+        return False
+        
+    
+def grunt_course(unid, uidwe):
+    appLocation= (os.path.dirname(os.path.realpath(__file__)))
+    print("Starting grunt process..")
+    os.system('mv ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/ustadmobile-settings.js ' +  appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/ustadmobile-settings.js.origi')
+    os.system('cp ' + appLocation + '/../UMCloudDj/media/gruntConfig/Gruntfile.js ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/')
+    os.system('cp ' + appLocation + '/../UMCloudDj/media/gruntConfig/package.json ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/')
+    os.system('cp ' + appLocation + '/../UMCloudDj/media/gruntConfig/ustadmobile-settings.js ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/ustadmobile-settings.js' )
+    os.system('cp ' + appLocation + '/../UMCloudDj/media/gruntConfig/umpassword.html ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/umpassword.html')
+    os.system('cd ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/')
+    print ('Trying this: ' + 'npm install grunt-contrib-qunit --save-dev -g --prefix ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/')
+    os.system('npm install grunt-contrib-qunit --save-dev -g --prefix ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/')
+    os.system('mv ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/lib/node_modules/ '+ appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/')
+    print('Trying this: ' + 'grunt --base ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/ --gruntfile ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/Gruntfile.js')
+    #Not running grunt until eXe changes are made - VarunaSingh 180220141732
+    if os.system('grunt --base ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/ --gruntfile ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/Gruntfile.js'):
+    	os.system('mv ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/ustadmobile-settings.js.origi ' +  appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/ustadmobile-settings.js')
+        print("Grunt ran successfully. ")
+        return True
+    else:
+    	#Grunt run failed. 
+        print("!!Unable to run grunt. Test failed!!")
+        os.system('mv ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/ustadmobile-settings.js.origi ' +  appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/ustadmobile-settings.js')
+        return False
+         
+        #When testing is disabled ( Running until eXe changes are made - VarunaSingh 180220141732 - edit on 250220141323)
+        #os.system('mv ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/ustadmobile-settings.js.origi ' +  appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/ustadmobile-settings.js') #Comment this when you have eXe changes, etc.
+
+        #If you ever do an if condition for installing grunt on the local course..
+        #else:
+        #    print("Unable to install grunt for this course.. Fail.")
+        #    os.system('mv ' + appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/ustadmobile-settings.js.origi ' +  appLocation + '/../UMCloudDj/media/eXeExport/' + unid + '/' + uidwe + '/ustadmobile-settings.js')
+
 
 
 ###################################################################################
@@ -517,24 +532,25 @@ def course_update(request, pk, template_name='myapp/course_form.html'):
 
     if form.is_valid():
         form.save()
-        print(request.POST.get('assignedpackages'))
-        print("hi")
         print("Going to update the assigned packages..")
         packagesidspicklist=request.POST.getlist('target')
         print(packagesidspicklist)
-	course.packages.clear()
+	#course.packages.clear()
         if packagesidspicklist:
+		print("There is something selected for packages")
 		course.packages.clear()
-	assignedclear = course.packages.all();
-	for everypackageid in packagesidspicklist:
-		currentpackage = Document.objects.get(pk=everypackageid)
-		course.packages.add(currentpackage)
-		course.save()
-	print("Going to update the assigned courses..")
+		assignedclear = course.packages.all();
+		for everypackageid in packagesidspicklist:
+			currentpackage = Document.objects.get(pk=everypackageid)
+			course.packages.add(currentpackage)
+			course.save()
+
+	print("Going to update the assigned students..")
 	studentidspicklist=request.POST.getlist('target2')
 	print(studentidspicklist)
 	course.students.clear()
 	if studentidspicklist:
+		print("There is something selected for students")
 		course.students.clear()
 	for everystudentid in studentidspicklist:
 		currentstudent = User.objects.get(pk=everystudentid)
@@ -544,9 +560,9 @@ def course_update(request, pk, template_name='myapp/course_form.html'):
   	print("Going to update the assigned allclasses..")
 	allclassidspicklist=request.POST.getlist('target3')
 	print(allclassidspicklist)
-	course.allclasses.clear()
-	if allclassidspicklist:
+	if allclassidspicklist is None:
 		course.allclasses.clear()
+	course.allclasses.clear()
 	for everyallclassid in allclassidspicklist:
 		currentallclass = Allclass.objects.get(pk=everyallclassid)
 		course.allclasses.add(currentallclass)

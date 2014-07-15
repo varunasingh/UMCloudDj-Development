@@ -24,6 +24,7 @@ class Package(models.Model):
    elpid = models.CharField(max_length=200)
    exefile = models.FileField(upload_to=get_file_path) #saves as a unique id.
    name = models.CharField(max_length=200)
+   #elpname = models.CharField(max_length=200)
    pub_date = models.DateTimeField(auto_now_add=True) #added by Varuna Singh
    upd_date = models.DateTimeField(auto_now=True)
    url = models.CharField(max_length=200)

@@ -2,6 +2,7 @@
 {% block scriptjs %}
 <script type="text/javascript">
           $(function() { 
+		
                 var all_students = [{% for student in all_students %}
                         { "value" : "{{ student.id }}",
                         "label" : "{{student.first_name}}({{student.username}})"
@@ -33,6 +34,7 @@
 			"label" : "{{course.name}} (ID: {{course.id}})"
                         },
                 {% endfor %}];
+			$('#school').puidropdown();
 
 			$('#assignedcourses').puipicklist({
                                 effect: 'clip',  
@@ -89,17 +91,30 @@
 {% block title %}Edit Class{% endblock %}
 {% block content %}
 
-<form method="post">{% csrf_token %}
+<form id="allclassedit" method="post">{% csrf_token %}
     <!--{{ form.as_p }}-->
 
     <label>Class Name</label>
 	{{form.allclass_name}}
+    <p></p>
     <label>Class Desc</label>
 	{{form.allclass_desc}}
+    <p></p>
     <label>Class Location</label>
 	{{form.allclass_location}}
-    <label>School</label>
-	{{form.school}}
+     <p></p>
+     <label>School</label>
+	<select id="school" form="allclassedit" name="school">
+        {% for school in all_schools %}
+                {% if school.id == assignedschool.id %}
+                        <option selected="Selected" value="{{ school.id }}">{{ school.school_name }}</option>
+                {% else %}
+                        <option value="{{ school.id }}">{{ school.school_name }}</option>
+                {% endif%}
+        {% endfor %}
+   </select>
+
+
 
     <h3>Assigned Students</h3>
         <div id="assignedstudents" >

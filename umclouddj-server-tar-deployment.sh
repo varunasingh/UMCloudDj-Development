@@ -7,7 +7,8 @@
 
 if [ $# -eq 0 ]; then
     echo "No arguments provided"
-    echo "Usage: .sh <tar file> <Super username> <password>"
+    echo "Usage: .sh <tar file> <Super username> <password> <host url>"
+    echo "Ex:    .sh /home/varuna/UMCloudDj.tar.gz adminusername adminpassword umcloud4.ustadmobile.com"
     exit 1
 fi
 
@@ -15,17 +16,18 @@ fi
 TARFILE=${1}
 SUPERUSERNAME=${2}
 SUPERPASSWORD=${3}
+HOSTURL=${4}
 
 if [ -z $1 ]
   then
     echo "Please provide the tar file as argument 1"
-    echo "Usage: .sh <tar> <super username> <password>"
+    echo "Usage: .sh <tar> <super username> <password>i <host url/name>"
     exit 1
 fi
 
 if [ -z "$2" ] || [ -z "$3" ]
   then
-    echo "No superusername given. Username: umcdj and password: Ch@ng3M3U/\/\C|_0UD')"
+    echo "No superusername given. Username: umcdj and password: Ch@ng3M3U/\/\C|_0UD"
     SUPERUSERNAME="umcdjsu"
     SUPERPASSWORD="Ch@ng3M3U/\/\C|_0UD"
 
@@ -58,7 +60,9 @@ cd /var/www/UMCloudDj
 #source env/bin/activate
 
 #temporary, need to define hosts to run django with debug off.
-sed -i.backup -e 's/^DEBUG = False/DEBUG = True/' /var/www/UMCloudDj/UMCloudDj/settings.py
+#sed -i.backup -e 's/^DEBUG = False/DEBUG = True/' /var/www/UMCloudDj/UMCloudDj/settings.py
+ALLOWED_HOSTS="ALLOWED_HOSTS=['${HOSTURL}']"
+sed -i.backup -e 's/^ALLOWED_HOSTS.*/'${ALLOWED_HOSTS}'/' /var/www/UMCloudDj/UMCloudDj/settings.py
 
 
 sudo pip install Django

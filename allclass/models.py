@@ -9,5 +9,7 @@ class Allclass(models.Model):
     students = models.ManyToManyField(User, related_name='allclassstudents')
     teachers = models.ManyToManyField(User, related_name='teachers')
     school = models.ForeignKey(School)
-
+    
+    def __unicode__(self):
+        return u'%s ' % (self.allclass_name)
 # Create your models here.

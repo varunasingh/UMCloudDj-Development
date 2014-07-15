@@ -1,3 +1,14 @@
+v0.5.6
+-Added 404.html and 500.html pages. These get active when Debug is False
+-Updated umclouddj-server-tar-deployment.sh to set Debug as False and add allowed hosts to the server in production.
+-Added organisational constraints to Allclasses's school field.
+-Modified Class to return name on model's object call
+-Modified getassigned: /getassignedcourseids/ param: username/password to get course ids.
+-Modified getassigned: /getassignedcourseids/ to return an xml with package and course details.
+-Fixed bug in package upload . replaced all spaces in elp file with underscores.
+-Seperated exe export and ui/cloud stuff. seperated Grunt tests as well.
+-Fixed bug and now umcloud1 can recieve elp files from eXe 
+
 v0.5.3
 -Added coverage of unit tests in jenkins build script.
 -Updates server steps to install coverage
