@@ -452,7 +452,7 @@ def course_create(request, template_name='myapp/course_create.html'):
                 course_name=post['course_name']
                 course_desc=post['course_desc']
 		course_category=post['course_category']
-		course_price=post['course_price']
+		#course_price=post['course_price']
 		#publisher
 		#organisation
 		#success
@@ -467,7 +467,7 @@ def course_create(request, template_name='myapp/course_create.html'):
 		
 		course_publisher = request.user
 		course_organisation = User_Organisations.objects.get(user_userid=course_publisher).organisation_organisationid
-		course = Course(name=course_name, category=course_category, price=course_price, description=course_desc, publisher=course_publisher, organisation=course_organisation)
+		course = Course(name=course_name, category=course_category, description=course_desc, publisher=course_publisher, organisation=course_organisation)
 		course.save()
 
                 print("Mapping packages with course..")

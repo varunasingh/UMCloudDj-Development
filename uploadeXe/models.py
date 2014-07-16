@@ -43,7 +43,7 @@ class Course(models.Model):
    add_date=models.DateTimeField(auto_now_add=True)
    upd_date=models.DateTimeField(auto_now=True)
    category=models.CharField(max_length=200)
-   price=models.FloatField()
+   price=models.FloatField(default = 0)
    active=models.BooleanField(default = True)
    public=models.BooleanField(default = True)
    publisher = models.ForeignKey(User, related_name='coursepublisher')

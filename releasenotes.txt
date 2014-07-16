@@ -1,3 +1,7 @@
+v0.5.7
+-Fixed course creation bug: It was still looking for price in code. Fixed it and model's updated to default to 0
+-Seperated logic and UI for uploading, exe export and grunt tests
+
 v0.5.6
 -Added 404.html and 500.html pages. These get active when Debug is False
 -Updated umclouddj-server-tar-deployment.sh to set Debug as False and add allowed hosts to the server in production.
