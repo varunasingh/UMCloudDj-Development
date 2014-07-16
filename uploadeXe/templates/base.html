@@ -72,6 +72,34 @@
    		padding: 5px;
 		border-radius: 5px;
 	  }
+	#coursesnav {
+    	background-image: url(/media/images/course.png);
+    	background-repeat: no-repeat;
+    	background-position: center left;
+    	text-align: center;
+	}
+
+	#usertablenav {
+    	background-image:url(/media/images/users.png);
+    	background-repeat: no-repeat;
+    	background-position: center left;
+    	text-align: center;
+	}
+	#allclasstablenav {
+    	background-image:url(/media/images/class.png);
+    	background-repeat: no-repeat;
+    	background-position: center left;
+    	text-align: center;
+	}
+	#schooltablenav {
+    	background-image:url(/media/images/school.png);
+    	background-repeat: no-repeat;
+    	background-position: center left;
+    	text-align: center;
+	}
+
+
+
 	</style>
 
 	<!-- Favicon goes here-->
@@ -109,12 +137,13 @@
 	</script>
 
 	{% block scriptjs %}{% endblock %}
+	{% block navjs %} {% endblock %}
 </head>
 
 <body>
 	<div id="header">
 		<p></p>
-		<a href="/"><img src="/media/images/logoUMlong.png" alt="Ustad_Mobile_UMCloud_logo" align=""/></a><i>    (v0.5.7)</i>
+		<a href="/home/"><img src="/media/images/logoUMlong.png" alt="Ustad_Mobile_UMCloud_logo" align=""/></a><i>    (v0.5.8)</i>
 		{% if current_user %}
 			{{current_user}}
 		{% endif %}
@@ -124,13 +153,17 @@
 	<div id="sidebar">
 		{% block sidebar %}
 		<ul id="pm1">
-			<li><a data-icon="ui-icon-home" href="/">Home</a></li>
+			<li><a data-icon="ui-icon-home" href="/home/">Home</a></li>
 			<li><a data-icon="ui-icon-power" href="/logout/">Logout</a></li>
 		</ul>
 		{% endblock %}
 	</div>
 	<div></div>
 	<div id="content">
+        	<div id="navigate">
+               		{%block navigate%}{% endblock %}
+        	</div>
+
 		{% block content %}{% endblock %}
 	</div>
 	</div>

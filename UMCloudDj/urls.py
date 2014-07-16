@@ -21,6 +21,7 @@ from django.contrib import admin
 #UMCloudDj.uploadeXe
 
 urlpatterns = patterns('',
+	url(r'^$', RedirectView.as_view(url='/userstable/')), # Just for ease of use.
 	url(r'^upload/', 'UMCloudDj.views.upload_view'),
 	url(r'^management/', 'UMCloudDj.views.management_view'),
 	url(r'^reports/', 'UMCloudDj.views.reports_view'),
@@ -43,7 +44,7 @@ urlpatterns = patterns('',
 	url(r'^login/', 'UMCloudDj.views.loginview', name='login'),
 	url(r'^auth/', 'UMCloudDj.views.auth_and_login'),
         url(r'^signup/', 'UMCloudDj.views.sign_up_in'),
-        url(r'^$', 'UMCloudDj.views.secured'),
+        url(r'^home/$', 'UMCloudDj.views.secured'),
 	url(r'^logout/$', 'UMCloudDj.views.logout_view'),
 	url(r'^register/$', 'UMCloudDj.views.register_view', name='register'),
 

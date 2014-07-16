@@ -111,7 +111,7 @@ def allclass_create(request, template_name='allclass/allclass_create.html'):
 		class_desc=post['class_desc']
 		class_location=post['class_location']
 		schoolid=post['schoolid']
-		teacherid=post['teacherid']
+		#teacherid=post['teacherid']
 
 		studentidspicklist=post.getlist('target')
 		print("students selected from picklist:")
@@ -152,11 +152,14 @@ def allclass_create(request, template_name='allclass/allclass_create.html'):
 			#course.allclass.add(currentcourse)
 		print("Mapping of courses and students done for all students in the class")
 			
-			
-
-		currentteacher=User.objects.get(pk=teacherid)
-		allclass.teachers.add(currentteacher)
-		allclass.save()
+		try:
+			teacherid=post['teacherid']
+			currentteacher=User.objects.get(pk=teacherid)
+			allclass.teachers.add(currentteacher)
+			allclass.save()
+		except:
+			print("No teacher given")
+		
 
                 #allclass = create_allclass(class_name=post['class_name'], class_desc=post['class_desc'], class_location=post['class_location'], schoolid=post['schoolid'], studentids=post.getlist('studentids'))
                 return redirect('allclass_table')

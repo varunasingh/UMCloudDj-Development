@@ -1,3 +1,13 @@
+v0.5.8
+-Renamed Managemewnt's Manage X to X
+-Removed duplicate new X / Add New buttons
+-Removed extra text on pages.
+-Fixed bug in creating class when no teachers defined.
+-Changed icons to show classes are 3 users and users as 1 user (icon)
+-Included a navigation panel on Management on top.
+-Sign in loads to Users Management.
+-Added Hover effect for selected menu.
+
 v0.5.7
 -Fixed course creation bug: It was still looking for price in code. Fixed it and model's updated to default to 0
 -Seperated logic and UI for uploading, exe export and grunt tests

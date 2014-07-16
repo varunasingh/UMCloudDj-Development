@@ -1,5 +1,24 @@
-{% extends "base.html" %}
+{% extends "managebase.html" %}
+{% block navigate %}
+<a href="/upload/"><button id="coursesnav" type="button"style="width:149px;height:50px;margin-top:10px;margin-right:10px;margin-left:40px;">Courses</button></a>
+<a href="/userstable/"><button id="usertablenav" type="button" style="width:150px;height:50px;margin-top:10px;margin-right:10px;">Users</button></a>
+<a href="/schoolstable/"><button id="schooltablenav" type="button"style="width:150px;height:50px;margin-top:10px;margin-right:10px;">Schools</button></a>
+<a href="/allclassestable/"><button id="allclasstablenav" class="ui-state-hover" type="button"style="width:150px;height:50px;margin-top:10px;margin-right:10px;">Classes</button></a>
+<hr>
+<p></p>
+{% endblock %}
 {% block scriptjs %}
+<style>
+#newallclass {
+    background-image: url(/media/images/plus.png);
+    background-repeat: no-repeat;
+    background-position: center left;
+    text-align: right;
+    padding-left: 10px;
+}
+
+</style>
+
 <script type="text/javascript">
           $(function() { 
                         $('#newallclass').puibutton();
@@ -49,8 +68,9 @@
 
 
 </script>
-<i>Click a row to edit the Class</i>
+<a href="/allclassnew/"><button id="newallclass" type="button">New Class</button></a>
+<!--<i>Click a row to edit the Class</i>-->
+<p></p>
 <div id="tblallclasses"> </div>
-<a href="/allclassnew/"><button id="newallclass" type="button">New Class</button></a>  
                                                                              
 {% endblock %}

@@ -1,4 +1,12 @@
-{% extends "base.html" %}
+{% extends "managebase.html" %}
+{% block navigate %}
+<a href="/upload/"><button id="coursesnav" type="button"style="width:149px;height:50px;margin-top:10px;margin-right:10px;margin-left:40px;">Courses</button></a>
+<a href="/userstable/"><button id="usertablenav" type="button" style="width:150px;height:50px;margin-top:10px;margin-right:10px;">Users</button></a>
+<a href="/schoolstable/"><button id="schooltablenav" class="ui-state-hover"  type="button"style="width:150px;height:50px;margin-top:10px;margin-right:10px;">Schools</button></a>
+<a href="/allclassestable/"><button id="allclasstablenav" type="button"style="width:150px;height:50px;margin-top:10px;margin-right:10px;">Classes</button></a>
+<hr>
+<p></p>
+{% endblock %}
 {% block title %}Manage Schools{% endblock %}
 {% block content %}
 <style>
@@ -54,9 +62,9 @@
 <p></p>
 <a href="/schoolnew/"><button id="newschool1" type="button">New School</button></a>
 <p></p>
-<i>Click a row to edit School</i>
+<!--<i>Click a row to edit School</i>-->
 <div id="tblschools"> </div>
-<a href="/schoolnew/"><button id="newschool" type="button">Add New</button></a>  
+<!--<a href="/schoolnew/"><button id="newschool" type="button">Add New</button></a>  -->
                                                                              
 
 
