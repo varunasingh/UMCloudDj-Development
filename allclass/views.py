@@ -110,7 +110,6 @@ def allclass_create(request, template_name='allclass/allclass_create.html'):
 		class_name=post['class_name']
 		class_desc=post['class_desc']
 		class_location=post['class_location']
-		schoolid=post['schoolid']
 		#teacherid=post['teacherid']
 
 		studentidspicklist=post.getlist('target')
@@ -122,13 +121,19 @@ def allclass_create(request, template_name='allclass/allclass_create.html'):
 		print(courseidspicklist)
 		
 		
+		try:
+                        schoolid=post['schoolid']
+			currentschool = School.objects.get(pk=schoolid)
+                
+                	allclass = Allclass(allclass_name=class_name, allclass_desc=class_desc, allclass_location=class_location,school=currentschool)
+                	allclass.save()
+                	school = School.objects.get(pk=schoolid)
+                	print("Class School mapping success.")
 
-		currentschool = School.objects.get(pk=schoolid)
-		
-    		allclass = Allclass(allclass_name=class_name, allclass_desc=class_desc, allclass_location=class_location,school=currentschool)
-    		allclass.save()
-    		school = School.objects.get(pk=schoolid)
-		print("Class School mapping success.")
+                except:
+                        print("No school given")
+			allclass = Allclass(allclass_name=class_name, allclass_desc=class_desc, allclass_location=class_location)
+                        allclass.save()
 
 
 		print("Class Students mapping success.")

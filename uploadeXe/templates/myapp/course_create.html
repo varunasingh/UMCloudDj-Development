@@ -1,9 +1,10 @@
 {% extends "managebase.html" %}
 {% block navigate %}
-<a href="/upload/"><button id="coursesnav" class="ui-state-hover" type="button"style="width:149px;height:50px;margin-top:10px;margin-right:10px;margin-left:40px;">Courses</button></a>
-<a href="/userstable/"><button id="usertablenav" type="button" style="width:150px;height:50px;margin-top:10px;margin-right:10px;">Users</button></a>
+<a href="/userstable/"><button id="usertablenav" type="button" style="width:150px;height:50px;margin-top:10px;margin-right:10px;margin-left:40px;">Users</button></a>
 <a href="/schoolstable/"><button id="schooltablenav" type="button"style="width:150px;height:50px;margin-top:10px;margin-right:10px;">Schools</button></a>
 <a href="/allclassestable/"><button id="allclasstablenav" type="button"style="width:150px;height:50px;margin-top:10px;margin-right:10px;">Classes</button></a>
+<a href="/upload/"><button id="coursesnav" class="ui-state-hover" type="button"style="width:149px;height:50px;margin-top:10px;margin-right:10px;">Courses</button></a>
+
 <hr>
 <p></p>
 {% endblock %}
@@ -14,7 +15,7 @@
 <script type="text/javascript">
  	var student_map = [{% for student in student_list %}
                         { "value" : "{{ student.id }}",
-                        "label":"{{student.first_name}} {{student.username}}(ID: {{student.id}})"
+                        "label":"{{student.first_name}} {{student.last_name}} ({{student.username}})"
                         //"label" : "{{package.name}}({{package.url}})"
                         },
                 {% endfor %}];
@@ -100,7 +101,7 @@
         <label for="course_price">Course Price:  </label><input type="number" step="0.01" min="0" name="course_price" id="course_price" value="" />
     </div>-->
 
-   <h3>Assign Packages <a href="/uploadeXe/new"><i>(Upload New)</i></a></h3> 
+   <h3>Assign Blocks <a href="/uploadeXe/new"><i>(Upload New)</i></a></h3> 
 <div id="selectpackagesfornewcourse" >  
     <select multiple="multiple" id="source" name="source">  
     </select>  

@@ -1,3 +1,4 @@
+"""
 # -*- coding: utf-8 -*-
 from django import forms
 from datetimewidget.widgets import DateTimeWidget
@@ -9,4 +10,4 @@ class DTForm(forms.ModelForm):
             #Use localization
             'datetime': DateTimeWidget(attrs={'id':"yourdatetimeid"}, usel10n = True)
         }
-
+"""

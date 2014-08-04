@@ -16,6 +16,7 @@ from organisation.models import User_Organisations
 from users.models import UserProfile
 from django import forms
 from uploadeXe.models import Package as Document
+from uploadeXe.models import Course 
 import os 
 from django.conf import settings
 
@@ -37,6 +38,12 @@ class UMCloudDjViewTestCase(TestCase):
 	user_organisation.save()
 	user_organisation2 = User_Organisations(user_userid=testuser2, organisation_organisationid=mainorganisation)
 	user_organisation2.save()
+
+	test_course = Course(name="TestCourse", category="Testing", description="This is a course made for testing", publisher=testuser, organisation=mainorganisation)
+	test_course.save()
+	test_course.students.add(testuser)
+	test_course.save()
+	
 
     def test_checklogin_view(self):
 	"""
@@ -123,18 +130,74 @@ class UMCloudDjViewTestCase(TestCase):
 		except:
 			print("WORDPRESS CRED NOT INCLUDED")
 
+	"""
+        Test incorrect login details from ustadmobile.com wordpress server
+        """
+        print("Project Root:")
+        data='willbereplaced'
+        """
+        We get the password from an external file accesable to test
+        """
+        try:
+                with open (os.path.join(settings.PROJECT_ROOT, 'wordpresscred.txt'), "r") as myfile:
+                        data=myfile.readlines()
+                print("GOT WP CRED FILE")
+                data=data[0].strip("\n")
+                post_data_wordpress={'username':'testuser','password':data}
+                response=self.client.post(view_url, post_data_wordpress)
+                self.assertEquals(response.status_code, 302)
+                self.assertRedirects(response, '/')
+        except:
+		if True:
+			data="incorrectpasswordlalala"
+                        post_data_wordpress={'username':'testuser','password':data}
+                        response=self.client.post(view_url, post_data_wordpress)
+			self.assertContains(response,'Wrong username/password combination' , 1, status_code=200)
+
+
     def test_sign_up_in(self):
 	"""
 	Test if User can be created by the view that creates a user from the website
 	UMCloudDj.views.sign_up_in()
 	"""
 	view_url="/signup/"
-	post_data={'username':'cowsaysmoo','email':'cow@moo.com','password':'iamacow','first_name':'Cow','last_name':'Moo','website':'www.cow.moo','job_title':'Cow','company_name':'Moo'}
+	post_data={'username':'cowsaysmoo','email':'cow@moo.com','password':'iamacow','first_name':'Cow','last_name':'Moo','website':'www.cow.moo','job_title':'Cow','company_name':'Moo','dateofbirth':'02/02/2014','phonenumber':'+1234567890','address':'123 STREET, XYZ Avenue, ABC building, 3A, DEFGHIJ, KLMNOPQRST','gender':'M', 'organisationrequest':''}
 	response = self.client.post(view_url, post_data)
 	cow=User.objects.get(username="cowsaysmoo")
 	self.assertEqual(cow.last_name, 'Moo')
 	
-	
+    def test_getassignedcourseids(self):
+	"""
+        Test if getassignedcourseids returns users's course ids with block ids and details as an xml in the body
+        """
+	view_url="/getassignedcourseids/"
+	post_data={'username':'testuser1','password':'12345'}
+	response = self.client.post(view_url, post_data)
+	self.assertEquals(response.status_code, 200)
+	self.assertContains(response, "<?xml version=\"1.0\" ?><getasssignedcourseids>", status_code=200)
+	self.assertContains(response, "<course>TestCourse</course><id>1</id>", status_code=200)
+
+    def test_sendelpfile(self):
+	"""
+	Tests the file upload  (eXe elp package) block
+	"""
+	print("starting..")
+        #try:
+	if True:
+		
+		view_url="/sendelpfile/"
+                with open('/opt/UMCloudDj/gt1.elp',"r") as myfile:
+			print("found file here")
+			post_data={'username':'testuser1', 'password':'12345', 'exeuploadelp': myfile}
+                	response = self.client.post(view_url, post_data)
+			print (response)
+			self.assertEquals(response['courseid'], '1')
+			self.assertEquals(response.status_code, 200)
+        #except:
+	else:
+                print("TEST ELP FILE NOT INCLUDED")
+
+
 
     def tearDown(self):
 	print("end of UMCloud Views test")

@@ -46,7 +46,7 @@ class UserViewTestCase(TestCase):
         Users cannot be created without logging in
 	UMCloudDj.views.user_create
         """
-        post_data={'username':'test_create','email':'test_create@ustadmobile.com','password':'123456','first_name':'test','last_name':'create','role':1,'organisation':1}
+        post_data={'username':'test_create','email':'test_create@ustadmobile.com','password':'123456','first_name':'test','last_name':'create','role':1,'organisation':1, 'dateofbirth':'02/02/1989','address':'123, ABC Street, DEFG Avenue, IJKLMN, OPQRSTUV', 'gender':'F','phonenumber':'+1234567890' }
         response = self.client.post('/usernew/', post_data)
         self.assertEqual(response.status_code, 302)
         #302 is redirected to login page.

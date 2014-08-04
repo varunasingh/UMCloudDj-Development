@@ -1,3 +1,18 @@
+v0.5.9
+-Added nother option in user_new to submit user creation and create another which redirects to another form.
+-Got rid of ID fields in most tables but retained number in first field (usually name)
+-Make pick list of user approval for org manager
+-Make course pic black and white too to avoid confusion.
+-Made First Name , Last Name, DOB fields required in register (website)
+-Fixed bug in pending requests check for non organisation managers.
+-Made First Name, Last Name, UserName, fields mandatory in New User
+-Re ordered the Toolbar at the top to be Users, Schools, Classes, Courses
+-Renamed Packages to Blocks (to be more in line with how other LMSs name course blocks)
+-Disabled grunt testing on course upload.
+-Updated user creation (internal) and website unit tests.
+-Added more tests to unit testing including file (block/elp/package/exe) upload
+-More updates to unit testing
+
 v0.5.8
 -Renamed Managemewnt's Manage X to X
 -Removed duplicate new X / Add New buttons

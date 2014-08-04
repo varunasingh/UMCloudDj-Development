@@ -1,9 +1,10 @@
 {% extends "managebase.html" %}
 {% block navigate %}
-<a href="/upload/"><button id="coursesnav" type="button"style="width:149px;height:50px;margin-top:10px;margin-right:10px;margin-left:40px;">Courses</button></a>
-<a href="/userstable/"><button id="usertablenav" type="button" style="width:150px;height:50px;margin-top:10px;margin-right:10px;">Users</button></a>
+<a href="/userstable/"><button id="usertablenav" type="button" style="width:150px;height:50px;margin-top:10px;margin-right:10px;margin-left:40px;">Users</button></a>
 <a href="/schoolstable/"><button id="schooltablenav" class="ui-state-hover"  type="button"style="width:150px;height:50px;margin-top:10px;margin-right:10px;">Schools</button></a>
 <a href="/allclassestable/"><button id="allclasstablenav" type="button"style="width:150px;height:50px;margin-top:10px;margin-right:10px;">Classes</button></a>
+<a href="/upload/"><button id="coursesnav" type="button"style="width:149px;height:50px;margin-top:10px;margin-right:10px;">Courses</button></a>
+
 <hr>
 <p></p>
 {% endblock %}
@@ -29,7 +30,7 @@
                 rows: 10
             },
             columns: [
-                {field:'pk', headerText: 'ID', sortable:true},
+                //{field:'pk', headerText: 'ID', sortable:true},
                 //{field:'model', headerText: 'Django Model', sortable:true},
                 {field:'school_name', headerText: 'School Name', sortable:true},
                 {field:'school_desc', headerText: 'Desc', sortable:true},
@@ -39,7 +40,7 @@
             datasource: [
                 {% if schools_as_json %}
                         {% for c in schools_as_json %}
-                        {"pk":"{{c.pk}}", "school_name":"{{c.fields.school_name}}","school_desc":"{{c.fields.school_desc}}", "organisation":"{{c.fields.organisation}}"}{% if not forloop.last %},{% endif %}
+                        {"pk":"{{c.pk}}", "school_name":"{{c.pk}}: {{c.fields.school_name}}","school_desc":"{{c.fields.school_desc}}", "organisation":"{{c.fields.organisation}}"}{% if not forloop.last %},{% endif %}
                         {% endfor %}
                 {% endif %}
                 ],

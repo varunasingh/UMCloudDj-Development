@@ -281,11 +281,13 @@ def list(request, template_name='myapp/list.html'):
                 end
                 """
                 
+		"""
                 retg = grunt_course(unid, uidwe)
                 
                 if not retg:
                     setattr(newdoc, 'success', 'NO')
                     newdoc.save()
+		"""
 
                 newdoc.save()
                 #form is valid (upload file form)

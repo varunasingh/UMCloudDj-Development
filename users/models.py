@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from organisation.models import Organisation
 
 class UserProfile(models.Model):
     #user = models.ForeignKey(User, unique=True)
@@ -7,4 +8,10 @@ class UserProfile(models.Model):
     website = models.URLField("Website", blank=True)
     company_name = models.CharField(max_length=100, blank=True)
     job_title = models.CharField(max_length=100, blank=True)
+    date_of_birth = models.DateField(blank=True, null=True)
+    address = models.CharField(max_length=800, blank=True)
+    phone_number = models.CharField(max_length=15, blank=True)
+    gender = models.CharField(max_length=2, blank=True)
+    admin_approved = models.BooleanField(default=False)
+    organisation_requested = models.ForeignKey(Organisation)
 # Create your models here.

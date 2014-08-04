@@ -19,6 +19,7 @@ from django.forms import ModelForm
 from organisation.models import Organisation
 from organisation.models import UMCloud_Package
 from organisation.models import User_Organisations
+from organisation.models import Organisation_Code
 from users.models import UserProfile
 from allclass.models import Allclass
 from school.models import School
@@ -50,12 +51,15 @@ from django.db.models import Q
 class RoleForm(ModelForm):
     class Meta:
         model = Role
+
+"""
 @login_required(login_url='/login/')
 def role_list(request, template_name='role/role_list.html'):
     roles = Role.objects.all()
     data = {}
     data['object_list'] = roles
     return render(request, template_name, data)
+"""
 
 @login_required(login_url='/login/')
 def role_table(request, template_name='role/role_table.html'):
@@ -67,6 +71,7 @@ def role_table(request, template_name='role/role_table.html'):
 
     return render(request, template_name, {'data':data, 'roles_as_json':roles_as_json})
 
+"""
 @login_required(login_url='/login/')
 def role_dynatable(request, template_name='table/dynatable.html'):
     roles=Role.objects.all()
@@ -91,7 +96,7 @@ def role_dynatable(request, template_name='table/dynatable.html'):
     logicpopulation = '{"pk":"{{c.pk}}","model":"{{c.model}}", "role_name":"{{c.fields.role_name}}","role_desc":"{{c.fields.role_desc}}"}{% if not forloop.last %},{% endif %}'
 
     return render(request, template_name, {'data':data, 'data_as_json':data_as_json, 'table_headers_html':table_headers_html, 'pagetitle':pagetitle, 'newtypeid':newtypeid, 'tabletypeid':tabletypeid, 'newtypelink':newtypelink, 'logicpopulation':logicpopulation}, context_instance=RequestContext(request))
-
+"""
 
 @login_required(login_url='/login/')
 def role_create(request, template_name='role/role_form.html'):
@@ -125,6 +130,12 @@ def role_delete(request, pk, template_name='role/role_confirm_delete.html'):
 ###################################
 # USER CRUD
 
+class UserProfileForm(ModelForm):
+    raw_id_fields=("user",)
+    readonly_fields=("user",)
+    class Meta:
+        model = UserProfile
+	fields=('website','company_name','job_title','date_of_birth','address','phone_number','gender', 'admin_approved')
 
 class UserForm(ModelForm):
     password = forms.CharField(widget=forms.PasswordInput, required=False)
@@ -148,6 +159,7 @@ class UserForm(ModelForm):
 		user.save()
     	return user
 
+"""
 @login_required(login_url='/login/')
 def user_list(request, template_name='user/user_list.html'):
     users = User.objects.all()
@@ -167,12 +179,30 @@ def user_list(request, template_name='user/user_list.html'):
     data['organisation_list'] = user_organisations
     
     return render(request, template_name, data)
+"""
 
 @login_required(login_url='/login/')
 def user_table(request, template_name='user/user_table.html'):
     organisation = User_Organisations.objects.get(user_userid=request.user).organisation_organisationid;
     users = User.objects.all()
     users= User.objects.filter(pk__in=User_Organisations.objects.filter(organisation_organisationid=organisation).values_list('user_userid', flat=True))
+    #Syntax to ignore un aproved users.
+    users= User.objects.filter(pk__in=User_Organisations.objects.filter(organisation_organisationid=organisation).values_list('user_userid', flat=True)).exclude(pk__in=UserProfile.objects.filter(admin_approved=False).values_list('user', flat=True))
+
+    user_role = User_Roles.objects.get(user_userid=request.user).role_roleid;
+    organisational_admin_role = Role.objects.get(pk=2)
+
+    current_user_role = user_role.role_name;
+    current_user = "Hi, " + request.user.first_name + ". You are a " + current_user_role + " in " + organisation.organisation_name + " organisation."
+
+
+    if user_role == organisational_admin_role:
+	org_role = True
+	users_notification= User.objects.filter(pk__in=User_Organisations.objects.filter(organisation_organisationid=organisation).values_list('user_userid', flat=True)).filter(pk__in=UserProfile.objects.filter(admin_approved=False).values_list('user', flat=True))
+	requestspending = users_notification.count()
+    else:
+	org_role = False
+	requestspending = 0
 
     user_roles = []
     user_organisations = []
@@ -188,7 +218,52 @@ def user_table(request, template_name='user/user_table.html'):
     users_as_json = serializers.serialize('json', users)
     users_as_json =json.loads(users_as_json)
     user_list=zip(users_as_json, user_roles, user_organisations)
-    return render(request, template_name, {'data':data, 'user_list':user_list,'users_as_json':users_as_json})
+    return render(request, template_name, {'data':data,'requestspending':requestspending,'current_user':current_user,'org_role':org_role, 'user_list':user_list,'users_as_json':users_as_json})
+
+
+@login_required(login_url='/login/')
+def admin_approve_request(request, template_name='user/admin_approve_request_table.html'):
+    role = User_Roles.objects.get(user_userid=request.user).role_roleid;
+    organisation = User_Organisations.objects.get(user_userid=request.user).organisation_organisationid;
+    organisational_admin_role = Role.objects.get(pk=2)
+    
+    if role == organisational_admin_role:
+
+	if request.method == 'POST':
+        	post = request.POST;
+		userstoapprove = request.POST.getlist('target');
+		for everyusertoapprove in userstoapprove:
+			usertoapprove=User.objects.get(pk=everyusertoapprove)
+			userprofile = UserProfile.objects.get(user=usertoapprove)
+			userprofile.admin_approved=True
+			userprofile.save()
+			print("user: " + usertoapprove.username + " approved.")
+		print("Users approved")
+		return redirect ('user_table')
+
+    	#Syntax to ignore un aproved users.
+	users= User.objects.filter(pk__in=User_Organisations.objects.filter(organisation_organisationid=organisation).values_list('user_userid', flat=True)).filter(pk__in=UserProfile.objects.filter(admin_approved=False).values_list('user', flat=True))
+
+    	user_roles = []
+    	user_organisations = []
+    	for user in users:
+        	role = User_Roles.objects.get(user_userid=user).role_roleid
+        	organisation = User_Organisations.objects.get(user_userid=user).organisation_organisationid
+        	user_roles.append(role)
+        	user_organisations.append(organisation)
+    	data = {}
+    	data['object_list'] = zip(users,user_roles,user_organisations)
+    	data['role_list'] = user_roles
+    	data['organisation_list'] = user_organisations
+    	users_as_json = serializers.serialize('json', users)
+    	users_as_json =json.loads(users_as_json)
+    	user_list=zip(users_as_json, user_roles, user_organisations)
+    	return render(request, template_name, {'data':data,'users_requests':users,'user_list':user_list,'users_as_json':users_as_json})
+    else:
+	print("Not an organisational admin.")
+	state="You do not have permission to see this page."
+	return render(request, template_name, {'state':state})
+
 
 
 @login_required(login_url='/login/')
@@ -207,10 +282,10 @@ def user_create(request, template_name='user/user_create.html'):
 
     if request.method == 'POST':
 	post = request.POST;
-	if not user_exists(post['email']):
+	if not user_exists(post['username']):
 		print("Creating the user..")
 		
-        	user = create_user_more(username=post['username'], email=post['email'], password=post['password'], first_name=post['first_name'], last_name=post['last_name'], roleid=post['role'], organisationid=organisation.id)
+        	user = create_user_more(username=post['username'], email=post['email'], password=post['password'], first_name=post['first_name'], last_name=post['last_name'], roleid=post['role'], organisationid=organisation.id, date_of_birth=post['dateofbirth'], address=post['address'], gender=post['gender'], phone_number=post['phonenumber'], organisation_request=organisation)
 		if user:
 		    current_user_role = User_Roles.objects.get(user_userid=user.id).role_roleid;
 		    student_role = Role.objects.get(pk=6)
@@ -222,18 +297,25 @@ def user_create(request, template_name='user/user_create.html'):
 			    everyallclass = Allclass.objects.get(pk=everyallclassid)
 			    everyallclass.students.add(user)
 			    everyallclass.save()
-
-		    return redirect('user_table')
+		    if 'submittotable' in request.POST:
+			return redirect('user_table')
+		    if 'submittonew' in request.POST:
+			return redirect('user_new')
+		    else:
+			return redirect ('user_table')
         	else:
                     state="The Username already exists.."
 		    data['state']=state
 		    return render(request, template_name, data)
-                    return render_to_response('user/user_create.html',{'state':state}, context_instance=RequestContext(request))
+                    #return render_to_response('user/user_create.html',{'state':state}, context_instance=RequestContext(request))
                 #return redirect("/register", {'state':state})
 
     	else:
         	#Show message that the username/email address already exists in our database.
-        	return redirect('user_table')
+		state="Please enter a valid user name"
+                data['state']=state
+                return render(request, template_name, data)
+        	#return redirect('user_table')
 
     return render(request, template_name, data)
 
@@ -248,6 +330,33 @@ def user_update(request, pk, template_name='user/user_update.html'):
         form.save()
         return redirect('user_table')
     return render(request, template_name, {'form':form})
+
+"""
+@login_required(login_url='/login/')
+def user_approve_request(request, pk, template_name='user/user_approve_request.html'):
+    role = User_Roles.objects.get(user_userid=request.user).role_roleid;
+    organisation = User_Organisations.objects.get(user_userid=request.user).organisation_organisationid;
+    organisational_admin_role = Role.objects.get(pk=2)
+
+    if role == organisational_admin_role:
+    	user = get_object_or_404(User, pk=pk)
+	userprofile = UserProfile.objects.get(user=user)
+	print("UserProfile's Gender:")
+	print(userprofile.gender)
+	form = UserProfileForm(request.POST or None, instance=userprofile)
+	username=user.username;
+	organisation_requested = userprofile.organisation_requested.organisation_name
+    	if form.is_valid():
+        	form.save()
+        	return redirect('users_approve')
+   	return render(request, template_name, {'username':username,'organisation_requested':organisation_requested,'form':form})
+
+    else:
+	print("Not an organisational admin.")
+        state="You do not have permission to see this page."
+        return render(request, template_name, {'state':state})
+
+"""
 
 @login_required(login_url='/login/')
 def user_delete(request, pk, template_name='user/user_confirm_delete.html'):
@@ -346,6 +455,7 @@ def report_statements_view(request):
 	c.update(csrf(request))
 	return render(request, "report_statements_selection.html")
 
+"""
 def elptestresults_selection_view(request):
 	c= {}
 	c.update(csrf(request))
@@ -355,7 +465,7 @@ def apptestresults_selection_view(request):
 	c = {}
 	c.update(csrf(request))
 	return render(request, "apptestresults_selection.html")
-
+"""
 
 @csrf_exempt
 def sendtestlog_view(request):
@@ -603,7 +713,7 @@ def sendelpfile_view(request):
                 		setattr(newdoc, 'name', uidwe)
                 		setattr(newdoc, 'publisher', request.user)
                 		newdoc.save()
-
+				"""
                 		retg = grunt_course(unid, uidwe)
 
                 		if not retg:
@@ -613,7 +723,7 @@ def sendelpfile_view(request):
                                         uploadresponse.write("Course testing failed but uploaded")
                                         uploadresponse['error'] = "Grunt test failed"
                                         return uploadresponse
-
+				"""
 
                 		newdoc.save()
                 		#form is valid (upload file form)
@@ -646,7 +756,8 @@ def sendelpfile_view(request):
                 uploadresponse['error'] = "Request is not POST"
                 return uploadresponse
 
-	
+
+"""
 @login_required(login_url='/login/')
 def testelpfiles_view(request):
 	appLocation = (os.path.dirname(os.path.realpath(__file__)))
@@ -797,6 +908,7 @@ def showelptestresults_view(request):
 	if request.method == 'GET':
 		print("Not a POST response")
 		return render_to_response("elptestresults.html", {'data': ''}, context_instance=RequestContext(request))
+"""
 		
 
 def getcourse_view(request):
@@ -839,8 +951,12 @@ def getcourse_view(request):
 def register_view(request, ):
 	c = {}
 	c.update(csrf(request))
-	#return render_to_response('signup.html', c)
-	return render_to_response('user/user_create_website.html', c, context_instance=RequestContext(request))
+
+	organisations = Organisation.objects.all()
+	organisation_list=organisations
+
+	#return render_to_response('user/user_create_website.html', c, context_instance=RequestContext(request))
+	return render(request, 'user/user_create_website.html',{'organisation_list':organisation_list})
 
 def my_view(request):
         current_user = request.user.username
@@ -861,49 +977,91 @@ def auth_and_login(request, onsuccess='/', onfail='/login'):
     #Returns user object if parameters match the database.
     user = authenticate(username=request.POST['username'], password=request.POST['password'])
     if user is not None:
-	#We Sign the user..
-        login(request, user)
-        return redirect(onsuccess)
+	try:
+		userprofile = UserProfile.objects.get(user=user)
+		if userprofile.admin_approved:
+			login(request, user)
+			return redirect(onsuccess)
+		else:
+			state="You are not yet approved by your organisation. Contact your organisation's admin"
+                	return render_to_response('login.html', {'state':state},context_instance=RequestContext(request))
+	
+	except UserProfile.DoesNotExist:
+		print("User profile does not exist")
+		login(request, user)
+                return redirect(onsuccess)
+
     else:
 	#Show a "incorrect credentials" message
 	state="Wrong username/password combination"
 	return render_to_response('login.html', {'state':state},context_instance=RequestContext(request))
         return redirect(onfail)  
 
-def create_user_website(username, email, password, first_name, last_name, website, job_title, company_name):
+def create_user_website(username, email, password, first_name, last_name, website, job_title, company_name, date_of_birth, address, phone_number, gender, organisation_request):
     #Usage:
     #user = create_user_website(username=post['email'], email=post['email'], password=post['password'], 
     # first_name=post['first_name'], last_name=post['last_name'], website=post['website'], 
     # job_title=post['job_title'], company_name=post['company_name'])
-    try:
+    #date_of_birth=post['dateofbith'], address=post['address'], phone_number=post['phonenumber'], gender=post['gender'], organisation_request=post['organisationrequest']
+    #try:
+    if True:
+        b=datetime.datetime.strptime(date_of_birth, '%m/%d/%Y').strftime('%Y-%m-%d')
+	date_of_birth=b
+
     	user = User(username=username, email=email, first_name=first_name, last_name=last_name)
     	user.set_password(password)
     	user.save()
     	print("User object created..")
     	print("Creating profile..")
+	individual_organisation = Organisation.objects.get(pk=1)
     
-    	user_profile = UserProfile(user=user, website=website, job_title=job_title, company_name=company_name)
-    	user_profile.save()
-    	print("User profile created..")
+ 	try:
+		if organisation_request == "":
+			print("No organisation code specified. Defaulting to Individual Organisation")
+			organisation_requested = individual_organisation
+		else:
+			organisation_requested = Organisation_Code.objects.get(code=organisation_request).organisation
+		
+    		user_profile = UserProfile(user=user, website=website, job_title=job_title, company_name=company_name, gender=gender, phone_number=phone_number, address=address, date_of_birth=date_of_birth, organisation_requested=organisation_requested)
 
-    	student_role = Role.objects.get(pk=6)
-    	new_role_mapping = User_Roles(name="website", user_userid=user, role_roleid=student_role)
-    	new_role_mapping.save()
+    		student_role = Role.objects.get(pk=6)
+    		new_role_mapping = User_Roles(name="website", user_userid=user, role_roleid=student_role)
 
-    	individual_organisation = Organisation.objects.get(pk=1)
-    	new_organisation_mapping = User_Organisations(user_userid=user, organisation_organisationid=individual_organisation)
-    	new_organisation_mapping.save()
+		new_organisation_mapping = User_Organisations(user_userid=user, organisation_organisationid=organisation_requested)
 
-    	#Check if previous were a success.
-    	print("User Role mapping (website) success.")
-    	return user
-    except:
-	print("Username  exists")
-	return None
+		user_profile.save()
+                print("User profile created..")
+
+		new_role_mapping.save()
+		print("Role Mapping created..")
+
+		new_organisation_mapping.save()
+		print("Organisation mapping created..")
+
+    		#Check if previous were a success.
+    		print("User Role mapping (website) success.")
+
+		if organisation_requested == individual_organisation:
+			print("Here we approve the individual org fellos")
+			#user_profile.admin_approved=True
+			#user_profile.save()
+
+		reason="success"
+    		return user, reason
+	except Organisation_Code.DoesNotExist:
+		reason = "Something went wrong in checking organisation code"
+		print(reason)
+		return None, reason
+    #except:
+    else:
+	reason = "Username exists"
+	print(reason)
+	return None, reason
 
 
-def create_user_more(username, email, password, first_name, last_name, roleid, organisationid):
-    try:
+def create_user_more(username, email, password, first_name, last_name, roleid, organisationid, date_of_birth, address, gender, phone_number, organisation_request):
+    #try:
+    if True:
     	user = User(username=username, email=email, first_name=first_name, last_name=last_name)
     	user.set_password(password)
     	user.save()
@@ -912,7 +1070,6 @@ def create_user_more(username, email, password, first_name, last_name, roleid, o
 
     	#Create role mapping. 
     	user_role = User_Roles(name="blah", user_userid=user, role_roleid=role)
-    	#user_role = User_Roles(user_userid=user)
     	user_role.save()
 
     	#Create organisation mapping.
@@ -920,11 +1077,19 @@ def create_user_more(username, email, password, first_name, last_name, roleid, o
     	user_organisation.save()
 
     	#Create same user in UM-TinCan LRS
-
     
     	print("User Role mapping success.")
+
+	b=datetime.datetime.strptime(date_of_birth, '%m/%d/%Y').strftime('%Y-%m-%d')
+        date_of_birth=b
+	user_profile = UserProfile(user=user, gender=gender, phone_number=phone_number, address=address, date_of_birth=date_of_birth, organisation_requested=organisation_request)
+	user_profile.admin_approved=True
+	user_profile.save()
+	print("User Profile mapping success.")
+
     	return user
-    except:
+    #except:
+    else:
 	print("Username exists")
 	return None
 
@@ -942,18 +1107,20 @@ def logout_view(request):
 
 def sign_up_in(request):
     print("Creating new user from website..")
+    organisation_list=Organisation.objects.all()
     post = request.POST
-    if not user_exists(post['email']): 
-	user = create_user_website(username=post['username'], email=post['email'], password=post['password'], first_name=post['first_name'], last_name=post['last_name'], website=post['website'], job_title=post['job_title'], company_name=post['company_name'])
+    if not user_exists(post['username']): 
+        user, reason = create_user_website(username=post['username'], email=post['email'], password=post['password'], first_name=post['first_name'], last_name=post['last_name'], website=post['website'], job_title=post['job_title'], company_name=post['company_name'], date_of_birth=post['dateofbirth'], address=post['address'], phone_number=post['phonenumber'], gender=post['gender'], organisation_request=post['organisationrequest'])
+
 	if user:
         	return auth_and_login(request)
 	else:
-		state="The Username already exists.."
-		return render_to_response('user/user_create_website.html',{'state':state}, context_instance=RequestContext(request))
-		#return redirect("/register", {'state':state})
+		return render_to_response('user/user_create_website.html',{'state':reason,'organisation_list':organisation_list}, context_instance=RequestContext(request))
     else:
         #Show message that the username/email address already exists in our database.
-        return redirect("/register")
+        state="The Username already exists.."
+        return render_to_response('user/user_create_website.html',{'state':state,'organisation_list':organisation_list}, context_instance=RequestContext(request))
+        #return redirect("/register")
 
 def logout_view(request):
     logout(request)

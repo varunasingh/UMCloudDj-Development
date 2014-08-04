@@ -26,5 +26,8 @@ class User_Organisations(models.Model):
    user_userid = models.ForeignKey(User)
    organisation_organisationid = models.ForeignKey(Organisation)
 
+class Organisation_Code(models.Model):
+   organisation = models.ForeignKey(Organisation)
+   code=models.CharField(max_length=100)
 
 # Create your models here.

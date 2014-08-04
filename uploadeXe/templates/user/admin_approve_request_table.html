@@ -3,21 +3,15 @@
 <a href="/userstable/"><button id="usertablenav" class="ui-state-hover" type="button" style="width:149px;height:50px;margin-top:10px;margin-right:10px;margin-left:40px;">Users</button></a>
 <a href="/schoolstable/"><button id="schooltablenav" type="button"style="width:150px;height:50px;margin-top:10px;margin-right:10px;">Schools</button></a>
 <a href="/allclassestable/"><button id="allclasstablenav" type="button"style="width:150px;height:50px;margin-top:10px;margin-right:10px;">Classes</button></a>
-<a href="/upload/"><button id="coursesnav" type="button"style="width:150px;height:50px;margin-top:10px;margin-right:10px;">Courses</button></a>
+<a href="/upload/"><button id="coursesnav" type="button"style="width:149px;height:50px;margin-top:10px;margin-right:10px;margin-left:40px;">Courses</button></a>
+
 <hr>
 <p></p>
 {% endblock %}
 
-{% block title %}User DataTable List{% endblock %}
+{% block title %}Approve User Requests{% endblock %}
 {% block content %}
 <style>
-#usersapprove {
-    background-image: url(/media/images/tick.png);
-    background-repeat: no-repeat;
-    width: 160px;
-    background-position: center left;
-    text-align: right;
-}
 #newuser {
     background-image: url(/media/images/user-new.png);
     background-repeat: no-repeat;
@@ -31,24 +25,6 @@
     width: 110px;
     background-position: center left;
     text-align: right;
-}
-.btn {
-    width:160px;
-    position:relative;
-    padding:0;
-    margin-right:.1em;
-    height: 33px;
-    background-color: lightgray;
-}
-.notification {
-    position:absolute;
-    right:-7px;
-    top:-7px;
-    background-color:red;
-    line-height:20px;
-    width:20px;
-    height:20px;
-    border-radius:10px;
 }
 
 </style>
@@ -72,16 +48,16 @@
             datasource: [
 		{% if users_as_json %}
     			{% for c, role, org in user_list %}
-			{"pk":"{{c.pk}}","model":"{{c.model}}","username":"{{c.fields.username}}", "first_name":"{{c.fields.first_name}}","last_name":"{{c.fields.last_name}}", "is_active":"{{c.fields.is_active}}","role":"{{role.role_name}}"}{% if not forloop.last %},{% endif %}
+			{"pk":"{{c.pk}}","model":"{{c.model}}","username":"{{c.pk}}: {{c.fields.username}}", "first_name":"{{c.fields.first_name}}","last_name":"{{c.fields.last_name}}", "is_active":"{{c.fields.is_active}}","role":"{{role.role_name}}"}{% if not forloop.last %},{% endif %}
     			{% endfor %}
 		{% endif %}
 		],
-            selectionMode: 'single',
+            //selectionMode: 'single',
             rowSelect: function(event, data) {
 		console.log("Wassup?")
                 $('#messages').puigrowl('show', [{severity:'info', summary: 'Row Selected', detail: (data.username + ' ' + data.pk)}]);
-		var edit="/useredit/"+data.pk;
-		window.open(edit, "_self");
+		var edit="/userapprove/"+data.pk;
+		//window.open(edit, "_self");
             },
             rowUnselect: function(event, data) {
                 //$('#messages').puigrowl('show', [{severity:'info', summary: 'Row Unselected', detail: (data.brand + ' ' + data.vin)}]);
@@ -89,22 +65,48 @@
    });
    $('#newuser').puibutton();  
    $('#adduser').puibutton();
-   $('#usersapprove').puibutton();
+   var users_requests_map = [{% for userprofile in users_requests %}
+			{ "value": "{{userprofile.id}}",
+			  "label": "{{userprofile.first_name}} {{userprofile.last_name}} ({{userprofile.username}})"
+			},
+		{% endfor %}];
+   $('#submit').puibutton();
+   $('#approveusers').puipicklist({  
+                                effect: 'clip',  
+                                showSourceControls: false,  
+                                showTargetControls: false,  
+                                sourceCaption: 'Available',  
+                                targetCaption: 'Selected',  
+                                filter: true,  
+                                sourceData:users_requests_map,  
+                                content: function(option) {  
+                                        return '<img src="/media/' + "user" + '.png" alt="" /><span style="">' + option.label.replace(/^\s+|\s+$/g, '') + '</span>';  
+                                }  
+                        });
+
   }
   ); 
 
 
 </script>
-<a href="/usernew/"><button id="newuser" type="button">New User</button></a>
-	{% if org_role == True %}
-		<a href="/usersapprove/"><button class="btn" id="usersapprove2" style="position:relative;" type="button"><b>Approve Users</b>
-		{% if requestspending != 0 %}
-    			<div class="notification">{{requestspending}}</div>
-		{% endif %}
-		</button></a>
-	{% endif %}
 <p></p>
-<!---<i>Click a row to edit User</i>-->
+<p cass="error" style="color:red;"><i>{{state}}</i></p>
+{% if  users_requests %}
 <div id="tblusers"> </div>
+<br></br>
+<form id="approveusersform" method="post">{% csrf_token %}
+
+<h3> Approve Users:</h3>
+<div id="approveusers" >
+    <select multiple="multiple" id="source" name="source">
+    </select>
+    <select multiple="multiple" id="target" name="target">
+    </select>
+</div>
+<button id="submit" type="submit" name="submittotable" value="Create">Submit</button>
+{% else %}
+<i>You have no pending user requests for your organisation</i>
+{% endif %}
+</form>
 <p></p>
 {% endblock %}

@@ -1,3 +1,4 @@
+"""
 # -*- coding: utf-8 -*-
 from django.db import models
 
@@ -24,3 +25,4 @@ class testTable(models.Model):
    name = models.CharField(max_length=300)
 
 # Create your models here.
+"""

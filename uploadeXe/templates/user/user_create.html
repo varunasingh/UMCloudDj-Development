@@ -1,9 +1,10 @@
 {% extends "managebase.html" %}
 {% block navigate %}
-<a href="/upload/"><button id="coursesnav" type="button"style="width:149px;height:50px;margin-top:10px;margin-right:10px;margin-left:40px;">Courses</button></a>
-<a href="/userstable/"><button id="usertablenav" class="ui-state-hover" type="button" style="width:150px;height:50px;margin-top:10px;margin-right:10px;">Users</button></a>
+<a href="/userstable/"><button id="usertablenav" class="ui-state-hover" type="button" style="width:149px;height:50px;margin-top:10px;margin-right:10px;margin-left:40px;">Users</button></a>
 <a href="/schoolstable/"><button id="schooltablenav" type="button"style="width:150px;height:50px;margin-top:10px;margin-right:10px;">Schools</button></a>
 <a href="/allclassestable/"><button id="allclasstablenav" type="button"style="width:150px;height:50px;margin-top:10px;margin-right:10px;">Classes</button></a>
+<a href="/upload/"><button id="coursesnav" type="button"style="width:149px;height:50px;margin-top:10px;margin-right:10px;margin-left:40px;">Courses</button></a>
+
 <hr>
 <p></p>
 {% endblock %}
@@ -28,6 +29,7 @@
                         //$('#job_title').puiinputtext();
                         //$('#company_name').puiinputtext();      
                         $('#submit').puibutton();
+			$('#submit2').puibutton();
                         $('#createuser').puipanel();
 			$('#role').puidropdown();
 			$('#organisation').puidropdown();
@@ -43,6 +45,14 @@
                                         return '<img src="/media/' + "allclass" + '.png" alt="" /><span style="">' + option.label.replace(/^\s+|\s+$/g, '') + '</span>';  
                                 }  
                         });
+			$('#phonenumber').puiinputtext();
+			$('#gender').puidropdown();
+			$( ".dobdatepicker" ).datepicker({
+        			changeMonth: true,
+        			changeYear: true,
+        			yearRange: "1900:2012",
+        			// You can put more options here.
+			});
 
 
                 }
@@ -57,7 +67,7 @@
     <div id="createuser" title="Create a New User">
     <div data-role="fieldcontain" style="padding-bottom:5px">
         <!--<label for="username">Username: &nbsp  </label>-->
-        <input type="text" name="username" id="username" placeholder="Username" style="height: 30px; width: 250px;" value="" />
+        <input type="text" name="username" id="username" placeholder="Username" style="height: 30px; width: 250px;" value="" required/>
     </div>
     <div data-role="fieldcontain" style="padding-bottom:5px">
         <!--<label for="email">Email:  &nbsp&nbsp</label>-->
@@ -65,16 +75,40 @@
     </div>
     <div data-role="fieldcontain" style="padding-bottom:5px">
         <!--<label for="password">Password:</label>-->
-        <input type="password" name="password" id="password" placeholder="Password" style="height: 30px; width: 250px;" value="" />
+        <input type="password" name="password" id="password" placeholder="Password" style="height: 30px; width: 250px;" value="" required/>
     </div>
     <div data-role="fieldcontain" style="padding-bottom:5px">
         <!--<label for="first_name">First Name:  </label>-->
-        <input type="text" name="first_name" id="first_name" placeholder="First Name" style="height: 30px; width: 250px;" value="" />
+        <input type="text" name="first_name" id="first_name" placeholder="First Name" style="height: 30px; width: 250px;" value="" required/>
     </div>
     <div data-role="fieldcontain" style="padding-bottom:5px">
         <!--<label for="last_name">Last Name:  </label>-->
-        <input type="text" name="last_name" id="last_name" placeholder="Last Name" style="height: 30px; width: 250px;" value="" />
+        <input type="text" name="last_name" id="last_name" placeholder="Last Name" style="height: 30px; width: 250px;" value="" required/>
     </div>
+
+
+   <div data-role="fieldcontain" style="padding-bottom:5px">
+        <!--<label for="company_name">Organisation name:  </label>-->
+        <input type="text" name="dateofbirth" id="dateofbirth" class="dobdatepicker" placeholder="Date of Birth" style="height: 30px; width: 250px;" value="" required/>
+    </div>
+    <div data-role="fieldcontain" style="padding-bottom:5px">
+        <!--<label for="job_title">Job Title:  </label>-->
+        <input type="text" name="address" id="address" placeholder="Address/Location" style="height: 30px; width: 250px;" value="" />
+    </div>
+     <div data-role="fieldcontain" style="padding-bottom:5px">
+        <!--<label for="job_title">Job Title:  </label>-->
+        <input type="tel" name="phonenumber" id="phonenumber" placeholder="Phone Number" style="height: 30px; width: 250px;" value="" required/>
+    </div>
+
+    <div data-role="fieldcontain" style="padding-bottom:5px">
+    <label>Gender:</label> <select id="gender" form="newuserform" name="gender">
+                <option value="M">Male</option>
+                <option value="F">Female</option>
+    </select>
+    </div>
+
+
+
     Role: <select id="role" form="newuserform" name="role">
         {% for role in object_list %}
 		{% if role.role_name == "Student" %}
@@ -98,7 +132,8 @@
         {% endfor %}
    </select>-->
    <br></br>
-    <button id="submit" type="submit" name="submit" value="Create">Create User</button>
+    <button id="submit" type="submit" name="submittotable" value="Create">Submit</button>
+    <button id="submit2" type="submit" name="submittonew" value="Create">Submit and Create another</button>
     </div>
 </form>
 

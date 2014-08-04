@@ -1,9 +1,7 @@
-# import the User object
 from django.contrib.auth.models import User
 from django.contrib import auth
 import xmlrpclib as xmlrpc 	#Used for authenticating against wordpress using xmlrpc client
 
-#Testing..
 from uploadeXe.models import Role
 from uploadeXe.models import User_Roles
 from django.forms import ModelForm
@@ -14,7 +12,6 @@ from users.models import UserProfile
 from django import forms
 
 
-# Name my backend 'MyCustomBackend'
 class MyCustomBackend:
 
     # Create an authentication method
@@ -27,8 +24,6 @@ class MyCustomBackend:
             user = User.objects.get(username=username)
 	    
 	    #Check username and password here..
-            #  Check the password is the reverse of the username
-            #if password == username[::-1]:
 	    if password == user.password:
                 # Yes? return the Django user object
 		print("Username and Password check success")
@@ -80,7 +75,7 @@ class MyCustomBackend:
 		return None
 
             #return None
-
+    """
     # Required for your backend to work properly - unchanged in most scenarios
     def get_user(self, user_id):
 	print("In get_user")
@@ -89,3 +84,5 @@ class MyCustomBackend:
         except User.DoesNotExist:
 	    print("User does not exist")
             return None
+    """
+

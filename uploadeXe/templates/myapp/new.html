@@ -1,15 +1,16 @@
 {% extends "managebase.html" %}
 {% block navigate %}
-<a href="/upload/"><button id="coursesnav" class="ui-state-hover" type="button"style="width:149px;height:50px;margin-top:10px;margin-right:10px;margin-left:40px;">Courses</button></a>
-<a href="/userstable/"><button id="usertablenav" type="button" style="width:150px;height:50px;margin-top:10px;margin-right:10px;">Users</button></a>
+<a href="/userstable/"><button id="usertablenav" type="button" style="width:150px;height:50px;margin-top:10px;margin-right:10px;margin-left:40px;">Users</button></a>
 <a href="/schoolstable/"><button id="schooltablenav" type="button"style="width:150px;height:50px;margin-top:10px;margin-right:10px;">Schools</button></a>
 <a href="/allclassestable/"><button id="allclasstablenav" type="button"style="width:150px;height:50px;margin-top:10px;margin-right:10px;">Classes</button></a>
+<a href="/upload/"><button id="coursesnav" class="ui-state-hover" type="button"style="width:149px;height:50px;margin-top:10px;margin-right:10px;">Courses</button></a>
+
 <hr>
 <p></p>
 {% endblock %}
 
 
-{% block title %}Upload eXe course {% endblock %}
+{% block title %}Upload eXe course Block {% endblock %}
 
 {% block scriptjs %} 
 <style>
@@ -74,7 +75,7 @@
 {% block content %}
 
 		<div id="ajaxSpinnerContainer" class="spinner">
-		<div id="ajaxSpinnerImage" title="Uploading your Package">  
+		<div id="ajaxSpinnerImage" title="Uploading your Block">  
 			<img src="{{MEDIA_URL}}/spinner.gif" title="working...">
                 </div>  
 		</div>
@@ -111,7 +112,7 @@
     				<select multiple="multiple" id="target" name="target">
     				</select>
 			</div>-->
-		        <h3>2. Add Package to Course:</h3>
+		        <h3>2. Add Block to Course:</h3>
         		<div id="assignedcourses" >
                 		<select multiple="multiple" id="source" name="source">
                 		</select>
