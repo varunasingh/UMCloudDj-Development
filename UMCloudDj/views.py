@@ -444,12 +444,13 @@ def get_report_zambia(request, onfail='/mcqreports'):
 
     	return render_to_response("report_zambia.html", {'date_since':date_since , 'date_until':date_until , 'data':data , 'lrs_endpoint':lrs_endpoint ,'statements_as_json':statements_as_json }, context_instance=RequestContext(request))
 
+@login_required(login_url='/login/')
 def report_selection_view(request):
 	c = {}
         c.update(csrf(request))
-        #return render_to_response('report_selection.html', c) #Somehow messes with the css and includes of scripts. This is not such sensitive data, so leaving.
 	return render(request, "report_selection.html")
 
+@login_required(login_url='/login/')
 def report_statements_view(request):
 	c = {}
 	c.update(csrf(request))
@@ -958,6 +959,7 @@ def register_view(request, ):
 	#return render_to_response('user/user_create_website.html', c, context_instance=RequestContext(request))
 	return render(request, 'user/user_create_website.html',{'organisation_list':organisation_list})
 
+"""
 def my_view(request):
         current_user = request.user.username
         print("Logged in username: " + current_user)
@@ -966,6 +968,7 @@ def my_view(request):
                 {'current_user': current_user, 'form': form},
                 context_instance=RequestContext(request)
         )
+"""
 
 def loginview(request):
 	c = {}
@@ -992,7 +995,7 @@ def auth_and_login(request, onsuccess='/', onfail='/login'):
                 return redirect(onsuccess)
 
     else:
-	#Show a "incorrect credentials" message
+	#Shows a "incorrect credentials" message
 	state="Wrong username/password combination"
 	return render_to_response('login.html', {'state':state},context_instance=RequestContext(request))
         return redirect(onfail)  
@@ -1100,11 +1103,6 @@ def user_exists(username):
         return False
     return True
 
-def logout_view(request):
-    logout(request)
-    return redirect('login')
-    #return render_to_response('login.html')
-
 def sign_up_in(request):
     print("Creating new user from website..")
     organisation_list=Organisation.objects.all()
@@ -1117,16 +1115,13 @@ def sign_up_in(request):
 	else:
 		return render_to_response('user/user_create_website.html',{'state':reason,'organisation_list':organisation_list}, context_instance=RequestContext(request))
     else:
-        #Show message that the username/email address already exists in our database.
+        #Shows message that the username/email address already exists in our database.
         state="The Username already exists.."
         return render_to_response('user/user_create_website.html',{'state':state,'organisation_list':organisation_list}, context_instance=RequestContext(request))
-        #return redirect("/register")
 
 def logout_view(request):
     logout(request)
     return redirect('login')
-    #return render_to_response('login.html')
-
 
 @login_required(login_url='/login/')
 def secured(request):

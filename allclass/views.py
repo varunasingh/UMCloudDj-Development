@@ -40,6 +40,7 @@ class AllclassForm(ModelForm):
 	fields = ('allclass_name','allclass_desc','allclass_location')
 
 
+"""
 @login_required(login_url='/login/')
 def allclass_list(request, template_name='allclass/allclass_list.html'):
     allclasses = Allclass.objects.all()
@@ -48,7 +49,7 @@ def allclass_list(request, template_name='allclass/allclass_list.html'):
     data['object_list'] = allclasses
     data['school_list'] = school_allclasses
     return render(request, template_name, data)
-
+"""
 
 @login_required(login_url='/login/')
 def allclass_table(request, template_name='allclass/allclass_table.html'):

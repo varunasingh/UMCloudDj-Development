@@ -17,6 +17,7 @@ from users.models import UserProfile
 from django import forms
 from uploadeXe.models import Package as Document
 from uploadeXe.models import Course 
+from uploadeXe.models import Ustadmobiletest
 import os 
 from django.conf import settings
 
@@ -183,8 +184,6 @@ class UMCloudDjViewTestCase(TestCase):
 	"""
 	print("starting..")
         try:
-	#if True:
-		
 		view_url="/sendelpfile/"
                 with open('/opt/UMCloudDj/gt1.elp',"r") as myfile:
 			print("found file here")
@@ -194,10 +193,223 @@ class UMCloudDjViewTestCase(TestCase):
 			self.assertEquals(response['courseid'], '1')
 			self.assertEquals(response.status_code, 200)
         except:
-	#else:
                 print("TEST ELP FILE NOT INCLUDED")
 
+    def test_logout_view(self):
+	"""
+	Test that logout view logs people off
+	"""
+	
+	"""
+	logging user in
+	"""
+	self.c = Client();
+        self.user = User.objects.get(username="testuser1")
+        self.user = authenticate(username='testuser1', password='12345')
+        login = self.c.login(username='testuser1', password='12345')
 
+	view_url="/logout/"
+	self.c = Client()
+        response = self.c.get(view_url)
+        self.assertEquals(response.status_code, 302)
+	self.assertRedirects(response, '/login/')
+
+    def test_secured(self):
+	"""
+	Tests that logged in user is able to get to the main menu
+	"""
+
+	"""
+	Un-Logged in user will redirect to login page.
+	"""
+	view_url="/home/"
+	self.c = Client()
+	response = self.c.get(view_url)
+	self.assertEquals(response.status_code, 302)
+	self.assertRedirects(response, '/login/?next=/home/')
+	
+	"""
+	Logged in user will be able to see the secured page
+	"""
+	self.c = Client();
+        self.user = User.objects.get(username="testuser1")
+        self.user = authenticate(username='testuser1', password='12345')
+        login = self.c.login(username='testuser1', password='12345')
+
+	response = self.c.get(view_url)
+	self.assertEquals(response.status_code, 200)
+	self.assertContains(response, "You are logged in. Here is what you can do", status_code=200)
+
+    def test_upload_view(self):
+	"""
+	Tests that logged in user and not logged in user to get to the bblock upload page
+	"""
+	
+	"""
+	Not logged in user will redirect to login page
+	"""
+	view_url="/upload/"
+	self.c = Client();
+	response = self.c.get(view_url)
+	self.assertEquals(response.status_code, 302)
+	self.assertRedirects(response, '/login/?next=/upload/')
+
+	"""
+	Logged in user will be able to see the upload page
+	"""
+	self.c = Client();
+        self.user = User.objects.get(username="testuser1")
+        self.user = authenticate(username='testuser1', password='12345')
+        login = self.c.login(username='testuser1', password='12345')
+
+        response = self.c.get(view_url)
+        self.assertEquals(response.status_code, 200)
+        self.assertContains(response, "Ustad Mobile Courses", status_code=200)
+
+	
+    def test_management_view(self):
+	"""
+        Tests that logged in user and not logged in user to get to the management page
+        """
+
+        """
+        Not logged in user will redirect to login page
+        """
+        view_url="/management/"
+        self.c = Client();
+        response = self.c.get(view_url)
+        self.assertEquals(response.status_code, 302)
+        self.assertRedirects(response, '/login/?next=/management/')
+
+        """
+        Logged in user will be able to see the upload page
+        """
+        self.c = Client();
+        self.user = User.objects.get(username="testuser1")
+        self.user = authenticate(username='testuser1', password='12345')
+        login = self.c.login(username='testuser1', password='12345')
+
+        response = self.c.get(view_url)
+        self.assertEquals(response.status_code, 200)
+        self.assertContains(response, "Management", status_code=200)
+
+    def test_reports_view(self):
+	"""
+        Tests that logged in user and not logged in user to get to the Reports page
+        """
+
+        """
+        Not logged in user will redirect to login page
+        """
+        view_url="/reports/"
+        self.c = Client();
+        response = self.c.get(view_url)
+        self.assertEquals(response.status_code, 302)
+        self.assertRedirects(response, '/login/?next=/reports/')
+
+        """
+        Logged in user will be able to see the upload page
+        """
+        self.c = Client();
+        self.user = User.objects.get(username="testuser1")
+        self.user = authenticate(username='testuser1', password='12345')
+        login = self.c.login(username='testuser1', password='12345')
+
+        response = self.c.get(view_url)
+        self.assertEquals(response.status_code, 200)
+        self.assertContains(response, "Reports", status_code=200)
+
+    def test_loginview(self):
+	"""
+        Tests that user to get to the Login page
+        """
+
+        view_url="/login/"
+        self.c = Client();
+        response = self.c.get(view_url)
+        self.assertEquals(response.status_code, 200)
+	self.assertContains(response, "Login", status_code=200)
+
+    def test_register_view(self):
+	"""
+	Tests if the register / signn up for users logged out works.
+	"""
+	view_url="/register/"
+	self.c = Client()
+	response = self.c.get(view_url)
+	self.assertEquals(response.status_code, 200)
+	self.assertContains(response, "Request my account")
+
+    def test_sendtestlog_view(self):
+	view_url="/sendtestlog/"
+	password = ""
+	try:
+		with open ("umpassword.txt", "r") as myfile:
+                	password=myfile.read().replace('\n', '')
+	except:
+		print("Cannot find test password file.")
+		password="wrongpassword"
+
+	post_data={'username':'test','password':password, 'appunittestoutput':'new|umclouddjunittestname|pass|0.5s|dategroup|uncloudjunittest|umclouddjtestversion|'}
+        response = self.client.post(view_url, post_data)
+	self.assertEquals(response.status_code, 200)
+	ustadmobile_test = Ustadmobiletest.objects.get(name='umclouddjunittestname')
+	self.assertEquals(ustadmobile_test.ustad_version, 'umclouddjtestversion')
+	
+
+    def test_report_statements_view(self):
+	"""
+        Tests that logged in user and not logged in user to get to the Report statement page
+        """
+
+        """
+        Not logged in user will redirect to login page
+        """
+        view_url="/statementsreports/"
+        self.c = Client();
+        response = self.c.get(view_url)
+        self.assertEquals(response.status_code, 302)
+        self.assertRedirects(response, '/login/?next=/statementsreports/')
+
+        """
+        Logged in user will be able to see the upload page
+        """
+        self.c = Client();
+        self.user = User.objects.get(username="testuser1")
+        self.user = authenticate(username='testuser1', password='12345')
+        login = self.c.login(username='testuser1', password='12345')
+
+        response = self.c.get(view_url)
+        self.assertEquals(response.status_code, 200)
+        self.assertContains(response, "Select the filters below", status_code=200)
+
+    def test_report_selection_view(self):
+	"""
+        Tests that logged in user and not logged in user to get to the Report mcq page
+        """
+
+        """
+        Not logged in user will redirect to login page
+        """
+        view_url="/mcqreports/"
+        self.c = Client();
+        response = self.c.get(view_url)
+        self.assertEquals(response.status_code, 302)
+        self.assertRedirects(response, '/login/?next=/mcqreports/')
+
+        """
+        Logged in user will be able to see the upload page
+        """
+        self.c = Client();
+        self.user = User.objects.get(username="testuser1")
+        self.user = authenticate(username='testuser1', password='12345')
+        login = self.c.login(username='testuser1', password='12345')
+
+        response = self.c.get(view_url)
+        self.assertEquals(response.status_code, 200)
+        self.assertContains(response, "Select the filters below", status_code=200)
+	
+	
 
     def tearDown(self):
 	print("end of UMCloud Views test")

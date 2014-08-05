@@ -1,3 +1,6 @@
+v0.6.0
+-82% unit test code coverage updates.
+
 v0.5.9.1
 -Fixed unit test bug to account for test files not present (exe elp file)
 

@@ -75,7 +75,7 @@ class MyCustomBackend:
 		return None
 
             #return None
-    """
+
     # Required for your backend to work properly - unchanged in most scenarios
     def get_user(self, user_id):
 	print("In get_user")
@@ -84,5 +84,4 @@ class MyCustomBackend:
         except User.DoesNotExist:
 	    print("User does not exist")
             return None
-    """
 

@@ -32,7 +32,7 @@ class SchoolForm(ModelForm):
     class Meta:
         model = School
         fields = ('school_name', 'school_desc')
-
+"""
 @login_required(login_url='/login/')
 def school_list(request, template_name='school/school_list.html'):
     schools = School.objects.all()
@@ -41,6 +41,7 @@ def school_list(request, template_name='school/school_list.html'):
     data['object_list'] = schools
     data['orgschools_list'] = organisation_schools
     return render(request, template_name, data)
+"""
 
 @login_required(login_url='/login/')
 def school_table(request, template_name='school/school_table.html'):
@@ -56,6 +57,7 @@ def school_table(request, template_name='school/school_table.html'):
 
     return render(request, template_name, {'data':data, 'schools_as_json':schools_as_json})
 
+"""
 @login_required(login_url='/login/')
 def school_exists(name):
     print("Checking..")
@@ -63,6 +65,7 @@ def school_exists(name):
     if school_count == 0:
         return False
     return True
+"""
 
 @login_required(login_url='/login/')
 def create_school(school_name, school_desc, organisationid):

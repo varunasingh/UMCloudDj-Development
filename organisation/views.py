@@ -34,6 +34,7 @@ class OrganisationForm(ModelForm):
     class Meta:
         model = Organisation
 
+"""
 @login_required(login_url='/login/')
 def organisation_list(request, template_name='organisation/organisation_list.html'):
     organisations = Organisation.objects.all()
@@ -48,6 +49,7 @@ def organisation_list(request, template_name='organisation/organisation_list.htm
     #data['object_list'] = zip(organisations,organisation_packages)
     data['umpackage_list'] = organisation_packages
     return render(request, template_name, data)
+"""
 
 @login_required(login_url='/login/')
 def organisation_table(request, template_name='organisation/organisation_table.html'):

@@ -145,7 +145,7 @@ def new(request, template_name='myapp/new.html'):
         context_instance=RequestContext(request)
     )
 
-
+"""
 @login_required(login_url='/login/')
 def elpparse(request, template_name='myapp/elpparse.html'):
     # Handle file upload
@@ -169,7 +169,7 @@ def elpparse(request, template_name='myapp/elpparse.html'):
     	)
 
     return redirect('elpparse')
-
+"""
 
 @login_required(login_url='/login/')
 def list(request, template_name='myapp/list.html'):
@@ -248,7 +248,6 @@ def list(request, template_name='myapp/list.html'):
                     elpxml=minidom.parseString(elpxmlfilecontents)
                     dictionarylist=elpxml.getElementsByTagName('dictionary')
                     stringlist=elpxml.getElementsByTagName('string')
-                    print("/////////////////////////////////////////////////////////////")
                     elpid="replacemewithxmldata"
                     setattr(newdoc, 'elpid', elpid)
                     #print(dictionarylist[0].attributes['string'].value)
@@ -277,9 +276,6 @@ def list(request, template_name='myapp/list.html'):
                 for everycourseid in courseidspicklist:
                     currentcourse = Course.objects.get(pk=everycourseid)
                     currentcourse.packages.add(newdoc)
-                """
-                end
-                """
                 
 		"""
                 retg = grunt_course(unid, uidwe)
@@ -290,7 +286,6 @@ def list(request, template_name='myapp/list.html'):
 		"""
 
                 newdoc.save()
-                #form is valid (upload file form)
                 # Redirect to the document list after POST
                 return HttpResponseRedirect(reverse('uploadeXe.views.list'))
                     
@@ -381,7 +376,7 @@ class CourseForm(ModelForm):
         model = Course
         fields = ('name', 'category','description')
 
-
+"""
 @login_required(login_url='/login/')
 def course_list(request, template_name='myapp/course_list.html'):
     courses = Course.objects.all()
@@ -390,7 +385,7 @@ def course_list(request, template_name='myapp/course_list.html'):
     data['object_list'] = courses
     data['package_list'] = packages_courses
     return render(request, template_name, data)
-
+"""
 
 @login_required(login_url='/login/')
 def course_table(request, template_name='myapp/course_table.html'):
