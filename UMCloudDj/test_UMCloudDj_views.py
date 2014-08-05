@@ -182,8 +182,8 @@ class UMCloudDjViewTestCase(TestCase):
 	Tests the file upload  (eXe elp package) block
 	"""
 	print("starting..")
-        #try:
-	if True:
+        try:
+	#if True:
 		
 		view_url="/sendelpfile/"
                 with open('/opt/UMCloudDj/gt1.elp',"r") as myfile:
@@ -193,8 +193,8 @@ class UMCloudDjViewTestCase(TestCase):
 			print (response)
 			self.assertEquals(response['courseid'], '1')
 			self.assertEquals(response.status_code, 200)
-        #except:
-	else:
+        except:
+	#else:
                 print("TEST ELP FILE NOT INCLUDED")
 
 
