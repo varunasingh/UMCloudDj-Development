@@ -40,6 +40,7 @@ from django.conf import settings
 import zipfile
 from xml.dom import minidom
 
+"""
 def my_view(request):
 	current_user = request.user.username
 	print("Logged in username: " + current_user)
@@ -48,6 +49,7 @@ def my_view(request):
         	{'current_user': current_user, 'form': form},
         	context_instance=RequestContext(request)
 	)
+"""
 
 
 

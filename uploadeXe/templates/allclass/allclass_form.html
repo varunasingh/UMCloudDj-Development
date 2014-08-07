@@ -99,7 +99,7 @@
 {% endblock %}
 {% block title %}Edit Class{% endblock %}
 {% block content %}
-
+<p cass="error" style="color:red;"><i>{{state}}</i></p>
 <form id="allclassedit" method="post">{% csrf_token %}
     <!--{{ form.as_p }}-->
 

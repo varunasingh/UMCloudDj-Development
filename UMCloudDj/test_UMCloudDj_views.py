@@ -18,6 +18,7 @@ from django import forms
 from uploadeXe.models import Package as Document
 from uploadeXe.models import Course 
 from uploadeXe.models import Ustadmobiletest
+from users.models import UserProfile
 import os 
 from django.conf import settings
 
@@ -28,6 +29,7 @@ class UMCloudDjViewTestCase(TestCase):
 	Have to manually create users and assign relationships for initial testing.
 	"""
 	testuser = User.objects.create(username='testuser1', password='12345', is_active=True, is_staff=True, is_superuser=True)
+	testuser.save()
 	adminrole=Role.objects.get(pk=1)
 	user_role = User_Roles(name="test", user_userid=testuser, role_roleid=adminrole)
 	user_role.save()
@@ -40,11 +42,23 @@ class UMCloudDjViewTestCase(TestCase):
 	user_organisation2 = User_Organisations(user_userid=testuser2, organisation_organisationid=mainorganisation)
 	user_organisation2.save()
 
+	orgadmin01=User.objects.create(username='orgadmin01', password='12345', is_active=True, is_staff=True, is_superuser=False)
+	orgadmin01.save()
+	orgadminrole=Role.objects.get(pk=2)
+	orgadmin01_role = User_Roles(name="test", user_userid=orgadmin01, role_roleid=orgadminrole)
+	orgadmin01_role.save()
+	orgadmin01_organisation = User_Organisations(user_userid=orgadmin01, organisation_organisationid=mainorganisation)
+	orgadmin01_organisation.save()
+	
 	test_course = Course(name="TestCourse", category="Testing", description="This is a course made for testing", publisher=testuser, organisation=mainorganisation)
 	test_course.save()
 	test_course.students.add(testuser)
 	test_course.save()
 	
+	test_block=Document(name="unittest01", url="//this.is.the/linke/to/the/test/01",uid="123UGOFreei01", success="Yes", publisher=testuser)
+	test_block.save()
+	test_course.packages.add(test_block)
+	test_course.save()
 
     def test_checklogin_view(self):
 	"""
@@ -91,7 +105,7 @@ class UMCloudDjViewTestCase(TestCase):
 	post_data={'username':'testuser1','password':'12345'}
 	response = self.client.post(view_url, post_data)
 	self.assertEquals(response.status_code, 302)
-	#self.assertRedirects(response, '/userstable/')
+	self.assertEquals(response['location'],"http://testserver/")
 
 	"""
 	Test incorrect login with redirect back to login page.
@@ -99,6 +113,7 @@ class UMCloudDjViewTestCase(TestCase):
 	post_data_incorrect={'username':'testuser1','password':'incorrectpassword'}
 	response = self.client.post(view_url,post_data_incorrect)
 	self.assertContains(response,'Wrong username/password combination' , 1, status_code=200)
+	self.assertContains(response, 'Log in')
 	
 
     	"""
@@ -110,26 +125,16 @@ class UMCloudDjViewTestCase(TestCase):
 	We get the password from an external file accesable to test
 	"""
 	try:
-		with open (os.path.join(settings.PROJECT_ROOT, 'wordpresscred.txt'), "r") as myfile:
-    			data=myfile.readlines()
-		print("GOT WP CRED FILE")
+		with open('/opt/UMCloudDj/wordpresscred.txt',"r") as myfile:
+			data=myfile.readlines()
+		print("GOT WP CRED FILE in /opt/")
 		data=data[0].strip("\n")
-		post_data_wordpress={'username':'testuser','password':data}
-		response=self.client.post(view_url, post_data_wordpress)
-		self.assertEquals(response.status_code, 302)
-		self.assertRedirects(response, '/')
-	except:	
-		try:
-			with open('/opt/UMCloudDj/wordpresscred.txt',"r") as myfile:
-				data=myfile.readlines()
-			print("GOT WP CRED FILE in /opt/")
-			data=data[0].strip("\n")
-                	post_data_wordpress={'username':'testuser','password':data}
-                	response=self.client.post(view_url, post_data_wordpress)
-                	self.assertEquals(response.status_code, 302)
-                	self.assertRedirects(response, '/')
-		except:
-			print("WORDPRESS CRED NOT INCLUDED")
+               	post_data_wordpress={'username':'testuser','password':data}
+               	response=self.client.post(view_url, post_data_wordpress)
+               	self.assertEquals(response.status_code, 302)
+		self.assertEquals(response['location'],"http://testserver/")
+	except:
+		print("WORDPRESS CRED NOT INCLUDED")
 
 	"""
         Test incorrect login details from ustadmobile.com wordpress server
@@ -139,21 +144,11 @@ class UMCloudDjViewTestCase(TestCase):
         """
         We get the password from an external file accesable to test
         """
-        try:
-                with open (os.path.join(settings.PROJECT_ROOT, 'wordpresscred.txt'), "r") as myfile:
-                        data=myfile.readlines()
-                print("GOT WP CRED FILE")
-                data=data[0].strip("\n")
-                post_data_wordpress={'username':'testuser','password':data}
-                response=self.client.post(view_url, post_data_wordpress)
-                self.assertEquals(response.status_code, 302)
-                self.assertRedirects(response, '/')
-        except:
-		if True:
-			data="incorrectpasswordlalala"
-                        post_data_wordpress={'username':'testuser','password':data}
-                        response=self.client.post(view_url, post_data_wordpress)
-			self.assertContains(response,'Wrong username/password combination' , 1, status_code=200)
+	data="incorrectpasswordlalala"
+        post_data_wordpress={'username':'testuserwordpress','password':data}
+        response=self.client.post(view_url, post_data_wordpress)
+        self.assertContains(response,'Wrong username/password combination' , 1, status_code=200)
+	self.assertContains(response, 'Log in')
 
 
     def test_sign_up_in(self):
@@ -340,6 +335,7 @@ class UMCloudDjViewTestCase(TestCase):
 	self.assertEquals(response.status_code, 200)
 	self.assertContains(response, "Request my account")
 
+
     def test_sendtestlog_view(self):
 	view_url="/sendtestlog/"
 	password = ""
@@ -356,7 +352,7 @@ class UMCloudDjViewTestCase(TestCase):
 	ustadmobile_test = Ustadmobiletest.objects.get(name='umclouddjunittestname')
 	self.assertEquals(ustadmobile_test.ustad_version, 'umclouddjtestversion')
 	
-
+    
     def test_report_statements_view(self):
 	"""
         Tests that logged in user and not logged in user to get to the Report statement page
@@ -409,7 +405,94 @@ class UMCloudDjViewTestCase(TestCase):
         self.assertEquals(response.status_code, 200)
         self.assertContains(response, "Select the filters below", status_code=200)
 	
+    def test_admin_approve_request_view(self):
+	"""
+	Tests that an organisational admin can view the requests page
+	UMCloudDj.views.admin_approve_request
+	"""
+	view_url="/usersapprove/"
 	
+	"""
+	Tests that you need to be logged in
+	"""
+	self.c = Client();
+	response = self.c.get(view_url)
+	self.assertEquals(response.status_code, 302)
+	self.assertRedirects(response, "/login/?next=/usersapprove/")
+
+	"""
+	Tests that you need to be logged in as well as be an organisational admin
+	"""
+	self.c = Client();
+        self.user = User.objects.get(username="testuser1")
+        self.user = authenticate(username='testuser1', password='12345')
+        login = self.c.login(username='testuser1', password='12345')
+	
+	response = self.c.get(view_url)
+        self.assertEquals(response.status_code, 200)
+	self.assertContains(response, "You do not have permission to see this page")
+
+	"""
+	Tests that if you are an org admin you can see the page
+	"""
+	
+	self.c = Client();
+        self.user = User.objects.get(username="orgadmin01")
+        self.user = authenticate(username='orgadmin01', password='12345')
+        login = self.c.login(username='orgadmin01', password='12345')
+
+        response = self.c.get(view_url)
+        self.assertEquals(response.status_code, 200)
+        self.assertContains(response, "You have no pending user requests for your organisation")
+
+    def test_sign_up_in(self):
+	view_url="/signup/"
+	post_data={'username':'testrequest', 'email':'testrequest@testing.com','password':'12345','first_name':'Test','last_name':'Request','website':'http://www.testing.com/','job_title':'Tester','company_name':'TestCorp','dateofbirth':'02/02/1989','address':'TestLand','phonenumber':'+1234567890','gender':'M','organisationrequest':''}
+	response=self.client.post(view_url,post_data)
+	self.assertEquals(response.status_code, 200)
+	testrequest=User.objects.get(username="testrequest")
+	self.assertEquals('testrequest', testrequest.username)
+	self.assertEquals(False, UserProfile.objects.get(user=testrequest).admin_approved)
+	
+	
+
+    def test_admin_approve_request_view_approve(self):
+
+	userrequest = User.objects.create(username="testrequest01", password="12345", is_active=True, is_staff=False, is_superuser=False)
+        userrequest.save()
+        studentrole = Role.objects.get(pk=6)
+        userrequest_role=User_Roles(name="test", user_userid=userrequest, role_roleid=studentrole)
+        userrequest_role.save()
+	mainorganisation=Organisation.objects.get(pk=1)
+        userrequest_organisation = User_Organisations(user_userid=userrequest, organisation_organisationid=mainorganisation)
+        userrequest_organisation.save()
+        userrequestProfile = UserProfile(user=userrequest, organisation_requested=mainorganisation, phone_number="+123456789",date_of_birth="1989-02-09", gender="M")
+        userrequestProfile.save()
+
+	view_url="/usersapprove/"
+	self.c = Client();
+        self.user = User.objects.get(username="orgadmin01")
+        self.user = authenticate(username='orgadmin01', password='12345')
+        login = self.c.login(username='orgadmin01', password='12345')
+
+        response = self.c.get(view_url)
+        self.assertEquals(response.status_code, 200)
+        self.assertContains(response, "testrequest01")
+
+	view_url="/usersapprove/"
+        self.c = Client();
+        self.user = User.objects.get(username="orgadmin01")
+        self.user = authenticate(username='orgadmin01', password='12345')
+        login = self.c.login(username='orgadmin01', password='12345')
+
+	testrequest01id=User.objects.get(username="testrequest01").id
+	toaccept=[testrequest01id]
+	post_data={'target':toaccept}
+	response = self.c.post(view_url, post_data)
+	print(response)
+        self.assertEquals(response.status_code, 302)
+	self.assertRedirects(response, "/userstable/")
+	self.assertEquals(True, UserProfile.objects.get(user=userrequest).admin_approved)
 
     def tearDown(self):
 	print("end of UMCloud Views test")

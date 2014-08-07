@@ -86,7 +86,7 @@ urlpatterns = patterns('',
         url(r'^allclassedit/(?P<pk>\d+)$', 'allclass.views.allclass_update', name='allclass_edit'),
         url(r'^allclassdelete/(?P<pk>\d+)$', 'allclass.views.allclass_delete', name='allclass_delete'),
 
-	#url(r'^dynatableroles/$', 'UMCloudDj.views.role_dynatable', name='role_dynatable'),
+	url(r'^dynatableroles/$', 'UMCloudDj.views.role_dynatable', name='role_dynatable'),
 
 
 	#url(r'^progressbarupload/', include('progressbarupload.urls')),

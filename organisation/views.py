@@ -128,13 +128,14 @@ def organisation_delete(request, pk, template_name='organisation/organisation_co
 class UMCloud_PackageForm(ModelForm):
     class Meta:
         model = UMCloud_Package
-
+"""
 @login_required(login_url='/login/')
 def umpackage_list(request, template_name='organisation/umpackage_list.html'):
     umpackages = UMCloud_Package.objects.all()
     data = {}
     data['object_list'] = umpackages
     return render(request, template_name, data)
+"""
 
 @login_required(login_url='/login/')
 def umpackage_table(request, template_name='organisation/umpackage_table.html'):

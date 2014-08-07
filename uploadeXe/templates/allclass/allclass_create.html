@@ -70,7 +70,7 @@
 {% endblock %}
 
 {% block content %}
-
+<p cass="error" style="color:red;"><i>{{state}}</i></p>
 <form id="newclassform" method="post">{% csrf_token %}
     <h1>Create a New Class</h1>
     <div data-role="fieldcontain">

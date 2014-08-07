@@ -8,7 +8,7 @@ class Allclass(models.Model):
     allclass_location = models.CharField(max_length=200)
     students = models.ManyToManyField(User, related_name='allclassstudents')
     teachers = models.ManyToManyField(User, related_name='teachers')
-    school = models.ForeignKey(School)
+    school = models.ForeignKey(School, null=True)
     
     def __unicode__(self):
         return u'%s ' % (self.allclass_name)

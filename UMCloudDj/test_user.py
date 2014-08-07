@@ -9,6 +9,8 @@ from django.core.urlresolvers import reverse
 
 from uploadeXe.models import Role
 from uploadeXe.models import User_Roles
+from allclass.models import Allclass
+from school.models import School
 from django.forms import ModelForm
 from organisation.models import Organisation
 from organisation.models import UMCloud_Package
@@ -36,6 +38,18 @@ class UserViewTestCase(TestCase):
 	user_organisation.save()
 	user_organisation2 = User_Organisations(user_userid=testuser2, organisation_organisationid=mainorganisation)
 	user_organisation2.save()
+	
+	school1 = School(school_name="TestSchool", school_desc="This is the desc of the TestSchool",organisation_id=1)
+        school1.save()
+
+        allclass1 = Allclass(allclass_name="TestAllClassTableTest1", allclass_desc="TestAllClass1 Desc", allclass_location="Test Land" ,school=school1)
+        allclass1.save()
+
+        allclass2 = Allclass(allclass_name="TestAllClassTableTest2", allclass_desc="TestAllClass1 Desc", allclass_location="Test Land")
+        allclass2.save()
+
+
+
 	""" 
 	Ideally we should create first, and then delete but that doesnt work since it removes all users after every test.
 	"""
@@ -46,7 +60,8 @@ class UserViewTestCase(TestCase):
         Users cannot be created without logging in
 	UMCloudDj.views.user_create
         """
-        post_data={'username':'test_create','email':'test_create@ustadmobile.com','password':'123456','first_name':'test','last_name':'create','role':1,'organisation':1, 'dateofbirth':'02/02/1989','address':'123, ABC Street, DEFG Avenue, IJKLMN, OPQRSTUV', 'gender':'F','phonenumber':'+1234567890' }
+	allclassids=[1]
+        post_data={'username':'test_create','email':'test_create@ustadmobile.com','password':'123456','first_name':'test','last_name':'create','role':6,'organisation':1, 'dateofbirth':'02/02/1989','address':'123, ABC Street, DEFG Avenue, IJKLMN, OPQRSTUV', 'gender':'F','phonenumber':'+1234567890','target':allclassids }
         response = self.client.post('/usernew/', post_data)
         self.assertEqual(response.status_code, 302)
         #302 is redirected to login page.

@@ -167,7 +167,6 @@ class CourseViewTestCase(TestCase):
         self.user.save()
         self.user = authenticate(username='testuser1', password='hello')
         login = self.c.login(username='testuser1', password='hello')
-	print("|||||||||||||||||||||||||||||||||")
 	testcoursecreate = Course.objects.get(name='TestCourse')
 	testcoursecreateid = testcoursecreate.id;
 	

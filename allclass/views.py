@@ -106,7 +106,6 @@ def allclass_create(request, template_name='allclass/allclass_create.html'):
 	class_name = post['class_name']
 	allclass_count = Allclass.objects.filter(allclass_name=class_name).count()
     	if allclass_count == 0:
-        #if not allclass_exists(post['class_name']):
                 print("Creating the Class..")
 		class_name=post['class_name']
 		class_desc=post['class_desc']
@@ -172,7 +171,10 @@ def allclass_create(request, template_name='allclass/allclass_create.html'):
         else:
 		print("Class already exists")
                 #Show message that the class name already exists in our database. (For the current organisation)
-                return redirect('allclass_table')
+		state="The Class Name already exists.."
+                data['state']=state
+                return render(request, template_name, data)
+                #return redirect('allclass_table')
 
     return render(request, template_name, data)
 
@@ -204,6 +206,7 @@ def allclass_update(request, pk, template_name='allclass/allclass_form.html'):
 
     if form.is_valid():
         form.save()
+	print("FORM IS VALID")
 	print(request.POST.get('assignedteachers'))
 	
 	print("Going to update the assigned school..")
@@ -247,6 +250,9 @@ def allclass_update(request, pk, template_name='allclass/allclass_form.html'):
 		print(everycourse.allclasses.all())
 	
         return redirect('allclass_table')
+    else:
+	print("ALLCLASS UPDATE FORM IS NOT VALID")
+	
     return render(request, template_name, {'form':form,'all_schools':allschools, 'assignedschool':assignedschool, 'all_courses':allcourses, 'assigned_courses':assignedcourses, 'all_students':allstudents,'assigned_students':assignedstudents, 'all_teachers':allteachers,'assigned_teachers':assignedteachers})
 
 @login_required(login_url='/login/')
@@ -258,11 +264,13 @@ def allclass_delete(request, pk, template_name='allclass/allclass_confirm_delete
         return redirect('allclass_table')
     return render(request, template_name, {'object':allclass})
 
+"""
 @login_required(login_url='/login/')
 def allclass_exists(name):
     allclass_count = Allclass.objects.filter(allclass_name=name).count()
     if allclass_count == 0:
         return False
     return True
+"""
 
 # Create your views here.

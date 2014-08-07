@@ -79,6 +79,25 @@ class SchoolViewTestCase(TestCase):
 	response = self.c.post(requesturl, post_data_create)
 	self.assertEqual("TestSchoolCreate", School.objects.get(school_name="TestSchoolCreate").school_name)
 
+	"""
+        Schools created again with the same name will fail and return an errro in the create page.
+        """
+        student_list_ids=[3,4]
+	post_data_create={'school_name':'TestSchoolCreate','school_desc':'Unit Test Creation','organisationid':1}
+
+        self.c = Client();
+        self.user = User.objects.get(username="testuser1")
+        self.user.set_password('hello')
+        self.user.save()
+        self.user = authenticate(username='testuser1', password='hello')
+        login = self.c.login(username='testuser1', password='hello')
+
+        requesturl = reverse(url_name)
+        response = self.c.post(requesturl, post_data_create)
+        self.assertContains(response, "The School Name already exists")
+        self.assertEqual(response.status_code, 200)
+
+
     @unittest.expectedFailure
     def test_school_create_failure(self):
 	"""
@@ -86,7 +105,7 @@ class SchoolViewTestCase(TestCase):
 	school.views.school_create
 	"""
 	url_name="school_new"
-	post_data_create_incorrect={'school_name':'TestSchoolCreateFail','school_desc':'This is a false test creation that is bound to fail.','organisationid':42}
+	post_data_create_incorrect={'school_name':'TestSchool','school_desc':'This is a false test creation that is bound to fail.','organisationid':42}
 
 
         self.c = Client();

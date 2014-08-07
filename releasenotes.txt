@@ -1,3 +1,6 @@
+v0.6.1
+-89% unit test code coverage updates.
+
 v0.6.0
 -82% unit test code coverage updates.
 

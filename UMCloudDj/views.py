@@ -71,7 +71,6 @@ def role_table(request, template_name='role/role_table.html'):
 
     return render(request, template_name, {'data':data, 'roles_as_json':roles_as_json})
 
-"""
 @login_required(login_url='/login/')
 def role_dynatable(request, template_name='table/dynatable.html'):
     roles=Role.objects.all()
@@ -85,6 +84,8 @@ def role_dynatable(request, template_name='table/dynatable.html'):
     tabletypeid="tblroles"
     table_headers_html=[]
     table_headers_name=[]
+    table_headers_html.append("approve")
+    table_headers_name.append("Approve")
     table_headers_html.append("pk")
     table_headers_name.append("ID")
     #table_headers_html.append("model");
@@ -96,7 +97,6 @@ def role_dynatable(request, template_name='table/dynatable.html'):
     logicpopulation = '{"pk":"{{c.pk}}","model":"{{c.model}}", "role_name":"{{c.fields.role_name}}","role_desc":"{{c.fields.role_desc}}"}{% if not forloop.last %},{% endif %}'
 
     return render(request, template_name, {'data':data, 'data_as_json':data_as_json, 'table_headers_html':table_headers_html, 'pagetitle':pagetitle, 'newtypeid':newtypeid, 'tabletypeid':tabletypeid, 'newtypelink':newtypelink, 'logicpopulation':logicpopulation}, context_instance=RequestContext(request))
-"""
 
 @login_required(login_url='/login/')
 def role_create(request, template_name='role/role_form.html'):

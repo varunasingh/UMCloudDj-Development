@@ -22,7 +22,7 @@
 
 {% block title %}Add a School {% endblock %}
 {% block content %}
-
+<p cass="error" style="color:red;"><i>{{state}}</i></p>
 <form id="newschoolform" method="post">{% csrf_token %}
     <h1>Create a New School</h1>
     <div data-role="fieldcontain">

@@ -67,6 +67,8 @@ def school_exists(name):
     return True
 """
 
+"""
+[Depreciated
 @login_required(login_url='/login/')
 def create_school(school_name, school_desc, organisationid):
     print("Creating school object")
@@ -78,7 +80,7 @@ def create_school(school_name, school_desc, organisationid):
 
     print("Organisation School mapping success.")
     return school
-
+"""
 
 
 
@@ -121,7 +123,10 @@ def school_create(request, template_name='school/school_create.html'):
                 	return redirect('school_table')
         	else:
                 	#Show message that the school name already exists in our database.
-                	return redirect('school_table')
+			state="The School Name already exists.."
+                	data['state']=state
+                	return render(request, template_name, data)
+                	#return redirect('school_table')
 	#except:
 	else:
 		#pass
