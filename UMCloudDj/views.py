@@ -71,6 +71,7 @@ def role_table(request, template_name='role/role_table.html'):
 
     return render(request, template_name, {'data':data, 'roles_as_json':roles_as_json})
 
+"""
 @login_required(login_url='/login/')
 def role_dynatable(request, template_name='table/dynatable.html'):
     roles=Role.objects.all()
@@ -101,6 +102,7 @@ def role_dynatable(request, template_name='table/dynatable.html'):
     logicpopulation = '{"pk":"{{c.pk}}","model":"{{c.model}}", "role_name":"{{c.fields.role_name}}","role_desc":"{{c.fields.role_desc}}"}{% if not forloop.last %},{% endif %}'
 
     return render(request, template_name, {'data':data, 'data_as_json':data_as_json, 'table_headers_html':table_headers_html, 'pagetitle':pagetitle, 'newtypeid':newtypeid, 'tabletypeid':tabletypeid, 'newtypelink':newtypelink, 'logicpopulation':logicpopulation}, context_instance=RequestContext(request))
+"""
 
 @login_required(login_url='/login/')
 def role_create(request, template_name='role/role_form.html'):
@@ -1020,15 +1022,35 @@ def getcourse_view(request):
 	
 	return redirect("/")
 
-def register_view(request, ):
+def register_individual_view(request, ):
 	c = {}
 	c.update(csrf(request))
+	return render(request, 'user/user_create_website_individual.html')
 
-	organisations = Organisation.objects.all()
-	organisation_list=organisations
+def register_organisation_view(request,):
+	try:
+		if 'organisationalcode' in request.session:
+			organisationalcode=request.session['organisationalcode']
+			request.session.flush();
+        		organisation_requested = Organisation_Code.objects.get(code=organisationalcode).organisation
+			organisation_name=organisation_requested.organisation_name;
+        		state="Valid code"
+			c = {}
+        		c.update(csrf(request))
+        		return render(request, 'user/user_create_website_organisation.html', {'organisationalcode':organisationalcode, 'organisation_name':organisation_name, 'state':state})
+		else:
+			state="Please enter your organisation code first"
+			return redirect('register_selection')
+    	except Organisation_Code.DoesNotExist, e:
+        	state="Please enter your organisation code first"
+		return redirect('register_selection')
+	
 
-	#return render_to_response('user/user_create_website.html', c, context_instance=RequestContext(request))
-	return render(request, 'user/user_create_website.html',{'organisation_list':organisation_list})
+def register_selection_view(request, ):
+        c = {}
+        c.update(csrf(request))
+        return render(request, 'user/user_create_website_selection.html')
+
 
 """
 def my_view(request):
@@ -1173,6 +1195,26 @@ def user_exists(username):
     if user_count == 0:
         return False
     return True
+
+
+
+def organisation_sign_up_in(request):
+    print("Checking organisation code")
+    post=request.POST
+    try:
+	organisation_request=post['organisationalcode']
+	print("Code given:")
+	print(organisation_request)
+	organisation_requested = Organisation_Code.objects.get(code=organisation_request).organisation
+	state="Valid code"
+	request.session['organisationalcode']=organisation_request
+	return redirect('register_organisation')
+	#return render_to_response('user/user_create_website_selection.html',{'state':state},context_instance=RequestContext(request))
+    except Organisation_Code.DoesNotExist, e:
+	state="Invalid code"
+	return render_to_response('user/user_create_website_selection.html',{'state':state},context_instance=RequestContext(request))
+    state="Nothing has happened"
+    return render_to_response('user/user_create_website_selection.html',{'state':state}, context_instance=RequestContext(request))
 
 def sign_up_in(request):
     print("Creating new user from website..")
