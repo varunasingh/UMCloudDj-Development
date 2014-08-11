@@ -55,6 +55,18 @@
 
 </style>
 <script type="text/javascript">
+	function changeColor(id)
+{
+	alert("hey");
+//and now on the click of approve button, do this is javascript function:
+
+    document.getElementById(id).setAttribute("style","background-color:green");
+
+//and similarly, on reject:
+
+    document.getElementById(id).setAttribute("style","background-color:red");
+}
+
           $(function() { 
 			$('#rd1').puiradiobutton();
 			var newtypeid="{{newtypeid}}";
@@ -65,7 +77,7 @@
         				records:[
                 				{% if data_as_json %}
                         				{% for c in data_as_json %}
-								{"approve":"<div class=\"onoffswitch\"><input type=\"checkbox\" name=\"onoffswitch\" class=\"onoffswitch-checkbox\" id=\"{{c.pk}}myonoffswitch\" checked><label class=\"onoffswitch-label\" for=\"{{c.pk}}myonoffswitch\"><span class=\"onoffswitch-inner\"></span><span class=\"onoffswitch-switch\"></span></label></div>","pk":"{{c.pk}}","model":"{{c.model}}", "fields.role_name":"{{c.fields.role_name}}","fields.role_desc":"{{c.fields.role_desc}}"}{% if not forloop.last %},{% endif %}
+								{"radio2":"<input type=\"radio\" id=\"{{c.pk}}_radio\" onchange=\"$(this).parents('tr:first').css('background-color','#E55451');\" name=\"{{c.pk}}_radio\" value=\"0\"><br>","radio":"<input type=\"radio\" onchange=\"$(this).parents('tr:first').css('background-color','lightgreen');\"name=\"{{c.pk}}_radio\" value=\"1\"><br>","approve":"<div class=\"onoffswitch\"><input type=\"checkbox\" name=\"onoffswitch\" class=\"onoffswitch-checkbox\" id=\"{{c.pk}}myonoffswitch\" checked><label class=\"onoffswitch-label\" for=\"{{c.pk}}myonoffswitch\"><span class=\"onoffswitch-inner\"></span><span class=\"onoffswitch-switch\"></span></label></div>","pk":"{{c.pk}}","model":"{{c.model}}", "fields.role_name":"{{c.fields.role_name}}","fields.role_desc":"{{c.fields.role_desc}}"}{% if not forloop.last %},{% endif %}
                         				{% endfor %}
                 				{% endif %}
                 				]

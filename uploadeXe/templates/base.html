@@ -4,7 +4,7 @@
 	<title>{% block title %}Home{% endblock %} Ustad Mobile Cloud Django</title>
 	<style type="text/css">
 
-	   table { table-layout: fixed; width: 100%; }
+	   table { width: 100%; }
 	   table tr { border-bottom:1px solid #e9e9e9; }
 	   table thead td, th {border-left: 1px solid #f2f2f2; border-right: 1px solid #d5d5d5; background: #ddd url("../images/sprites4.png") repeat-x scroll 0 100% ; font-weight: bold; text-align:left;}
 	   table tr td, th { border:1px solid #D5D5D5; padding:15px;}
@@ -44,7 +44,7 @@
     		height: 302px; /*hight of the spinner gif +2px to fix IE8 issue */
 	  }
 	  #page {
-		width: 1028px;
+		width: 1228px;
 		text-align: left;
 		background-color: grey;
 	  }
@@ -59,7 +59,7 @@
 
 	  #content {
 		float: left;
-		width: 800px;
+		width: 1000px;
 		border: 1px solid grey;
 		padding: 5px;
 		border-radius: 5px;
@@ -68,10 +68,17 @@
 	  #header {
 		float: top;
 		border: 2px solid grey;
-		width: 1011px;
+		width: 1211px;
    		padding: 5px;
 		border-radius: 5px;
 	  }
+	#blocknav {
+        background-image: url(/media/images/package.png);
+        background-repeat: no-repeat;
+        background-position: center left;
+        text-align: center;
+        }
+
 	#coursesnav {
     	background-image: url(/media/images/course.png);
     	background-repeat: no-repeat;
@@ -143,7 +150,7 @@
 <body>
 	<div id="header">
 		<p></p>
-		<a href="/home/"><img src="/media/images/logoUMlong.png" alt="Ustad_Mobile_UMCloud_logo" align=""/></a><i>    (v0.6.1)</i>
+		<a href="/home/"><img src="/media/images/logoUMlong.png" alt="Ustad_Mobile_UMCloud_logo" align=""/></a><i>    (v0.7.0)</i>
 		{% if current_user %}
 			{{current_user}}
 		{% endif %}

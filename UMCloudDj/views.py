@@ -84,8 +84,12 @@ def role_dynatable(request, template_name='table/dynatable.html'):
     tabletypeid="tblroles"
     table_headers_html=[]
     table_headers_name=[]
-    table_headers_html.append("approve")
+    #table_headers_html.append("approve")
+    #table_headers_name.append("Approve-Slide")
+    table_headers_html.append("radio")
     table_headers_name.append("Approve")
+    table_headers_html.append("radio2")
+    table_headers_name.append("Reject")
     table_headers_html.append("pk")
     table_headers_name.append("ID")
     #table_headers_html.append("model");
@@ -187,7 +191,7 @@ def user_table(request, template_name='user/user_table.html'):
     users = User.objects.all()
     users= User.objects.filter(pk__in=User_Organisations.objects.filter(organisation_organisationid=organisation).values_list('user_userid', flat=True))
     #Syntax to ignore un aproved users.
-    users= User.objects.filter(pk__in=User_Organisations.objects.filter(organisation_organisationid=organisation).values_list('user_userid', flat=True)).exclude(pk__in=UserProfile.objects.filter(admin_approved=False).values_list('user', flat=True))
+    users= User.objects.filter(pk__in=User_Organisations.objects.filter(organisation_organisationid=organisation).values_list('user_userid', flat=True)).exclude(pk__in=UserProfile.objects.filter(admin_approved=False).values_list('user', flat=True)).filter(is_active=True)
 
     user_role = User_Roles.objects.get(user_userid=request.user).role_roleid;
     organisational_admin_role = Role.objects.get(pk=2)
@@ -198,7 +202,7 @@ def user_table(request, template_name='user/user_table.html'):
 
     if user_role == organisational_admin_role:
 	org_role = True
-	users_notification= User.objects.filter(pk__in=User_Organisations.objects.filter(organisation_organisationid=organisation).values_list('user_userid', flat=True)).filter(pk__in=UserProfile.objects.filter(admin_approved=False).values_list('user', flat=True))
+	users_notification= User.objects.filter(pk__in=User_Organisations.objects.filter(organisation_organisationid=organisation).values_list('user_userid', flat=True)).filter(pk__in=UserProfile.objects.filter(admin_approved=False).values_list('user', flat=True)).filter(is_active=True)
 	requestspending = users_notification.count()
     else:
 	org_role = False
@@ -222,15 +226,42 @@ def user_table(request, template_name='user/user_table.html'):
 
 
 @login_required(login_url='/login/')
-def admin_approve_request(request, template_name='user/admin_approve_request_table.html'):
+def admin_approve_request(request, template_name='user/admin_approve_request_table2.html'):
     role = User_Roles.objects.get(user_userid=request.user).role_roleid;
     organisation = User_Organisations.objects.get(user_userid=request.user).organisation_organisationid;
     organisational_admin_role = Role.objects.get(pk=2)
     
     if role == organisational_admin_role:
-
+	roles=Role.objects.all()
+	#Syntax to ignore un aproved users.
+	users= User.objects.filter(pk__in=User_Organisations.objects.filter(organisation_organisationid=organisation).values_list('user_userid', flat=True)).filter(pk__in=UserProfile     .objects.filter(admin_approved=False).values_list('user', flat=True)).filter(is_active=True)
+	
 	if request.method == 'POST':
         	post = request.POST;
+		print("POST request values are:")
+		print(post)
+		for key in request.POST:
+			if "_radio" in key:
+				value=request.POST[key]
+				userid, action = value.split("_")
+				if action == '1':
+					print("Time to Approve")
+					usertoapprove=User.objects.get(pk=userid)
+					usertoapprove.is_active=True
+					userprofile=UserProfile.objects.get(user=usertoapprove)
+					userprofile.admin_approved=True
+					userprofile.save()
+			
+					print("User: " + usertoapprove.username + " approved.")
+				if action == '0':
+					print("Time to reject..")
+					usertoreject=User.objects.get(pk=userid)
+					userprofile=UserProfile.objects.get(user=usertoreject)
+					usertoreject.is_active=False
+					usertoreject.save()
+					
+		
+		"""
 		userstoapprove = request.POST.getlist('target');
 		for everyusertoapprove in userstoapprove:
 			usertoapprove=User.objects.get(pk=everyusertoapprove)
@@ -239,26 +270,55 @@ def admin_approve_request(request, template_name='user/admin_approve_request_tab
 			userprofile.save()
 			print("user: " + usertoapprove.username + " approved.")
 		print("Users approved")
+		"""
 		return redirect ('user_table')
+	user_roles = []
+        user_profiles = []
+	user_organisations = []
+	
+        for user in users:
+                role = User_Roles.objects.get(user_userid=user).role_roleid
+                organisation = User_Organisations.objects.get(user_userid=user).organisation_organisationid
+                user_roles.append(role)
+                user_organisations.append(organisation)
+		userprofile=UserProfile.objects.get(user=user)
+		user_profiles.append(userprofile)
 
-    	#Syntax to ignore un aproved users.
-	users= User.objects.filter(pk__in=User_Organisations.objects.filter(organisation_organisationid=organisation).values_list('user_userid', flat=True)).filter(pk__in=UserProfile.objects.filter(admin_approved=False).values_list('user', flat=True))
+	user_mapping = zip(users, user_roles, user_profiles)
 
-    	user_roles = []
-    	user_organisations = []
-    	for user in users:
-        	role = User_Roles.objects.get(user_userid=user).role_roleid
-        	organisation = User_Organisations.objects.get(user_userid=user).organisation_organisationid
-        	user_roles.append(role)
-        	user_organisations.append(organisation)
-    	data = {}
-    	data['object_list'] = zip(users,user_roles,user_organisations)
-    	data['role_list'] = user_roles
-    	data['organisation_list'] = user_organisations
-    	users_as_json = serializers.serialize('json', users)
-    	users_as_json =json.loads(users_as_json)
-    	user_list=zip(users_as_json, user_roles, user_organisations)
-    	return render(request, template_name, {'data':data,'users_requests':users,'user_list':user_list,'users_as_json':users_as_json})
+        data_as_json=serializers.serialize('json', users)
+        data_as_json=json.loads(data_as_json)
+
+        pagetitle="UstadMobile Admin User Requests"
+        tabletypeid="tbladminapproverequest"
+        table_headers_html=[]
+        table_headers_name=[]
+        table_headers_html.append("radio")
+        table_headers_name.append("Approve")
+        table_headers_html.append("radio2")
+        table_headers_name.append("Reject")
+        #table_headers_html.append("pk")
+        #table_headers_name.append("ID")
+        table_headers_html.append("fields.first_name")
+        table_headers_name.append("First Name")
+        table_headers_html.append("fields.last_name")
+	table_headers_html.append("fields.username")
+        table_headers_name.append("Username")
+        table_headers_name.append("Last Name")
+        table_headers_html.append("fields.role_name")
+        table_headers_name.append("Role")
+        table_headers_html.append("fields.gender")
+        table_headers_name.append("Gender")
+	table_headers_html.append("fields.phonenumber")
+	table_headers_name.append("Phone number")
+	table_headers_html.append("fields.dateofbirth")
+	table_headers_name.append("Date of Birth")
+
+        table_headers_html = zip(table_headers_html, table_headers_name)
+        logicpopulation = '{"pk":"{{c.pk}}","model":"{{c.model}}", "username":"{{c.fields.username}}","first_name":"{{c.fields.first_name}}"}{% if not forloop.last %},{% endif %}'
+
+        return render(request, template_name, {'data_as_json':data_as_json, 'table_headers_html':table_headers_html, 'pagetitle':pagetitle, 'tabletypeid':tabletypeid,'user_mapping':user_mapping}, context_instance=RequestContext(request))
+
     else:
 	print("Not an organisational admin.")
 	state="You do not have permission to see this page."
@@ -282,6 +342,15 @@ def user_create(request, template_name='user/user_create.html'):
 
     if request.method == 'POST':
 	post = request.POST;
+	password=post['password']
+	passwordagain=post['passwordagain']
+	if password != passwordagain:
+		password=None
+		print("Passwords dont match")
+		state="The two passwords you gave do not match. Please try again."
+                data['state']=state
+                return render(request, template_name, data)
+
 	if not user_exists(post['username']):
 		print("Creating the user..")
 		
@@ -297,6 +366,8 @@ def user_create(request, template_name='user/user_create.html'):
 			    everyallclass = Allclass.objects.get(pk=everyallclassid)
 			    everyallclass.students.add(user)
 			    everyallclass.save()
+
+		    state="The user " + user.username + " has been created."
 		    if 'submittotable' in request.POST:
 			return redirect('user_table')
 		    if 'submittonew' in request.POST:
@@ -1108,6 +1179,16 @@ def sign_up_in(request):
     organisation_list=Organisation.objects.all()
     post = request.POST
     if not user_exists(post['username']): 
+	password=post['password']
+	passwordagain=post['passwordagain']
+	if password != passwordagain:
+		password=None
+		state="The two passwords you gave do not match. Please try again."
+                #return render(request, template_name, data)
+		return render_to_response('user/user_create_website.html',{'state':state,'organisation_list':organisation_list}, context_instance=RequestContext(request))
+
+
+		
         user, reason = create_user_website(username=post['username'], email=post['email'], password=post['password'], first_name=post['first_name'], last_name=post['last_name'], website=post['website'], job_title=post['job_title'], company_name=post['company_name'], date_of_birth=post['dateofbirth'], address=post['address'], phone_number=post['phonenumber'], gender=post['gender'], organisation_request=post['organisationrequest'])
 
 	if user:
@@ -1149,8 +1230,13 @@ def management_view(request):
     current_user = "Hi, " + request.user.first_name + ". You are a " + current_user_role + " in " + organisation.organisation_name + " organisation."
 
     current_user = "Hi, " + request.user.first_name + ". You are a " + current_user_role + " in " + organisation.organisation_name + " organisation."
+    #superadmin_role
+    if request.user.is_staff == True:
+	superadmin_role=True
+    else:
+	superadmin_role=False
 
-    return render_to_response("manage.html", {'current_user': current_user},
+    return render_to_response("manage.html", {'current_user': current_user, 'superadmin_role':superadmin_role},
         context_instance=RequestContext(request))
 
 @login_required(login_url='/login/')

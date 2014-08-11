@@ -165,9 +165,12 @@ def allclass_create(request, template_name='allclass/allclass_create.html'):
 		except:
 			print("No teacher given")
 		
-
-                #allclass = create_allclass(class_name=post['class_name'], class_desc=post['class_desc'], class_location=post['class_location'], schoolid=post['schoolid'], studentids=post.getlist('studentids'))
-                return redirect('allclass_table')
+		if 'submittotable' in request.POST:
+                        return redirect('allclass_table')
+                if 'submittonew' in request.POST:
+                        return redirect('allclass_new')
+                else:
+                        return redirect ('allclass_table')
         else:
 		print("Class already exists")
                 #Show message that the class name already exists in our database. (For the current organisation)

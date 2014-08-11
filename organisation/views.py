@@ -14,6 +14,9 @@ from django.forms import ModelForm
 from organisation.models import Organisation
 from organisation.models import UMCloud_Package
 from organisation.models import User_Organisations
+from UMCloudDj.views import create_user_more, user_exists
+from uploadeXe.models import Role
+from uploadeXe.models import User_Roles
 
 from django.http import HttpResponse
 from django.shortcuts import render
@@ -50,23 +53,30 @@ def organisation_list(request, template_name='organisation/organisation_list.htm
     data['umpackage_list'] = organisation_packages
     return render(request, template_name, data)
 """
+def is_superadmin(user, organisation):
+    print("testing")
+    return None
 
 @login_required(login_url='/login/')
 def organisation_table(request, template_name='organisation/organisation_table.html'):
-    organisations = Organisation.objects.all()
-    organisation_packages = []
-    #for organisation in organisations:
-        #umpackage = Organisation_Package.objects.get(organisation_organisationid=organisation).set_package
-        #organisation_packages.append(umpackage)
+    if (request.user.is_staff==True):
+	organisations = Organisation.objects.all()
+    	organisation_packages = []
 
-    data = {}
-    data['object_list'] = organisations
-    #data['object_list'] = zip(organisations,organisation_packages)
-    data['umpackage_list'] = organisation_packages
-    organisations_as_json = serializers.serialize('json', organisations)
-    organisations_as_json =json.loads(organisations_as_json)
+    	data = {}
+    	data['object_list'] = organisations
+    	#data['object_list'] = zip(organisations,organisation_packages)
+    	data['umpackage_list'] = organisation_packages
+    	organisations_as_json = serializers.serialize('json', organisations)
+    	organisations_as_json =json.loads(organisations_as_json)
 
-    return render(request, template_name, {'data': data, 'organisations_as_json':organisations_as_json})
+    	return render(request, template_name, {'data': data, 'organisations_as_json':organisations_as_json})
+
+        
+    else:
+        print("Not a staff.")
+        state="You do not have permission to see this page."
+        return render(request, template_name, {'state':state})
 
  
 def organisation_exists(name):
@@ -85,40 +95,102 @@ def create_organisation(organisation_name, organisation_desc, umpackageid):
 
 @login_required(login_url='/login/')
 def organisation_create(request, template_name='organisation/organisation_create.html'):
-    form = OrganisationForm(request.POST or None)
-    umpackages = UMCloud_Package.objects.all()
-    data = {}
-    data['object_list'] = umpackages
-    
-    if request.method == 'POST':
-        post = request.POST;
-        if not organisation_exists(post['organisation_name']):
-                print("Creating the organisation..")
-		organisation = create_organisation(organisation_name=post['organisation_name'], organisation_desc=post['organisation_desc'], umpackageid=post['umpackageid'])
-                return redirect('organisation_table')
-		#Set users
-        else:
-                #Show message that the username/email address already exists in our database.
-                return redirect('organisation_table')
+    if (request.user.is_staff==True):
+	form = OrganisationForm(request.POST or None)
+	organisations=Organisation.objects.all()
+    	umpackages = UMCloud_Package.objects.all()
+    	data = {}
+    	data['object_list'] = umpackages
+	data['organisation_list'] = organisations
 
-    return render(request, template_name, data)
+    	if request.method == 'POST':
+        	post = request.POST;
+        	password=post['password']
+        	passwordagain=post['passwordagain']
+        	if password != passwordagain:
+                	password=None
+                	print("Passwords dont match")
+                	state="The two passwords you gave do not match. Please try again."
+                	data['state']=state
+                	return render(request, template_name, data)
+
+        	if not user_exists(post['username']):
+			if not organisation_exists(post['organisation_name']):
+                        	print("Creating the organisation..")
+				try:
+					umpackageid=post['umpackageid']
+				except:
+					umpackageid=2
+                        	organisation = create_organisation(organisation_name=post['organisation_name'], organisation_desc=post['organisation_desc'], umpackageid=post['umpackageid'])
+                        	#return redirect('organisation_table')
+
+
+                		print("Creating the user..")
+				org_admin_role_id=Role.objects.get(role_name="Organisational Manager").id
+                		user = create_user_more(username=post['username'], email=post['email'], password=post['password'], first_name=post['first_name'], last_name=post['last_name'], roleid=org_admin_role_id, organisationid=organisation.id, date_of_birth=post['dateofbirth'], address=post['address'], gender=post['gender'], phone_number=post['phonenumber'], organisation_request=organisation)
+                		if user:
+					print("User created..")
+                    			current_user_role = User_Roles.objects.get(user_userid=user.id).role_roleid;
+                    			student_role = Role.objects.get(pk=6)
+
+		
+                    			state="The user " + user.username + " and organisation " + organisation.organisation_name + " has been created."
+					return redirect('organisation_table')
+                		else:
+					print("Something went wrong when creating the user.. ")
+					organisation.delete()
+                    			state="The Username Creation failed. Contact us."
+                    			data['state']=state
+                    			return render(request, template_name, data)
+			else:
+				print("Organisation already exists..")
+                                #Show message that the username/email address already exists in our database.
+				state="The Organisation already exists.."
+                                data['state']=state
+                                return render(request, template_name, data)
+                                #return redirect('organisation_table')
+		else:
+			print("Username already exists..")
+                        #Show message that the username/email address already exists in our database.
+                        state="The Username already exists.."
+                        data['state']=state
+                        return render(request, template_name, data)
+                                #return redirect('organisation_table')
+
+	return render(request, template_name, data)
+    else:
+        print("Not a staff.")
+        state="You do not have permission to see this page."
+        return render(request, template_name, {'state':state})
+
 
 @login_required(login_url='/login/')
 def organisation_update(request, pk, template_name='organisation/organisation_form.html'):
-    organisation = get_object_or_404(Organisation, pk=pk)
-    form = OrganisationForm(request.POST or None, instance=organisation)
-    if form.is_valid():
-        form.save()
-        return redirect('organisation_table')
-    return render(request, template_name, {'form':form})
+    if (request.user.is_staff==True):
+	organisation = get_object_or_404(Organisation, pk=pk)
+    	form = OrganisationForm(request.POST or None, instance=organisation)
+    	if form.is_valid():
+        	form.save()
+        	return redirect('organisation_table')
+    	return render(request, template_name, {'form':form})
+
+    else:
+        print("Not a staff.")
+        state="You do not have permission to see this page."
+        return render(request, template_name, {'state':state})
 
 @login_required(login_url='/login/')
 def organisation_delete(request, pk, template_name='organisation/organisation_confirm_delete.html'):
-    organisation = get_object_or_404(Organisation, pk=pk)
-    if request.method=='POST':
-        organisation.delete()
-        return redirect('organisation_table')
-    return render(request, template_name, {'object':organisation})
+    if (request.user.is_staff==True):
+	organisation = get_object_or_404(Organisation, pk=pk)
+    	if request.method=='POST':
+        	organisation.delete()
+        	return redirect('organisation_table')
+    	return render(request, template_name, {'object':organisation})
+    else:
+        print("Not a staff.")
+        state="You do not have permission to see this page."
+        return render(request, template_name, {'state':state})
 
 ####################################
 
@@ -139,38 +211,57 @@ def umpackage_list(request, template_name='organisation/umpackage_list.html'):
 
 @login_required(login_url='/login/')
 def umpackage_table(request, template_name='organisation/umpackage_table.html'):
-    umpackages = UMCloud_Package.objects.all()
-    data = {}
-    data['object_list'] = umpackages
-    umpackages_as_json = serializers.serialize('json', umpackages)
-    umpackages_as_json =json.loads(umpackages_as_json)
-
-    return render(request, template_name, {'data':data, 'umpackages_as_json':umpackages_as_json})
+    if (request.user.is_staff==True):
+    	umpackages = UMCloud_Package.objects.all()
+    	data = {}
+    	data['object_list'] = umpackages
+    	umpackages_as_json = serializers.serialize('json', umpackages)
+    	umpackages_as_json =json.loads(umpackages_as_json)
+    	return render(request, template_name, {'data':data, 'umpackages_as_json':umpackages_as_json})
+    else:
+        print("Not a staff.")
+        state="You do not have permission to see this page."
+        return render(request, template_name, {'state':state})
 
 @login_required(login_url='/login/')
 def umpackage_create(request, template_name='organisation/umpackage_form.html'):
-    form = UMCloud_PackageForm(request.POST or None)
-    if form.is_valid():
-        form.save()
-        return redirect('umpackage_table')
-    return render(request, template_name, {'form':form})
+    if (request.user.is_staff==True):
+	form = UMCloud_PackageForm(request.POST or None)
+    	if form.is_valid():
+        	form.save()
+        	return redirect('umpackage_table')
+    	return render(request, template_name, {'form':form})
+    else:
+        print("Not a staff.")
+        state="You do not have permission to see this page."
+        return render(request, template_name, {'state':state})
 
 @login_required(login_url='/login/')
 def umpackage_update(request, pk, template_name='organisation/umpackage_form.html'):
-    umpackage = get_object_or_404(UMCloud_Package, pk=pk)
-    form = UMCloud_PackageForm(request.POST or None, instance=umpackage)
-    if form.is_valid():
-        form.save()
-        return redirect('umpackage_table')
-    return render(request, template_name, {'form':form})
+    if (request.user.is_staff==True):
+	umpackage = get_object_or_404(UMCloud_Package, pk=pk)
+    	form = UMCloud_PackageForm(request.POST or None, instance=umpackage)
+    	if form.is_valid():
+        	form.save()
+        	return redirect('umpackage_table')
+    	return render(request, template_name, {'form':form})
+    else:
+        print("Not a staff.")
+        state="You do not have permission to see this page."
+        return render(request, template_name, {'state':state})
 
 @login_required(login_url='/login/')
 def umpackage_delete(request, pk, template_name='organisation/umpackage_confirm_delete.html'):
-    umpackage = get_object_or_404(UMCloud_Package, pk=pk)
-    if request.method=='POST':
-        umpackage.delete()
-        return redirect('umpackage_table')
-    return render(request, template_name, {'object':umpackage})
+    if (request.user.is_staff==True):
+	umpackage = get_object_or_404(UMCloud_Package, pk=pk)
+    	if request.method=='POST':
+        	umpackage.delete()
+        	return redirect('umpackage_table')
+    	return render(request, template_name, {'object':umpackage})
+    else:
+        print("Not a staff.")
+        state="You do not have permission to see this page."
+        return render(request, template_name, {'state':state})
 
 ####################################
 

@@ -15,10 +15,12 @@
 
 {% block title %}Edit UMCloud Package Subscription{% endblock %}
 {% block content %}
-
+{% if state %}
+        <p cass="error" style="color:red;"><i>{{state}}</i></p>
+{% else %}
 <form method="post">{% csrf_token %}
     {{ form.as_p }}
     <button id="submit" type="submit" name="submit" value="Create">Submit</button>
 </form>
-
+{% endif %}
 {% endblock %}

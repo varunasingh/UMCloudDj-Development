@@ -1,3 +1,29 @@
+v0.7.1
+-Added organisation management for staff/super users
+-Polish the User Requests page.
+
+v0.7.0
+-Eliminate ID from table list
+-Email is not mandatory
+-Phone number mandatory
+-Added field to user's profile: date of birth
+-Added field to user's profile: gender, location
+-Added "Add another" on all creation forms.
+-Basic implementation of confirmations.
+-First Name and Last name are mandatory
+-Search in picklist is against all contains and not just starts with
+-Packages called blocks.
+-Toolbar on top has blocks and blocks view created
+-User Approval: Intuitive way to accept and reject users 
+-Icons are coloured
+-Manage Blocks
+-Save terminology and Gramatical errors fixed
+-Added doublt type password fields for sigups
+
+
+v0.6.2
+-Updated picklists to filter and search for contains instead of starts-with
+
 v0.6.1
 -89% unit test code coverage updates.
 

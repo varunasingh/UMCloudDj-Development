@@ -1,7 +1,9 @@
 {% extends "base.html" %}
 {% block title %}Manage UMCloud Packages {% endblock %}
 {% block content %}
-
+{% if state %}
+        <p cass="error" style="color:red;"><i>{{state}}</i></p>
+{% else %}
 <h1>UMCloud Packages</h1>
 <ul>
     {% for umpackage in object_list %}
@@ -11,7 +13,6 @@
     </li>
     {% endfor %}
 </ul>
-
 <a href="{% url "umpackage_new" %}">New</a>
-
+{% endif %}
 {% endblock %}

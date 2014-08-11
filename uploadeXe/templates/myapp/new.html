@@ -3,7 +3,8 @@
 <a href="/userstable/"><button id="usertablenav" type="button" style="width:150px;height:50px;margin-top:10px;margin-right:10px;margin-left:40px;">Users</button></a>
 <a href="/schoolstable/"><button id="schooltablenav" type="button"style="width:150px;height:50px;margin-top:10px;margin-right:10px;">Schools</button></a>
 <a href="/allclassestable/"><button id="allclasstablenav" type="button"style="width:150px;height:50px;margin-top:10px;margin-right:10px;">Classes</button></a>
-<a href="/upload/"><button id="coursesnav" class="ui-state-hover" type="button"style="width:149px;height:50px;margin-top:10px;margin-right:10px;">Courses</button></a>
+<a href="/uploadeXe/manage/"><button id="blocknav" class="ui-state-hover" type="button"style="width:149px;height:50px;margin-top:10px;margin-right:10px;">Blocks</button></a>
+<a href="/uploadeXe/managecourses/"><button id="coursesnav" type="button"style="width:149px;height:50px;margin-top:10px;margin-right:10px;">Courses</button></a>
 
 <hr>
 <p></p>
@@ -45,6 +46,7 @@
                                 sourceCaption: 'Available',  
                                 targetCaption: 'Selected',  
                                 filter: true,  
+				filterMatchMode: 'contains',
                                 sourceData:all_courses,  
                                 content: function(option) {  
                                         return '<img src="/media/' + "course" + '.png" alt="" /><span style="">' + option.label.replace(/^\s+|\s+$/g, '') + '</span>';  
@@ -57,6 +59,7 @@
                                 		sourceCaption: 'Available',  
                                 		targetCaption: 'Selected',  
                                 		filter: true,  
+						filterMatchMode: 'contains',
                                 		sourceData:students_map,  
                                 		content: function(option) {  
                                         		return '<img src="/media/' + "user" + '.png" alt="" /><span style="">' + option.label.replace(/^\s+|\s+$/g, '') + '</span>';  
@@ -66,6 +69,7 @@
                 		}
           	); 
                         $('#submit').puibutton(); 
+			$('#submit2').puibutton();
 			$('#ajaxSpinnerImage').puipanel();
                 }
           ); 
@@ -121,7 +125,8 @@
         		</div>
 			<p></p>
 			<h3>3. Click Upload</h3>
-			<button id="submit" type="submit" name="submit" value="upload">Upload</button>
+			<button id="submit" type="submit" name="submittotable" value="upload">Upload</button>
+    			<button id="submit2" type="submit" name="submittonew" value="Create">Upload and Create another</button>
 			<img src="/media/images/address-book-new-3-medium.png" align="right">
 		</form>
 		<p></p>

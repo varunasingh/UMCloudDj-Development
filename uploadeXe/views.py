@@ -288,8 +288,13 @@ def list(request, template_name='myapp/list.html'):
 		"""
 
                 newdoc.save()
-                # Redirect to the document list after POST
-                return HttpResponseRedirect(reverse('uploadeXe.views.list'))
+		# Redirect to the document list after POST
+		if 'submittotable' in request.POST:
+			return HttpResponseRedirect(reverse('uploadeXe.views.list'))
+                if 'submittonew' in request.POST:
+			return HttpResponseRedirect(reverse('uploadeXe.views.new'))
+                else:
+			return HttpResponseRedirect(reverse('uploadeXe.views.list'))
                     
             else:
                 setattr(newdoc, 'success', "NO")
@@ -446,15 +451,10 @@ def course_create(request, template_name='myapp/course_create.html'):
         course_name = post['course_name']
     	course_count = Course.objects.filter(name=course_name).count()
         if course_count == 0:
-        #if not allclass_exists(post['class_name']):
                 print("Creating the Course..")
                 course_name=post['course_name']
                 course_desc=post['course_desc']
 		course_category=post['course_category']
-		#course_price=post['course_price']
-		#publisher
-		#organisation
-		#success
                 packageidspicklist=post.getlist('target')
                 print("packages selected from picklist:")
                 print(packageidspicklist)
@@ -499,6 +499,12 @@ def course_create(request, template_name='myapp/course_create.html'):
 		course.save()
 		print("All done for course creation.")
 
+		if 'submittotable' in request.POST:
+                        return redirect('managecourses')
+                if 'submittonew' in request.POST:
+                	return redirect('coursenew')
+                else:
+                        return redirect ('managecourses')
 
                 return redirect('managecourses')
         else:

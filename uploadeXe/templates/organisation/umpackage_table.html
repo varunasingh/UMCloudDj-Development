@@ -51,24 +51,11 @@
 
 
 </script>
-<i>Click a row to edit UMCloud Package</i>
+{% if state %}
+        <p cass="error" style="color:red;"><i>{{state}}</i></p>
+{% else %}
 <div id="tblumpackages"> </div>
 <a href="/umpackagenew/"><button id="newumpackage" type="button">New Subscription</button></a>  
+{% endif %}
                                                                              
-
-
-<!--
-<h1>UMCloud Packages</h1>
-<ul>
-    {% for umpackage in object_list %}
-    <li>{{ umpackage.package_name }}  :  
-    <a href="{% url "umpackage_edit" umpackage.id %}">({{ umpackage.package_desc }})</a>
-    <a href="{% url "umpackage_delete" umpackage.id %}">  (Delete)</a>
-    </li>
-    {% endfor %}
-</ul>
-
-<a href="{% url "umpackage_new" %}">New</a>
--->
-
 {% endblock %}

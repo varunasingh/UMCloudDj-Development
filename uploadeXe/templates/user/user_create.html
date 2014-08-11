@@ -3,7 +3,8 @@
 <a href="/userstable/"><button id="usertablenav" class="ui-state-hover" type="button" style="width:149px;height:50px;margin-top:10px;margin-right:10px;margin-left:40px;">Users</button></a>
 <a href="/schoolstable/"><button id="schooltablenav" type="button"style="width:150px;height:50px;margin-top:10px;margin-right:10px;">Schools</button></a>
 <a href="/allclassestable/"><button id="allclasstablenav" type="button"style="width:150px;height:50px;margin-top:10px;margin-right:10px;">Classes</button></a>
-<a href="/upload/"><button id="coursesnav" type="button"style="width:149px;height:50px;margin-top:10px;margin-right:10px;margin-left:40px;">Courses</button></a>
+<a href="/uploadeXe/manage/"><button id="blocknav" type="button"style="width:149px;height:50px;margin-top:10px;margin-right:10px;">Blocks</button></a>
+<a href="/uploadeXe/managecourses/"><button id="coursesnav" type="button"style="width:149px;height:50px;margin-top:10px;margin-right:10px;">Courses</button></a>
 
 <hr>
 <p></p>
@@ -23,11 +24,14 @@
                         $('#username').puiinputtext();
                         $('#email').puiinputtext();
                         $('#password').puiinputtext();
+			$('#passwordagain').puiinputtext();
                         $('#first_name').puiinputtext();
                         $('#last_name').puiinputtext();
                         //$('#website').puiinputtext();
                         //$('#job_title').puiinputtext();
                         //$('#company_name').puiinputtext();      
+			$('#dateofbirth').puiinputtext();
+                        $('#address').puiinputtext();
                         $('#submit').puibutton();
 			$('#submit2').puibutton();
                         $('#createuser').puipanel();
@@ -40,9 +44,10 @@
                                 sourceCaption: 'Available',  
                                 targetCaption: 'Selected',  
                                 filter: true,  
+				filterMatchMode: 'contains',
                                 sourceData:allclass_map,  
                                 content: function(option) {  
-                                        return '<img src="/media/' + "allclass" + '.png" alt="" /><span style="">' + option.label.replace(/^\s+|\s+$/g, '') + '</span>';  
+                                        return '<img src="/media/images/' + "class" + '.png" alt="" /><span style="">' + option.label.replace(/^\s+|\s+$/g, '') + '</span>';  
                                 }  
                         });
 			$('#phonenumber').puiinputtext();
@@ -59,7 +64,7 @@
           ); 
 </script>
 {% endblock %}
-{% block title %}UstadMobile App Unit Test Report {% endblock %}
+{% block title %}UstadMobile New User {% endblock %}
 {% block content %}
 <p cass="error" style="color:red;"><i>{{state}}</i></p>
 <form id="newuserform" method="post">{% csrf_token %}
@@ -77,6 +82,11 @@
         <!--<label for="password">Password:</label>-->
         <input type="password" name="password" id="password" placeholder="Password" style="height: 30px; width: 250px;" value="" required/>
     </div>
+    <div data-role="fieldcontain" style="padding-bottom:5px">
+        <!--<label for="password">Password:</label>-->
+        <input type="password" name="passwordagain" id="passwordagain" placeholder="Enter Password Again" style="height: 30px; width: 250px;" value="" required/>
+    </div>
+
     <div data-role="fieldcontain" style="padding-bottom:5px">
         <!--<label for="first_name">First Name:  </label>-->
         <input type="text" name="first_name" id="first_name" placeholder="First Name" style="height: 30px; width: 250px;" value="" required/>
@@ -119,7 +129,7 @@
         {% endfor %}
    </select>
 <p></p>
-<h3> Add user to Class:</h3>
+<h3>Class:</h3>
 <div id="selectallclassesfornewcourse" >
     <select multiple="multiple" id="source" name="source">
     </select>
@@ -132,8 +142,8 @@
         {% endfor %}
    </select>-->
    <br></br>
-    <button id="submit" type="submit" name="submittotable" value="Create">Submit</button>
-    <button id="submit2" type="submit" name="submittonew" value="Create">Submit and Create another</button>
+    <button id="submit" type="submit" name="submittotable" value="Create">Save</button>
+    <button id="submit2" type="submit" name="submittonew" value="Create">Save and Create another</button>
     </div>
 </form>
 

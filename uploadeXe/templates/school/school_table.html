@@ -3,7 +3,8 @@
 <a href="/userstable/"><button id="usertablenav" type="button" style="width:150px;height:50px;margin-top:10px;margin-right:10px;margin-left:40px;">Users</button></a>
 <a href="/schoolstable/"><button id="schooltablenav" class="ui-state-hover"  type="button"style="width:150px;height:50px;margin-top:10px;margin-right:10px;">Schools</button></a>
 <a href="/allclassestable/"><button id="allclasstablenav" type="button"style="width:150px;height:50px;margin-top:10px;margin-right:10px;">Classes</button></a>
-<a href="/upload/"><button id="coursesnav" type="button"style="width:149px;height:50px;margin-top:10px;margin-right:10px;">Courses</button></a>
+<a href="/uploadeXe/manage/"><button id="blocknav" type="button"style="width:149px;height:50px;margin-top:10px;margin-right:10px;">Blocks</button></a>
+<a href="/uploadeXe/managecourses/"><button id="coursesnav" type="button"style="width:149px;height:50px;margin-top:10px;margin-right:10px;">Courses</button></a>
 
 <hr>
 <p></p>
@@ -55,32 +56,27 @@
                 //$('#messages').puigrowl('show', [{severity:'info', summary: 'Row Unselected', detail: (data.brand + ' ' + data.vin)}]);
             }
    });
-  }
-  ); 
+   $('#notifyme').puigrowl();                  
+   	addMessage = function(msg) {  
+        	$('#notifyme').puigrowl('show', msg);  
+        }  
+  }); 
+  function codeAddress() {
+                var state="{{state}}"
+                addMessage([{severity: 'info', summary: state, detail: ''}]);
+        }
+        var state="{{state}}";
+        if(state){
+                window.onload = codeAddress;
+        }
 
 
 </script>
 <p></p>
+<div id="notifyme"></div>
 <a href="/schoolnew/"><button id="newschool1" type="button">New School</button></a>
 <p></p>
 <!--<i>Click a row to edit School</i>-->
 <div id="tblschools"> </div>
 <!--<a href="/schoolnew/"><button id="newschool" type="button">Add New</button></a>  -->
-                                                                             
-
-
-<!--
-<h1>Schools</h1>
-<ul>
-    {% for school, organisation in object_list %}
-    <li>{{ school.id }}  :  
-    <a href="{% url "school_edit" school.id %}">{{ school.school_name }} </a> ({{school.school_desc}})
-    of Organisation: {{ organisation.organisation_name }}
-    <a href="{% url "school_delete" school.id %}">  (Delete)</a>
-    </li>
-    {% endfor %}
-</ul>
-<a href="{% url "school_new" %}">New</a>
--->
-
 {% endblock %}

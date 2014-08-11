@@ -14,6 +14,7 @@ from organisation.models import Organisation
 from organisation.models import UMCloud_Package
 from organisation.models import User_Organisations
 from school.models import School
+from django.contrib import messages
 
 from django.http import HttpResponse
 from django.shortcuts import render
@@ -44,7 +45,7 @@ def school_list(request, template_name='school/school_list.html'):
 """
 
 @login_required(login_url='/login/')
-def school_table(request, template_name='school/school_table.html'):
+def school_table(request, template_name='school/school_table.html', rstate=''):
     organisation = User_Organisations.objects.get(user_userid=request.user).organisation_organisationid;
     schools=School.objects.filter(organisation=organisation)
     #schools = School.objects.all()
@@ -54,7 +55,9 @@ def school_table(request, template_name='school/school_table.html'):
     data['orgschools_list'] = organisation_schools
     schools_as_json = serializers.serialize('json', schools)
     schools_as_json =json.loads(schools_as_json)
-
+    print("rstate:")
+    print(rstate)
+    #data['state']=rstate
     return render(request, template_name, {'data':data, 'schools_as_json':schools_as_json})
 
 """
@@ -85,7 +88,7 @@ def create_school(school_name, school_desc, organisationid):
 
 
 @login_required(login_url='/login/')
-def school_create(request, template_name='school/school_create.html'):
+def school_create(request, template_name='school/school_create.html', rstate=''):
     form = SchoolForm(request.POST or None)
     #organisations = Organisation.objects.all()
     organisations=[]
@@ -120,18 +123,28 @@ def school_create(request, template_name='school/school_create.html'):
     
     			print("Organisation School mapping success.")
 
-                	return redirect('school_table')
+			state="The School has been created."
+			data['state']=state
+			if 'submittotable' in request.POST:
+				#return render(request, 'school/school_table.html', data)
+				return redirect('school_table')
+                	if 'submittonew' in request.POST:
+				return render(request, template_name, data,context_instance=RequestContext(request))
+                        	#return redirect('school_new')
+                	else:
+                        	return redirect ('school_table')
+
         	else:
                 	#Show message that the school name already exists in our database.
 			state="The School Name already exists.."
                 	data['state']=state
                 	return render(request, template_name, data)
-                	#return redirect('school_table')
+                	#return redirect('school_table', state)
 	#except:
 	else:
 		#pass
 		print('Something went wrong')
-
+    #data['state']=rstate;
     return render(request, template_name, data)
 
 @login_required(login_url='/login/')

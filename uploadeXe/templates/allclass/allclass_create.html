@@ -5,7 +5,8 @@
 <a href="/userstable/"><button id="usertablenav" type="button" style="width:150px;height:50px;margin-top:10px;margin-right:10px;margin-left:40px;">Users</button></a>
 <a href="/schoolstable/"><button id="schooltablenav" type="button"style="width:150px;height:50px;margin-top:10px;margin-right:10px;">Schools</button></a>
 <a href="/allclassestable/"><button id="allclasstablenav" class="ui-state-hover" type="button"style="width:150px;height:50px;margin-top:10px;margin-right:10px;">Classes</button></a>
-<a href="/upload/"><button id="coursesnav" type="button"style="width:149px;height:50px;margin-top:10px;margin-right:10px;">Courses</button></a>
+<a href="/uploadeXe/manage/"><button id="blocknav" type="button"style="width:149px;height:50px;margin-top:10px;margin-right:10px;">Blocks</button></a>
+<a href="/uploadeXe/managecourses/"><button id="coursesnav" type="button"style="width:149px;height:50px;margin-top:10px;margin-right:10px;">Courses</button></a>
 
 <hr>
 <p></p>
@@ -27,6 +28,7 @@
 			$('#school').puidropdown();
 			$('#teacher').puidropdown();
 			$('#submit').puibutton();
+			$('#submit2').puibutton();
 
 			$('#selectstudentsfornewallclass').puipicklist({  
     				effect: 'clip',  
@@ -34,6 +36,7 @@
     				showTargetControls: true,  
     				sourceCaption: 'Available',  
     				targetCaption: 'Selected',  
+				filterMatchMode: 'contains',
     				filter: true,  
     				sourceData:students_map,  
     				content: function(option) {  
@@ -58,6 +61,7 @@
                                 sourceCaption: 'Available',  
                                 targetCaption: 'Selected',  
                                 filter: true,  
+				filterMatchMode: 'contains',
                                 sourceData:course_map,  
                                 content: function(option) {  
                                         return '<img src="/media/' + "course" + '.png" alt="" /><span style="">' + option.label.replace(/^\s+|\s+$/g, '') + '</span>';  
@@ -88,7 +92,7 @@
         {% endfor %}
    </select><a href="/schoolnew/">Create an associative school first</a> </i>
    <p></p>
-   <label>Teacher in charge:</label> <select id="teacher" form="newclassform" name="teacherid">
+   <label>Teacher:</label> <select id="teacher" form="newclassform" name="teacherid">
         	{% for teacher in teacher_list %}
         	<option value="{{ teacher.id }}">{{ teacher.first_name }} {{teacher.last_name}} </option>
         	{% endfor %} 
@@ -96,7 +100,7 @@
    <i><a href="/usernew/"> Click here to create a new user</a> </i>
 	
    <p></p>
-   <h3>Assign Students</h3>  
+   <h3>Students:</h3>  
 <div id="selectstudentsfornewallclass" >  
     <select multiple="multiple" id="source" name="source">  
     </select>  
@@ -104,7 +108,7 @@
     </select>  
 </div>  
    <p></p>
-   <h3>Assign Courses to this class</h3>         
+   <h3>Courses:</h3>         
 <div id="selectcoursesfornewallclass" >
     <select multiple="multiple" id="source" name="source">
     </select>
@@ -113,8 +117,8 @@
 </div>
 
    <br></br>
-
-    <button id="submit" type="submit" name="submit" value="Create">Submit</button>
+    <button id="submit" type="submit" name="submittotable" value="Create">Save</button>
+    <button id="submit2" type="submit" name="submittonew" value="Create">Save and Create another</button>
 </form>
 
 

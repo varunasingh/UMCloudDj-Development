@@ -2,6 +2,13 @@
 
 {% block scriptjs %}
 <style>
+#blocks {
+    background-image: url(/media/images/package.png);
+    background-repeat: no-repeat;
+    background-position: center left;
+    text-align: center;
+}
+
 #courses {
     background-image: url(/media/images/course.png);
     background-repeat: no-repeat;
@@ -27,6 +34,12 @@
     background-position: center left;
     text-align: center;
 }
+#orgtable {
+background-image:url(/media/system-settings.png);
+    background-repeat: no-repeat;
+    background-position: center left;
+    text-align: center;
+}
 
 
 </style>
@@ -40,6 +53,7 @@
 			$('#allclasstable').puibutton(); 
 			$('#dynatableroles').puibutton();
 			$('#courses').puibutton();
+			$('#blocks').puibutton();
                 }
           ); 
 </script>
@@ -49,13 +63,18 @@
 <h2>Management</h2> <!--<img src="/media/images/user-home.png" align="right">-->
      <div id="toolbarbottom" class="toolbar" >
 	<ul>
-		<a href="/upload/"><button id="courses" type="button"style="width:200px;height:100px;margin-top:10px;margin-right:10px;">Courses</button></a>
 		<!--<a href="/rolestable/"><button id="roletable" type="button"style="width:200px;height:100px;margin-top:10px;margin-right:10px;" >Manage Roles</button></a>-->
 		<a href="/userstable/"><button id="usertable" type="button" style="width:200px;height:100px;margin-top:10px;margin-right:10px;">Users</button></a>
-		<!--<a href="/organisationstable/"><button id="orgtable" type="button"style="width:200px;height:100px;margin-top:10px;margin-right:10px;">Manage Org</button></a>-->
+		{% if superadmin_role == True %}
+		<a href="/organisationstable/"><button id="orgtable" type="button"style="width:200px;height:100px;margin-top:10px;margin-right:10px;">Organisations</button></a>
+                </button></a>
+        {% endif %}
+
 		<!--<a href="/umpackagestable/"><button id="umpackagetable" type="button"style="width:200px;height:100px;margin-top:10px;margin-right:10px;">Manage Subscription</button></a>-->
 		<a href="/schoolstable/"><button id="schooltable" type="button"style="width:200px;height:100px;margin-top:10px;margin-right:10px;">Schools</button></a>
 		<a href="/allclassestable/"><button id="allclasstable" type="button"style="width:200px;height:100px;margin-top:10px;margin-right:10px;">Classes</button></a>
+		<a href="/uploadeXe/manage/"><button id="blocks" type="button"style="width:200px;height:100px;margin-top:10px;margin-right:10px;">Blocks</button></a>
+		<a href="/uploadeXe/managecourses/"><button id="courses" type="button"style="width:200px;height:100px;margin-top:10px;margin-right:10px;">Courses</button></a>
 
 	</ul>
     </div>
