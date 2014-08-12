@@ -2,6 +2,9 @@ from django.db import models
 from django.contrib.auth.models import User
 from organisation.models import Organisation
 
+def get_image_path(instance, filename):
+    return os.path.join('avatars', str(instance.id), filename)
+
 class UserProfile(models.Model):
     #user = models.ForeignKey(User, unique=True)
     user = models.OneToOneField(User)
@@ -14,4 +17,5 @@ class UserProfile(models.Model):
     gender = models.CharField(max_length=2, blank=True)
     admin_approved = models.BooleanField(default=False)
     organisation_requested = models.ForeignKey(Organisation)
+    #avatar=models.ImageField(upload_to=get_image_path, default='/media/avatars/no-img.jpg')
 # Create your models here.

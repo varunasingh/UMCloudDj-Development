@@ -99,6 +99,7 @@ urlpatterns = patterns('',
 	(r'^uploadeXe/$', RedirectView.as_view(url='/uploadeXe/list/')), # Just for ease of use.
 	(r'^manageeXe/$', RedirectView.as_view(url='/uploadeXe/manage/')),
 	(r'^managecourses/$',RedirectView.as_view(url='/uploadeXe/managecourses/')),
+	(r'^messages/', include('django_messages.urls')),
 
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

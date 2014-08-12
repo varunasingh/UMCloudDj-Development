@@ -46,6 +46,7 @@ INSTALLED_APPS = (
     'school',
     'allclass',
     'users',
+    'django_messages', #Added 110824012121
     #'datetimewidget', #Varuna Singh datetimewidget test
 )
 

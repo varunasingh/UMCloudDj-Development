@@ -1,3 +1,6 @@
+v0.7.3
+-Added messages to message users and made it look fairly decent but not mordern yet.
+
 v0.7.2
 - Registration and Sign up divided into two.
 
