@@ -45,6 +45,7 @@
 	  }
 	  #page {
 		width: 1228px;
+		/*width:100%;*/
 		text-align: left;
 		background-color: grey;
 	  }
@@ -59,7 +60,9 @@
 
 	  #content {
 		float: left;
-		width: 1000px;
+		width: 900px;
+		/*margin-left: 245px;*/
+		/*width: 100%;*/
 		border: 1px solid grey;
 		padding: 5px;
 		border-radius: 5px;
@@ -68,7 +71,8 @@
 	  #header {
 		float: top;
 		border: 2px solid grey;
-		width: 1211px;
+		/*width: 1111px;*/
+		width: 100%;
    		padding: 5px;
 		border-radius: 5px;
 	  }
@@ -150,7 +154,7 @@
 <body>
 	<div id="header">
 		<p></p>
-		<a href="/home/"><img src="/media/images/logoUMlong.png" alt="Ustad_Mobile_UMCloud_logo" align=""/></a><i>    (v0.7.3)</i>
+		<a href="/home/"><img src="/media/images/logoUMlong.png" alt="Ustad_Mobile_UMCloud_logo" align=""/></a><i>    (v0.7.4)</i>
 		{% if current_user %}
 			{{current_user}}
 		{% endif %}
@@ -161,13 +165,12 @@
 		{% block sidebar %}
 		<ul id="pm1">
 			<li><a data-icon="ui-icon-home" href="/home/">Home</a></li>
-			<li><a data-icon="ui-icon-mail-closed" href="/messages/">Messaging</a></li>
+			<li><a data-icon="ui-icon-wrench" href="/management/">Management</a></li>
+			<!--<li><a data-icon="ui-icon-mail-closed" href="/messages/">Messaging</a></li>-->
 			<li><a data-icon="ui-icon-power" href="/logout/">Logout</a></li>
 		</ul>
 		{% endblock %}
-	</div>
-	<div></div>
-	<div id="content">
+	</div>	<div id="content">
         	<div id="navigate">
 			{%block toolbar%}{% endblock %}
                		{%block navigate%}{% endblock %}

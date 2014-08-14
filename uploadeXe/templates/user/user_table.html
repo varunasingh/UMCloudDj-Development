@@ -91,6 +91,7 @@
    $('#newuser').puibutton();  
    $('#adduser').puibutton();
    $('#usersapprove').puibutton();
+   $('#orgcode').puiinputtext();
   }
   ); 
 
@@ -102,7 +103,7 @@
 		{% if requestspending != 0 %}
     			<div class="notification">{{requestspending}}</div>
 		{% endif %}
-		</button></a>
+		</button></a> <b><i style="float:right;"> Organisation sign-up code:&nbsp;  <input id="orgcode" type="text" style="float: right; width:100px;" readonly="True" value="{{organisation_code.code}}"/> </i> </b>
 	{% endif %}
 <p></p>
 <!---<i>Click a row to edit User</i>-->

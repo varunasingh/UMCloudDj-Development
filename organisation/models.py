@@ -30,4 +30,5 @@ class Organisation_Code(models.Model):
    organisation = models.ForeignKey(Organisation)
    code=models.CharField(max_length=100)
 
+
 # Create your models here.

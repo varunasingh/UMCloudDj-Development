@@ -164,11 +164,17 @@ def allclass_create(request, template_name='allclass/allclass_create.html'):
 			allclass.save()
 		except:
 			print("No teacher given")
-		
+		data['state']="The class: " + allclass.allclass_name + " has been created."
 		if 'submittotable' in request.POST:
-                        return redirect('allclass_table')
+			statesuccess=1
+                        data['statesuccess']=statesuccess
+			return render(request,'allclass/confirmation.html',data)
+                        #return redirect('allclass_table')
                 if 'submittonew' in request.POST:
-                        return redirect('allclass_new')
+			statesuccess=1
+                        data['statesuccess']=statesuccess
+			return render(request, template_name, data)
+                        #return redirect('allclass_new')
                 else:
                         return redirect ('allclass_table')
         else:

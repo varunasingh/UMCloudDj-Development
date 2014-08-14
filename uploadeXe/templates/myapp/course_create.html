@@ -66,7 +66,7 @@
 				filterMatchMode: 'contains',
                                 sourceData:allclass_map,  
                                 content: function(option) {  
-                                        return '<img src="/media/' + "allclass" + '.png" alt="" /><span style="">' + option.label.replace(/^\s+|\s+$/g, '') + '</span>';  
+                                        return '<img src="/media/images/' + "class-small" + '.png" alt="" /><span style="">' + option.label.replace(/^\s+|\s+$/g, '') + '</span>';  
                                 }  
                         });
 
@@ -90,6 +90,12 @@
 {% endblock %}
 
 {% block content %}
+
+	{% if statesuccess == 1 %}
+                        <p style="color:green;"><i><img src="/media/images/tick.png" alt="">{{state}}<i></p>
+                {% else %}
+                        <p cass="error" style="color:red;"><i>{{state}}</i></p>
+        {% endif %}
 
 <form id="newcourseform" method="post">{% csrf_token %}
     <h1>Create a New Course</h1>

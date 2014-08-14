@@ -47,7 +47,7 @@
 				filterMatchMode: 'contains',
                                 sourceData:allclass_map,  
                                 content: function(option) {  
-                                        return '<img src="/media/images/' + "class" + '.png" alt="" /><span style="">' + option.label.replace(/^\s+|\s+$/g, '') + '</span>';  
+                                        return '<img src="/media/images/' + "class-small" + '.png" alt="" /><span style="">' + option.label.replace(/^\s+|\s+$/g, '') + '</span>';  
                                 }  
                         });
 			$('#phonenumber').puiinputtext();
@@ -66,7 +66,14 @@
 {% endblock %}
 {% block title %}UstadMobile New User {% endblock %}
 {% block content %}
-<p cass="error" style="color:red;"><i>{{state}}</i></p>
+	{% if state %}
+		{% if statesuccess == 1 %}
+                	<p style="color:green;"><i><img src="/media/images/tick.png" alt="">{{state}}<i></p>
+		{% else %}
+			<p cass="error" style="color:red;"><i>{{state}}</i></p>
+		{% endif %}
+        {% endif %}
+
 <form id="newuserform" method="post">{% csrf_token %}
     <!--{{ form.as_p }}-->
     <div id="createuser" title="Create a New User">

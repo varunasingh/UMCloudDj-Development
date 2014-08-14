@@ -20,7 +20,12 @@
 	{% if form.errors %}
     		<p class="error"> Sorry, that is not a valid username/password</p>
 	{% endif %}
-	<p style="color:red;" class="error"><i>{{state}}<i></p>
+	{% if statesuccess == 1 %}
+		<img src="/media/images/tick.png" alt=""><p style="color:green;"><i>{{state}}<i></p>
+	{% else %}
+		<p style="color:red;" class="error"><i>{{state}}<i></p>
+	{% endif %}
+	
 	<form action="/auth/" method="POST"> {% csrf_token %}
 		<div id="loginpanel" title="Log in to Ustad Mobile Cloud">  
 		<div data-role="fieldcontain">

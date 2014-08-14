@@ -498,19 +498,27 @@ def course_create(request, template_name='myapp/course_create.html'):
 		setattr(course, 'success','YES')
 		course.save()
 		print("All done for course creation.")
-
+		data['state']="Course : " + course.name + " created successfully."
 		if 'submittotable' in request.POST:
-                        return redirect('managecourses')
+			
+			return render(request, 'myapp/confirmation.html', data)
+                        #return redirect('managecourses')
                 if 'submittonew' in request.POST:
-                	return redirect('coursenew')
+			statesuccess=1
+			data['statesuccess']=statesuccess
+			return render(request, template_name, data)
+                	#return redirect('coursenew')
                 else:
+			data['state']="Something went wrong"
                         return redirect ('managecourses')
 
                 return redirect('managecourses')
         else:
                 print("Course already exists")
+		data['state']="A course with that name already exists. Please specify another name"
+		return render(request, template_name, data)
                 #Show message that the class name already exists in our database. (For the current organisation)
-                return redirect('managecourses')
+                #return redirect('managecourses')
 
     return render(request, template_name, data)
 

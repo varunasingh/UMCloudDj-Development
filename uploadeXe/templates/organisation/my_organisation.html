@@ -7,14 +7,14 @@
           ); 
 </script>
 {% endblock %}
-{% block title %}Manage Organisations - UstadMobile Cloud {% endblock %}
+{% block title %}My Organisations - UstadMobile Cloud {% endblock %}
 {% block content %}
 
 
 <script type="text/javascript">
   $(function() { 
     $('#tblorganisations').puidatatable({
-            caption: 'Organisations',
+            caption: '{{organisation.organisation_name}} Code',
             paginator: {
                 rows: 10
             },
@@ -22,25 +22,19 @@
                 {field:'pk', headerText: 'ID', sortable:true},
                 //{field:'model', headerText: 'Django Model', sortable:true},
                 {field:'organisation_name', headerText: 'Organisation Name', sortable:true},
-                {field:'organisation_desc', headerText: 'Organisation Desc', sortable:true},
-                {field:'add_date', headerText: 'Date Added', sortable:true},
-		{field:'set_package', headerText: 'Subscription', sortable:true},
-		{field:'code', headerText: 'User Request Code', sortable:true},
-		{field:'admin', headerText: 'Admin/Manager', sortable:true},
+		{field:'code', headerText: 'Code', sortable:true},
 
             ],
             datasource: [
-                {% if organisations %}
-                        {% for c,r,a in object_list %}
-                        {"pk":"{{c.pk}}","model":"{{c.model}}","organisation_name":"{{c.organisation_name}}", "organisation_desc":"{{c.organisation_desc}}","add_date":"{{c.add_date}}","set_package":"{{c.set_package.package_name}}","code":"{{r}}","admin":"{{a}}"}{% if not forloop.last %},{% endif %}
-                        {% endfor %}
+                {% if organisation_code %}
+                        {"pk":"{{organisation_code.pk}}","model":"{{organisation_code.model}}","organisation_name":"{{organisation_code.organisation.organisation_name}}", "code":"{{organisation_code.code}}"}
                 {% endif %}
                 ],
             selectionMode: 'single',
             rowSelect: function(event, data) {
                 console.log("Wassup?")
                 $('#messages').puigrowl('show', [{severity:'info', summary: 'Row Selected', detail: (data.organisation_name + ' ' + data.pk)}]);
-                var edit="/organisationedit/"+data.pk;
+                var edit="/myorganisationedit/"+data.pk;
                 window.open(edit, "_self");
             },
             rowUnselect: function(event, data) {
@@ -52,5 +46,4 @@
 </script>
 <p cass="error" style="color:red;"><i>{{state}}</i></p>
 <div id="tblorganisations"> </div>
-<a href="/organisationnew/"><button id="neworganisation" type="button">New Organisation</button></a>  
 {% endblock %}

@@ -17,6 +17,7 @@ from organisation.models import User_Organisations
 from UMCloudDj.views import create_user_more, user_exists
 from uploadeXe.models import Role
 from uploadeXe.models import User_Roles
+from organisation.models import Organisation_Code
 
 from django.http import HttpResponse
 from django.shortcuts import render
@@ -27,6 +28,7 @@ import os
 import urllib
 import urllib2, base64, json
 import glob #For file ^VS 130420141454
+from random import randrange
 
 
 
@@ -37,6 +39,10 @@ class OrganisationForm(ModelForm):
     class Meta:
         model = Organisation
 
+class OrganisationCodeForm(ModelForm):
+    class Meta:
+	model = Organisation_Code
+	fields=('code',)
 """
 @login_required(login_url='/login/')
 def organisation_list(request, template_name='organisation/organisation_list.html'):
@@ -64,19 +70,83 @@ def organisation_table(request, template_name='organisation/organisation_table.h
     	organisation_packages = []
 
     	data = {}
-    	data['object_list'] = organisations
+	organisation_code=[]		
+	organisation_manager=[]
+	for org in organisations:
+		try:
+			org_code=Organisation_Code.objects.get(organisation=org)
+			organisation_code.append(org_code.code)
+		except Organisation_Code.DoesNotExist, e:
+			nullcode="-"
+			organisation_code.append(nullcode)	
+		try:
+			organisation_admin_role=Role.objects.get(pk=2)
+			org_manager=User.objects.filter(pk__in=User_Organisations.objects.filter(organisation_organisationid=org).values_list('user_userid', flat=True)).filter(pk__in=User_Roles.objects.filter(role_roleid=organisation_admin_role).values_list('user_userid',flat=True))[0]
+			print("Found org manager for org: " + org.organisation_name)
+			print(org_manager)	
+			organisation_manager.append(org_manager.username)
+		
+		except:
+			print("Didnt find org manager for org: " + org.organisation_name )
+			organisation_manager.append("-")
+		
+			
     	#data['object_list'] = zip(organisations,organisation_packages)
     	data['umpackage_list'] = organisation_packages
-    	organisations_as_json = serializers.serialize('json', organisations)
-    	organisations_as_json =json.loads(organisations_as_json)
-
-    	return render(request, template_name, {'data': data, 'organisations_as_json':organisations_as_json})
+	object_list = zip(organisations, organisation_code, organisation_manager)
+	data['object_list']=object_list
+	data['organisations']=organisations
+    	return render(request, template_name, data)
 
         
     else:
         print("Not a staff.")
         state="You do not have permission to see this page."
         return render(request, template_name, {'state':state})
+
+@login_required(login_url='/login/')
+def my_organisation(request, template_name='organisation/my_organisation.html'):
+    current_role = User_Roles.objects.get(user_userid=request.user.id).role_roleid
+    organisation = User_Organisations.objects.get(user_userid=request.user).organisation_organisationid
+    if current_role.id == 2:
+	print("You are an organisation")
+	try:
+		organisation_code=Organisation_Code.objects.get(organisation=organisation)
+		print(organisation_code.code)
+	except Organisation_Code.DoesNotExist, e:
+		organisation_code = Organisation_Code(organisation=organisation)
+		random_code = randrange(1000000)
+		random_org_code=str(organisation.id)+str(random_code)
+		organisation_code.code=random_org_code
+		organisation_code.save()
+	return render(request, template_name,{'organisation':organisation,'organisation_code':organisation_code})
+	
+    else:
+	
+	state="You do not have permission to see this page."
+        return render(request, template_name, {'state':state})
+	
+@login_required(login_url='/login/')
+def my_organisation_update(request, pk, template_name='organisation/my_organisation_form.html'):
+    current_role = User_Roles.objects.get(user_userid=request.user.id).role_roleid
+    organisation = User_Organisations.objects.get(user_userid=request.user).organisation_organisationid
+    organisation_code = Organisation_Code.objects.get(organisation=organisation)
+    data={}
+    data['organisation']=organisation
+    if current_role.id == 2 and pk == str(organisation_code.id):
+        print("You are an organisation and editing your own organisation")
+	organisation_code = get_object_or_404(Organisation_Code, pk=pk)
+        form = OrganisationCodeForm(request.POST or None, instance=organisation_code)
+        if form.is_valid():
+                form.save()
+		return redirect('my_organisation')
+        return render(request, template_name, {'form':form, 'organisation':organisation})
+
+    else:
+        print("Not a staff.")
+        data['state']="You do not have permission to see this page."
+        return render(request, template_name, data)
+    
 
  
 def organisation_exists(name):

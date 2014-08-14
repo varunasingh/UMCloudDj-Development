@@ -126,8 +126,9 @@ def school_create(request, template_name='school/school_create.html', rstate='')
 			state="The School has been created."
 			data['state']=state
 			if 'submittotable' in request.POST:
+                        	return render(request, 'school/confirmation.html', data)
 				#return render(request, 'school/school_table.html', data)
-				return redirect('school_table')
+				#return redirect('school_table')
                 	if 'submittonew' in request.POST:
 				return render(request, template_name, data,context_instance=RequestContext(request))
                         	#return redirect('school_new')

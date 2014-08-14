@@ -429,6 +429,7 @@ class UMCloudDjViewTestCase(TestCase):
         login = self.c.login(username='testuser1', password='12345')
 	
 	response = self.c.get(view_url)
+	print (response)
         self.assertEquals(response.status_code, 200)
 	self.assertContains(response, "You do not have permission to see this page")
 

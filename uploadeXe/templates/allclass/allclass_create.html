@@ -64,7 +64,7 @@
 				filterMatchMode: 'contains',
                                 sourceData:course_map,  
                                 content: function(option) {  
-                                        return '<img src="/media/' + "course" + '.png" alt="" /><span style="">' + option.label.replace(/^\s+|\s+$/g, '') + '</span>';  
+                                        return '<img src="/media/images/' + "course-small" + '.png" alt="" /><span style="">' + option.label.replace(/^\s+|\s+$/g, '') + '</span>';  
                                 }  
                         });  
                 }
@@ -74,7 +74,14 @@
 {% endblock %}
 
 {% block content %}
-<p cass="error" style="color:red;"><i>{{state}}</i></p>
+{% if state %}
+                {% if statesuccess == 1 %}
+                        <p style="color:green;"><i><img src="/media/images/tick.png" alt="">{{state}}<i></p>
+                {% else %}
+                        <p cass="error" style="color:red;"><i>{{state}}</i></p>
+                {% endif %}
+        {% endif %}
+
 <form id="newclassform" method="post">{% csrf_token %}
     <h1>Create a New Class</h1>
     <div data-role="fieldcontain">
@@ -86,18 +93,18 @@
     <div data-role="fieldcontain">
         <label for="class_location">Class Location:  </label><input type="text" name="class_location" id="class_location" value="" />
     </div>
-   <label>Associative School:</label> <select id="school" form="newclassform" name="schoolid">
+   <label>School:</label> <select id="school" form="newclassform" name="schoolid">
         {% for school in object_list %}
         <option value="{{ school.id }}">{{ school.school_name }}</option>
         {% endfor %}
-   </select><a href="/schoolnew/">Create an associative school first</a> </i>
+   </select><!--<a href="/schoolnew/">Create an associative school first</a> </i>-->
    <p></p>
    <label>Teacher:</label> <select id="teacher" form="newclassform" name="teacherid">
         	{% for teacher in teacher_list %}
         	<option value="{{ teacher.id }}">{{ teacher.first_name }} {{teacher.last_name}} </option>
         	{% endfor %} 
    </select>
-   <i><a href="/usernew/"> Click here to create a new user</a> </i>
+   <!--<i><a href="/usernew/"> Click here to create a new user</a> </i>-->
 	
    <p></p>
    <h3>Students:</h3>  
