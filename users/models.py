@@ -21,5 +21,5 @@ class UserProfile(models.Model):
     admin_approved = models.BooleanField(default=False)
     organisation_requested = models.ForeignKey(Organisation)
     avatar=models.ImageField(upload_to=get_image_path, default='/media/avatars/no-img.jpg', null=True)
-    notes=models.TextField(null=True)
+    notes=models.TextField(null=True,blank=True)
 # Create your models here.

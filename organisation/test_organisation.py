@@ -66,7 +66,7 @@ class OrganisationViewTestCase(TestCase):
 	"""
 	setpackage = Subscription.objects.get(pk=1)
 	url_name="organisation_new"
-	post_data_create={'organisation_name':'TestingOrganisation2','organisation_desc':'Test to create TestingOrganisation2','add_date':'2014-07-07', 'umpackageid':1}
+	post_data_create={'organisation_name':'TestingOrganisation2','organisation_desc':'Test to create TestingOrganisation2','add_date':'2014-07-07', 'umpackageid':1, 'username':'orgadmin04','email':'orgadmino2@orgadmin04.com','password':'12345','passwordagain':'12345','first_name':'Org','last_name':'Admin','address':'Test Street, 1234 Avenue, Modest, Country','phonenumber':'+1234567890','dateofbirth':'02/02/1980','gender':'F'}
 	
 	"""
 	Organisations cannot be created without logging in 

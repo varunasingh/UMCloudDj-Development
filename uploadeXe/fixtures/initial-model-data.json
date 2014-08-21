@@ -11,7 +11,7 @@
     "model": "uploadeXe.role",
     "pk": 2,
     "fields": {
-      "role_name": "Orgaisational Manager",
+      "role_name": "Organisational Manager",
       "role_desc": "Manager of a particular linked organisation. Has control and views over its Students, Teachers and Content Authors."
     }
   },

@@ -61,7 +61,7 @@ class UserViewTestCase(TestCase):
 	UMCloudDj.views.user_create
         """
 	allclassids=[1]
-        post_data={'username':'test_create','email':'test_create@ustadmobile.com','password':'123456','first_name':'test','last_name':'create','role':6,'organisation':1, 'dateofbirth':'02/02/1989','address':'123, ABC Street, DEFG Avenue, IJKLMN, OPQRSTUV', 'gender':'F','phonenumber':'+1234567890','target':allclassids }
+        post_data={'username':'test_create','email':'test_create@ustadmobile.com','password':'123456','passwordagain':'123456','first_name':'test','last_name':'create','role':6,'organisation':1, 'dateofbirth':'02/02/1989','address':'123, ABC Street, DEFG Avenue, IJKLMN, OPQRSTUV', 'gender':'F','phonenumber':'+1234567890','target':allclassids }
         response = self.client.post('/usernew/', post_data)
         self.assertEqual(response.status_code, 302)
         #302 is redirected to login page.
@@ -98,14 +98,14 @@ class UserViewTestCase(TestCase):
         self.user.save()
         self.user = authenticate(username='testuser', password='hello')
         login = self.c.login(username='testuser', password='hello')
-	post_data_incorrect={'username':'test_create','email':'test_create@ustadmobile.com','password':'123456','first_name':'test','last_name':'create','role':1,'organisation':1}
+	post_data_incorrect={'username':'test_create','email':'test_create@ustadmobile.com','password':'123456','passwordagain':'123456','first_name':'test','last_name':'create','role':1,'organisation':1}
         requesturl = reverse(view_name)
         response = self.c.post(requesturl, post_data_incorrect)
 	self.assertEqual(response.status_code, 200)
 
     def test_update(self):
 	view_name='user_edit'
-	post_data_changes={'username':'testuser2','email':'testuser2@ustadmobile.com','password':'changedpassword','first_name':'TestChanged','last_name':'User2Changed','role':1,'organisation':1}
+	post_data_changes={'username':'testuser2','email':'testuser2@ustadmobile.com','password':'changedpassword','passwordagain':'changedpassword','first_name':'TestChanged','last_name':'User2Changed','role':1,'organisation':1}
 
 	
 	"""

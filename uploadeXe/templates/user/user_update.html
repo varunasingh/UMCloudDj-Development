@@ -24,20 +24,33 @@
 	    $('#id_company_name').puiinputtext();
 	    $('#id_job_title').puiinputtext();
   	    $('#id_date_of_birth').puiinputtext();
+            $( ".dobdatepicker" ).datepicker({
+                                changeMonth: true,
+                                changeYear: true,
+                                yearRange: "1900:2012",
+                                // You can put more options here.
+                        });
+
 	    $('#id_address').puiinputtext();
  	    $('#id_phone_number').puiinputtext();
-    	    $('#id_gender').puiinputtext();
+    	    $('#gender').puidropdown();
  	    $('#id_notes').puiinputtext();
   	    $('#submit').puibutton();
 	    $('#deleteuser').puibutton();
             });  
 
+	function disableusername() {
+		$('#id_username').puiinputtext('disable');
+        }
+
+	    //window.onload=disableusername;
+
 </script>
 
-<form method="post">{% csrf_token %}
+<form id="edituserform" name="edituserform" method="post">{% csrf_token %}
 
         <label>Username:</label>
-        {{ form.username }}<i> (You cannot update or change the username)</i><p></p>
+        {{ form.username }}<i></i><p></p>
 	<label>New Password:</label>
 	{{form.password}}<i> (Leave blank to retain)</i><p></p>
 	<label>Email address:</label>
@@ -46,7 +59,38 @@
 	{{form.first_name}}<p></p>
 	<label>Last Name:</label>
 	{{form.last_name}}<p></p>
-	{{upform.as_p}}
+	<label>Website</label>
+	{{upform.website}}<p></p>
+	<label>Company Name</label>
+        {{upform.company_name}}<p></p>
+	<label>Job Title</label>
+	<!--<input id="id_job_title" maxlength="800" name="address" type="text" value="{{upform.job_title.value}}"/><p></p>-->
+	{{upform.job_title}}<p></p>
+	<label>Date of Birth</label>
+        {{upform.date_of_birth}}<p></p>
+	<label>Address</label>
+        {{upform.address}}<p></p>
+	<label>Phone Number</label>
+        {{upform.phone_number}}<p></p>
+	<!--
+	<label>Gender:</label>
+	{{upform.gender}}
+	<p></p>
+	-->
+
+	<label>Gender:</label> <select id="gender" form="edituserform" name="gender">
+		{% if upform.gender.value == 'M' %}	
+			<option value="M" selected="Selected">Male</option>
+			<option value="F" >Female</option>
+		{% else %}
+			<option value="M" >Male</option>
+                	<option value="F" selected="Selected">Female</option>
+		{% endif %}
+    	</select>*<p></p>
+
+	<label>Notes</label>
+        {{upform.notes}}<p></p>
+	<!--{{upform.as_p}}-->
 
 	<button id="submit" type="submit" name="submit" value="submit-value">Update</button>
 

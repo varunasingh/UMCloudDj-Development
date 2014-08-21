@@ -41,6 +41,9 @@
 </script>
 {% endblock %}
 {% block content %}
+{% if state %}
+<p class="error" style="color:red;"><i>{{state}}</i></p>
+{% else %}
 <form id="approveusersform" method="post">{% csrf_token %}
 <table id="{{tabletypeid}}">
   <thead>
@@ -54,7 +57,7 @@
 <button id="uncheckradio" type="button" name="uncheckradio" onClick="disableall()" value="Uncheck">Reset</button>
 <button id="submit" type="submit" name="submittotable" value="Create">Submit</button>
 </form>
-
+{% endif %}
 
 <br></br>
 

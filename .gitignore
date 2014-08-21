@@ -10,3 +10,9 @@ UMCloudDj/settings.py
 UMCloudDj/wordpresscred.txt
 *.pyc
 *.bak
+adllrs/
+adllrs-server/
+lrs/
+oauth_provider/
+adl_lrs/
+logs/

@@ -97,6 +97,10 @@
 
 
 </script>
+{% if state %}
+                <p style="color:green;"><i><img src="/media/images/tick.png" alt="">{{state}}<i></p>
+        {% endif %}
+
 <a href="/usernew/"><button id="newuser" type="button">New User</button></a>
 	{% if org_role == True %}
 		<a href="/usersapprove/"><button class="btn" id="usersapprove2" style="position:relative;" type="button"><b>Approve Users</b>

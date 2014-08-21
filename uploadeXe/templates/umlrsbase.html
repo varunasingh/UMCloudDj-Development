@@ -155,7 +155,7 @@
 <body>
 	<div id="header">
 		<p></p>
-		<a href="/home/"><img src="/media/images/logoUMlong.png" alt="Ustad_Mobile_UMCloud_logo" align=""/></a><i>    (v0.7.8)</i>
+		<a href="/home/"><img src="/media/images/logoUMlong.png" alt="Ustad_Mobile_UMCloud_logo" align=""/></a><i>    (v0.7.4)</i>
 		{% if current_user %}
 			{{current_user}}
 		{% endif %}
@@ -173,6 +173,23 @@
 		{% endblock %}
 	</div>	<div id="content">
         	<div id="navigate">
+		
+        <ul id="umlrsmb" >
+                <li><a href="{% url 'lrs.views.home' %}">UM LRS</a></li>
+                  {% if user.is_authenticated %}
+                      <li><a style="height:25px; width:auto;float:right;" href="{% url 'lrs.views.me' %}">{{user.username}}</a></li>
+                      <li><a style="height:25px; width:auto;" href="{% url 'logout' %}">logout</a></li>
+                  {% else %}<ul>
+                    <form action="{% url 'django.contrib.auth.views.login' %}" method="post" class="navbar-form pull-right">
+                      {% csrf_token %}
+                      <input class="span2" type="text" name="username" placeholder="Username">
+                      <input class="span2" type="password" name="password" placeholder="Password">
+                      <button type="submit" class="btn">Sign in</button>
+                    </form></ul>
+                  {% endif %}
+        </ul>
+        <br></br>
+
 
 			{%block toolbar%}{% endblock %}
                		{%block navigate%}{% endblock %}

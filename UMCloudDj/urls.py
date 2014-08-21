@@ -58,6 +58,7 @@ urlpatterns = patterns('',
 
 	#url(r'^users/$', 'UMCloudDj.views.user_list', name='user_list'),
 	url(r'^userstable/$', 'UMCloudDj.views.user_table', name='user_table'),
+	url(r'^userstable/(?P<created>\d+)$', 'UMCloudDj.views.user_table', name='user_table'),
 	url(r'^usersapprove/$','UMCloudDj.views.admin_approve_request', name='users_approve'),
  	#url(r'^userapprove/(?P<pk>\d+)$', 'UMCloudDj.views.user_approve_request', name='user_approve'),
         url(r'^usernew/$', 'UMCloudDj.views.user_create', name='user_new'),
@@ -99,6 +100,7 @@ urlpatterns = patterns('',
 
  	#For upload feature. Need both for file upload. The second one re directs to the url and first one does somehting related to that. 
 	(r'^uploadeXe/', include('uploadeXe.urls')),
+        (r'^umlrs/', include('lrs.urls')),
 	(r'^uploadeXe/$', RedirectView.as_view(url='/uploadeXe/list/')), # Just for ease of use.
 	(r'^manageeXe/$', RedirectView.as_view(url='/uploadeXe/manage/')),
 	(r'^managecourses/$',RedirectView.as_view(url='/uploadeXe/managecourses/')),

@@ -10,7 +10,7 @@ from django.core.urlresolvers import reverse
 from uploadeXe.models import Role
 from uploadeXe.models import User_Roles
 from django.forms import ModelForm
-from organisation.models import Organisation
+from organisation.models import Organisation, Organisation_Code
 from organisation.models import UMCloud_Package
 from organisation.models import User_Organisations
 from users.models import UserProfile
@@ -325,15 +325,25 @@ class UMCloudDjViewTestCase(TestCase):
         self.assertEquals(response.status_code, 200)
 	self.assertContains(response, "Login", status_code=200)
 
-    def test_register_view(self):
+    def test_register_start_view(self):
 	"""
 	Tests if the register / signn up for users logged out works.
 	"""
-	view_url="/register/"
+	view_url="/register/start/"
 	self.c = Client()
 	response = self.c.get(view_url)
 	self.assertEquals(response.status_code, 200)
 	self.assertContains(response, "Request my account")
+
+    def test_register_view(self):
+        """
+        Tests if the register / signn up for users logged out works.
+        """
+        view_url="/register/"
+	c=Client()
+        response = c.get(view_url)
+        self.assertEquals(response.status_code, 301) #301 is permanant redirect
+	self.assertEqual(response.get('location'),'http://testserver/register/start/')
 
 
     def test_sendtestlog_view(self):
@@ -429,7 +439,6 @@ class UMCloudDjViewTestCase(TestCase):
         login = self.c.login(username='testuser1', password='12345')
 	
 	response = self.c.get(view_url)
-	print (response)
         self.assertEquals(response.status_code, 200)
 	self.assertContains(response, "You do not have permission to see this page")
 
@@ -444,11 +453,11 @@ class UMCloudDjViewTestCase(TestCase):
 
         response = self.c.get(view_url)
         self.assertEquals(response.status_code, 200)
-        self.assertContains(response, "You have no pending user requests for your organisation")
+	self.assertContains(response, "No new user requests")
 
     def test_sign_up_in(self):
 	view_url="/signup/"
-	post_data={'username':'testrequest', 'email':'testrequest@testing.com','password':'12345','first_name':'Test','last_name':'Request','website':'http://www.testing.com/','job_title':'Tester','company_name':'TestCorp','dateofbirth':'02/02/1989','address':'TestLand','phonenumber':'+1234567890','gender':'M','organisationrequest':''}
+	post_data={'username':'testrequest', 'email':'testrequest@testing.com','password':'12345','passwordagain':'12345','first_name':'Test','last_name':'Request','website':'http://www.testing.com/','job_title':'Tester','company_name':'TestCorp','dateofbirth':'02/02/1989','address':'TestLand','phonenumber':'+1234567890','gender':'M','organisationrequest':''}
 	response=self.client.post(view_url,post_data)
 	self.assertEquals(response.status_code, 200)
 	testrequest=User.objects.get(username="testrequest")
@@ -469,6 +478,9 @@ class UMCloudDjViewTestCase(TestCase):
         userrequest_organisation.save()
         userrequestProfile = UserProfile(user=userrequest, organisation_requested=mainorganisation, phone_number="+123456789",date_of_birth="1989-02-09", gender="M")
         userrequestProfile.save()
+	#creating org code: to get rid of the randrange unknown error.
+	newcode=Organisation_Code(organisation=mainorganisation,code="COW1234")
+	newcode.save()
 
 	view_url="/usersapprove/"
 	self.c = Client();
@@ -489,8 +501,10 @@ class UMCloudDjViewTestCase(TestCase):
 	testrequest01id=User.objects.get(username="testrequest01").id
 	toaccept=[testrequest01id]
 	post_data={'target':toaccept}
+	idname=str(testrequest01id)+"_radio"
+	idvalue=str(testrequest01id)+"_1"
+	post_data={idname:idvalue}
 	response = self.c.post(view_url, post_data)
-	print(response)
         self.assertEquals(response.status_code, 302)
 	self.assertRedirects(response, "/userstable/")
 	self.assertEquals(True, UserProfile.objects.get(user=userrequest).admin_approved)

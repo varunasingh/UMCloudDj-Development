@@ -1,3 +1,10 @@
+v0.7.9
+- Fixed unit tests
+- minor tweaks for usability
+
+v0.7.5
+- Fixed log out bug
+
 v0.7.4
 - Accept approval of users: just change to make final screen as 'confirmation' with a reassuring checkbox or something of the like (can't be reasonably confused with an error message).
 - Users: make sure to show extra fields in the edit user section.  Add textfield 'notes' (multi line extended length text field - only visible on edit user)

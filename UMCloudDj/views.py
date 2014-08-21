@@ -42,6 +42,7 @@ from uploadeXe.models import Ustadmobiletest
 #from django.utils import simplejson
 from django.conf import settings
 from django.db.models import Q
+import random
 
 #UMCloudDj.uploadeXe
 
@@ -216,14 +217,18 @@ def upload_avatar(request, template_name='myapp/avatar.html'):
     current_user_role = User_Roles.objects.get(user_userid=request.user).role_roleid.role_name;
     try:
 	current_user_profile=UserProfile.objects.get(user=request.user)
-    except:
-        current_user_profile=None
+    except UserProfile.DoesNotExist, e:
+	current_user_profile=None
+        print("User profile does NOT exist")
+        current_user_profile=UserProfile(user=request.user, organisation_requested=organisation)
+        current_user_profile.save()
+
     current_organisation=organisation
 
     if request.method == 'POST':
 	form=ImageUploadForm(request.POST, request.FILES)
 	if form.is_valid():
-	    current_user_profile=UserProfile.objects.get(user=current_user)
+	    current_user_profile=UserProfile.objects.get(user=request.user)
 	    current_user_profile.avatar = request.FILES['avatar']
 	    current_user_profile.save()
 	    return redirect ('home')
@@ -264,7 +269,7 @@ def user_list(request, template_name='user/user_list.html'):
 """
 
 @login_required(login_url='/login/')
-def user_table(request, template_name='user/user_table.html'):
+def user_table(request, template_name='user/user_table.html', created=None):
     organisation = User_Organisations.objects.get(user_userid=request.user).organisation_organisationid;
     users = User.objects.all()
     users= User.objects.filter(pk__in=User_Organisations.objects.filter(organisation_organisationid=organisation).values_list('user_userid', flat=True))
@@ -277,7 +282,21 @@ def user_table(request, template_name='user/user_table.html'):
     current_user_role = user_role.role_name;
     current_user = "Hi, " + request.user.first_name + ". You are a " + current_user_role + " in " + organisation.organisation_name + " organisation."
     data={}
-
+    if created:
+	try:
+		usercreated=User.objects.get(id=created)
+		if usercreated in users:
+			data['state']="Username : " + usercreated.username + " created successfully"
+			print("A success redirect")
+		else:
+			data['state']=""
+			print("Not a success redirect")
+	except User.DoesNotExist, e:
+		data['state']=""
+		print("Not a success redirect")
+    else:
+	print("Not a success redirect")
+    	data['state']=""
     if user_role == organisational_admin_role:
 	org_role = True
 	try:
@@ -394,9 +413,9 @@ def admin_approve_request(request, template_name='user/admin_approve_request_tab
         table_headers_html.append("fields.first_name")
         table_headers_name.append("First Name")
         table_headers_html.append("fields.last_name")
+	table_headers_name.append("Last Name")
 	table_headers_html.append("fields.username")
         table_headers_name.append("Username")
-        table_headers_name.append("Last Name")
         table_headers_html.append("fields.role_name")
         table_headers_name.append("Role")
         table_headers_html.append("fields.gender")
@@ -408,8 +427,13 @@ def admin_approve_request(request, template_name='user/admin_approve_request_tab
 
         table_headers_html = zip(table_headers_html, table_headers_name)
         logicpopulation = '{"pk":"{{c.pk}}","model":"{{c.model}}", "username":"{{c.fields.username}}","first_name":"{{c.fields.first_name}}"}{% if not forloop.last %},{% endif %}'
-
-        return render(request, template_name, {'data_as_json':data_as_json, 'table_headers_html':table_headers_html, 'pagetitle':pagetitle, 'tabletypeid':tabletypeid,'user_mapping':user_mapping}, context_instance=RequestContext(request))
+	print("Users")
+	print(users)
+	if not users:
+		state="No new user requests"
+		return render(request, template_name, {'data_as_json':data_as_json, 'table_headers_html':table_headers_html, 'pagetitle':pagetitle, 'tabletypeid':tabletypeid,'user_mapping':user_mapping,'state':state}, context_instance=RequestContext(request))
+	else:
+        	return render(request, template_name, {'data_as_json':data_as_json, 'table_headers_html':table_headers_html, 'pagetitle':pagetitle, 'tabletypeid':tabletypeid,'user_mapping':user_mapping}, context_instance=RequestContext(request))
 
     else:
 	print("Not an organisational admin.")
@@ -422,6 +446,8 @@ def admin_approve_request(request, template_name='user/admin_approve_request_tab
 def user_create(request, template_name='user/user_create.html'):
     organisation = User_Organisations.objects.get(user_userid=request.user).organisation_organisationid;
     form = UserForm(request.POST or None)
+    #form.fields['username'].widget.attrs['readonly'] = True
+    #upform.fields['date_of_birth'].widget.attrs = {'class':'dobdatepicker'}
     roles = Role.objects.all()
     organisations = Organisation.objects.all()
     organisations=[]
@@ -462,7 +488,8 @@ def user_create(request, template_name='user/user_create.html'):
 		    state="The user " + user.username + " has been created."
 		    if 'submittotable' in request.POST:
 			data['state']=state
-			return render(request, 'user/confirmation.html', data)
+			return redirect('user_table',created=user.id)
+			#return render(request, 'user/confirmation.html', data)
 			#return redirect('user_table')
 		    if 'submittonew' in request.POST:
 			statesuccess=1
@@ -502,6 +529,7 @@ def user_update(request, pk, template_name='user/user_update.html'):
 	userprofile=UserProfile(user=user, organisation_requested=organisation)
 	userprofile.save()
     upform=UserProfileForm(request.POST or None, instance=userprofile)
+    upform.fields['date_of_birth'].widget.attrs = {'class':'dobdatepicker'}
 
     if upform.is_valid():
 	print("e")

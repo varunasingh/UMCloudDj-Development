@@ -6,11 +6,39 @@ from django.utils import timezone
 from django_messages.models import Message
 from django_messages.utils import format_subject, format_quote
 
+from uploadeXe.models import Role
+from uploadeXe.models import User_Roles
+from allclass.models import Allclass
+from school.models import School
+from django.forms import ModelForm
+from organisation.models import Organisation
+from organisation.models import UMCloud_Package
+from organisation.models import User_Organisations
+from users.models import UserProfile
+
+
 
 class SendTestCase(TestCase):
+    fixtures = ['uploadeXe/fixtures/initial-model-data.json']
     def setUp(self):
         self.user1 = User.objects.create_user('user1', 'user1@example.com', '123456')
         self.user2 = User.objects.create_user('user2', 'user2@example.com', '123456')
+	
+	adminrole=Role.objects.get(pk=1)
+	self.user1_role=User_Roles(name="test", user_userid=self.user1, role_roleid=adminrole)
+	self.user1_role.save()
+	self.user2_role=User_Roles(name="test", user_userid=self.user2, role_roleid=adminrole)
+        self.user2_role.save()
+	mainorganisation = Organisation.objects.get(pk=1)
+        user_organisation1 = User_Organisations(user_userid=self.user1, organisation_organisationid=mainorganisation)
+        user_organisation1.save()
+	user_organisation2 = User_Organisations(user_userid=self.user2, organisation_organisationid=mainorganisation)
+        user_organisation2.save()
+
+
+	print(User.objects.all())
+	print(User_Roles.objects.all())
+
         self.msg1 = Message(sender=self.user1, recipient=self.user2, subject='Subject Text', body='Body Text')
         self.msg1.save()
         
@@ -25,6 +53,7 @@ class SendTestCase(TestCase):
         self.assertEqual(self.user2.sent_messages.count(), 0)
         
 class DeleteTestCase(TestCase):
+    fixtures = ['uploadeXe/fixtures/initial-model-data.json']
     def setUp(self):
         self.user1 = User.objects.create_user('user3', 'user3@example.com', '123456')
         self.user2 = User.objects.create_user('user4', 'user4@example.com', '123456')
@@ -34,6 +63,21 @@ class DeleteTestCase(TestCase):
         self.msg2.recipient_deleted_at = timezone.now()
         self.msg1.save()
         self.msg2.save()
+
+	adminrole=Role.objects.get(pk=1)
+        self.user1_role=User_Roles(name="test", user_userid=self.user1, role_roleid=adminrole)
+        self.user1_role.save()
+        self.user2_role=User_Roles(name="test", user_userid=self.user2, role_roleid=adminrole)
+        self.user2_role.save()
+	mainorganisation = Organisation.objects.get(pk=1)
+        user_organisation1 = User_Organisations(user_userid=self.user1, organisation_organisationid=mainorganisation)
+        user_organisation1.save()
+        user_organisation2 = User_Organisations(user_userid=self.user2, organisation_organisationid=mainorganisation)
+        user_organisation2.save()
+
+
+        print(User.objects.all())
+        print(User_Roles.objects.all())
                 
     def testBasic(self):
         self.assertEqual(Message.objects.outbox_for(self.user1).count(), 1)
@@ -50,6 +94,7 @@ class DeleteTestCase(TestCase):
 
 
 class IntegrationTestCase(TestCase):
+    fixtures = ['uploadeXe/fixtures/initial-model-data.json']
     """
     Test the app from a user perpective using Django's Test-Client.
     
@@ -66,6 +111,22 @@ class IntegrationTestCase(TestCase):
         """ create 2 users and a test-client logged in as user_1 """
         self.user_1 = User.objects.create_user(**self.T_USER_DATA[0])
         self.user_2 = User.objects.create_user(**self.T_USER_DATA[1])
+	adminrole=Role.objects.get(pk=1)
+        self.user1_role=User_Roles(name="test", user_userid=self.user_1, role_roleid=adminrole)
+        self.user1_role.save()
+        self.user2_role=User_Roles(name="test", user_userid=self.user_2, role_roleid=adminrole)
+        self.user2_role.save()
+	mainorganisation = Organisation.objects.get(pk=1)
+        user_organisation1 = User_Organisations(user_userid=self.user_1, organisation_organisationid=mainorganisation)
+        user_organisation1.save()
+        user_organisation2 = User_Organisations(user_userid=self.user_2, organisation_organisationid=mainorganisation)
+        user_organisation2.save()
+
+
+        print(User.objects.all())
+	print(User_Roles.objects.all())
+	print(User_Organisations.objects.all())
+
         self.c = Client()
         self.c.login(username=self.T_USER_DATA[0]['username'], 
                      password=self.T_USER_DATA[0]['password'])
@@ -134,6 +195,7 @@ class IntegrationTestCase(TestCase):
                 u"Re: %(subject)s"%{'subject': self.T_MESSAGE_DATA[0]['subject']})
                      
 class FormatTestCase(TestCase):
+    fixtures = ['uploadeXe/fixtures/initial-model-data.json']
     """ some tests for helper functions """
     def testSubject(self):
         """ test that reply counting works as expected """

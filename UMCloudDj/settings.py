@@ -47,8 +47,29 @@ INSTALLED_APPS = (
     'allclass',
     'users',
     'django_messages', #Added 110824012121
+    #'lrs', #Added for lrs entry trial 190820142045
+    #'lrs.util',
+    #'adl_lrs',
+    #'oauth_provider',
+    #'gunicorn',
+    'django_extensions'
     #'datetimewidget', #Varuna Singh datetimewidget test
 )
+
+#For lrs entry trial 190820142046
+# Caches for /more endpoint and attachments
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'cache_statement_list',
+        'TIMEOUT': 86400,
+    },
+    'attachment_cache':{
+        'BACKEND':'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION':'attachment_cache',
+    },
+}
+
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
