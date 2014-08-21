@@ -52,7 +52,7 @@ INSTALLED_APPS = (
     #'adl_lrs',
     #'oauth_provider',
     #'gunicorn',
-    'django_extensions'
+    #'django_extensions'
     #'datetimewidget', #Varuna Singh datetimewidget test
 )
 
