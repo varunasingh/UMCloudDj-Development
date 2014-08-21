@@ -100,7 +100,7 @@ urlpatterns = patterns('',
 
  	#For upload feature. Need both for file upload. The second one re directs to the url and first one does somehting related to that. 
 	(r'^uploadeXe/', include('uploadeXe.urls')),
-        (r'^umlrs/', include('lrs.urls')),
+        #(r'^umlrs/', include('lrs.urls')),
 	(r'^uploadeXe/$', RedirectView.as_view(url='/uploadeXe/list/')), # Just for ease of use.
 	(r'^manageeXe/$', RedirectView.as_view(url='/uploadeXe/manage/')),
 	(r'^managecourses/$',RedirectView.as_view(url='/uploadeXe/managecourses/')),

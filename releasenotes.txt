@@ -2,6 +2,7 @@ v0.7.9
 - Fixed unit tests
 - minor tweaks for usability
 - Fixed build bug01
+- Fixed build bug02
 
 v0.7.5
 - Fixed log out bug
