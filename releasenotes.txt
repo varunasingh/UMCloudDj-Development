@@ -1,3 +1,6 @@
+v0.7.9b
+- Added ability for superuser to log in without external approval checks.
+
 v0.7.9
 - Fixed unit tests
 - minor tweaks for usability

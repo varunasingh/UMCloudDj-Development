@@ -53,7 +53,6 @@ INSTALLED_APPS = (
     #'oauth_provider',
     #'gunicorn',
     #'django_extensions'
-    #'datetimewidget', #Varuna Singh datetimewidget test
 )
 
 #For lrs entry trial 190820142046

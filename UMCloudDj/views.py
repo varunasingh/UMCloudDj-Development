@@ -1227,6 +1227,10 @@ def auth_and_login(request, onsuccess='/', onfail='/login'):
                 return render_to_response('login.html', {'state':state},context_instance=RequestContext(request))
 			
 	try:
+		if user.is_superuser:
+			login(request, user)
+			return redirect(onsuccess)
+
 		userprofile = UserProfile.objects.get(user=user)
 		if userprofile.admin_approved:
 			login(request, user)
