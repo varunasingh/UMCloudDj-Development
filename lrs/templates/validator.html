@@ -1,0 +1,31 @@
+{% extends "umlrsbase.html" %}
+{% block content %}
+<p>Enter JSON here to validate:</p>
+{% if error_message %}
+<p class="alert alert-error">
+    <strong>{{ error_message }}</strong>
+</p>
+{% elif valid_message %}
+<p class="alert alert-success">
+    <strong>{{ valid_message }}</strong>
+</p>
+{% else %}
+<p>
+	<br>
+</p>
+{% endif %}
+<form action="{% url 'lrs.views.stmt_validator' %}" method="post">
+	{% csrf_token %}
+	<div class="control-group">
+	    <label class="control-label" for="Data">Data</label>
+	    <div class="controls">
+	      <textarea class="input-block-level" id="id_jsondata" rows="20" cols="100" name="jsondata">{{ form.jsondata.value|default_if_none:"" }}</textarea>
+	    </div>
+	  </div>
+	<div class="control-group">
+	    <div class="controls">
+	      <button type="submit" class="btn">Validate</button>
+	    </div>
+	  </div>
+</form>
+{% endblock content %}

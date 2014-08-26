@@ -1,0 +1,13 @@
+{% extends "umlrsbase.html" %}
+{% block title %}ADL LRS Client Allow Access{% endblock title %}
+{% block heading %}ADL LRS Client Allow Access{% endblock heading %}
+{% block content %}
+{% if error %}
+<p>{{ error }}</p>
+{% else %}
+<p>
+     You are seeing this because the callback url was set to 'oob'
+</p>
+<p>Enter this PIN in your app: {{ token.verifier }}</p>
+{% endif %}
+{% endblock content %}
