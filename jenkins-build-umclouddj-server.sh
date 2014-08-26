@@ -2,6 +2,8 @@
 
 cd $WORKSPACE
 
+cp UMCloudDj/settings.py.edit UMCloudDj/settings.py
+
 #cd setup/android/
 
 #run tests
