@@ -303,7 +303,7 @@ def user_table(request, template_name='user/user_table.html', created=None):
                 organisation_code=Organisation_Code.objects.get(organisation=organisation)
         except Organisation_Code.DoesNotExist, e:
                 organisation_code = Organisation_Code(organisation=organisation)
-                random_code = randrange(1000000)
+                random_code = random.randrange(1000000)
                 random_org_code=str(organisation.id)+str(random_code)
                 organisation_code.code=random_org_code
                 organisation_code.save()
