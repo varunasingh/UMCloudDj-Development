@@ -1,14 +1,23 @@
 if [ $# -eq 0 ]; then
     echo "No arguments provided"
-    echo "Usage: .sh <Super username> <password> <wordpress pass> <wordpress pass>"
-    echo "Ex:    .sh adminusername adminpassword "
+    echo "Usage: .sh <Super username> <password> <wordpress pass> <um pass> <secret key>"
+    echo "Ex:    .sh adminusername adminpassword worddpass umtestpass secretkey_10212wdsda><?:<>!@%*%$"
     exit 1
 fi
+
+if [ $# -ne 5 ]; then
+    echo "You need to give 5 arguments"
+    echo "Usage: .sh <Super username> <password> <wordpress pass> <um pass> <secret key>"
+    echo "Ex:    .sh adminusername adminpassword worddpass umtestpass secretkey_10212wdsda><?:<>!@%*%$"
+    exit 1
+fi
+
 
 SUPERUSERNAME=${1}
 SUPERPASSWORD=${2}
 WORDPRESSPASS=${3}
 UMPASS=${4}
+SECRET_KEY=${5}
 
 DATE=`date +%Y-%m-%d-%H-%M-%S`
 echo "Starting installation of UMCDjCloud."
@@ -33,10 +42,16 @@ git clone ssh://varunasingh@git.code.sf.net/p/ustadmobil/code-umclouddjango UMCl
 
 > UMCloudDj/UMCloudDj/wordpresscred.txt
 > UMCloudDj/UMCloudDj/media/gruntConfig/umpassword.txt
-echo "${WORDPRESSPASS}" > UMCloudDj/UMCloudDj/wordpresscred.txt
-echo "${UMPASS}" > UMCloudDj/UMCloudDj/media/gruntConfig/umpassword.txt
+echo "${WORDPRESSPASS}" > UMCloudDj/UMCloudDj/wordpresscred.txt		#Soon to be depreciated. Was used for authenticting wordpress users. 
+echo "${UMPASS}" > UMCloudDj/UMCloudDj/media/gruntConfig/umpassword.txt #Soon to be depreciated . Was used for testing course pass/fail when sent to server
 
 cd UMCloudDj
+
+cp UMCloudDj/settings.py.edit UMCloudDj/settings.py
+
+#Need to update the secret key
+sed -i.bak -e 's/^SECRET_KEY/##/' UMCloudDj/settings.py
+echo "SECRET_KEY=\"${SECRET_KEY}\"" >> UMCloudDj/settings.py
 
 #After getting latest version, we use this to create super user and assign database mappings:
 #Creates a super user and syncs models and databases
