@@ -221,6 +221,7 @@ def upload_avatar(request, template_name='myapp/avatar.html'):
 	current_user_profile=None
         print("User profile does NOT exist")
         current_user_profile=UserProfile(user=request.user, organisation_requested=organisation)
+	current_user_profile.admin_approved=True
         current_user_profile.save()
 
     current_organisation=organisation
@@ -527,6 +528,7 @@ def user_update(request, pk, template_name='user/user_update.html'):
 	userprofile=UserProfile.objects.get(user=user)
     except UserProfile.DoesNotExist, e:
 	userprofile=UserProfile(user=user, organisation_requested=organisation)
+	userprofile.admin_approved=True
 	userprofile.save()
     upform=UserProfileForm(request.POST or None, instance=userprofile)
     upform.fields['date_of_birth'].widget.attrs = {'class':'dobdatepicker'}
